@@ -4,6 +4,8 @@ A full-featured, easy to use chat plugin and API for Bukkit servers.
 
 *   by **krinsdeath**
 
+Licensed under the <a href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>.
+
 Want to contribute?
 ---
 This plugin uses maven to handle its dependencies. <br />

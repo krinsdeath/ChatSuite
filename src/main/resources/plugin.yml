@@ -1,61 +1,38 @@
 name: ChatSuite
-main: net.krinsoft.chatsuite.ChatSuite
+main: net.krinsoft.chat.ChatCore
 version: ${project.version}
 author: krinsdeath
 softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core]
 
 commands:
-  afk:
-    description: Toggles the user's afk status
-    permission: commandsuite.chat.commands.afk
-    usage: |
-      /<command> - toggles afk
-      /<command> [message] - sets the user to afk, and responds to whispers with the provided message
-  whisper:
-    description: Sends a message to the specified user
-    permission: commandsuite.chat.commands.whisper
-    usage: |
-      /<command> (player) (message)
-  channel:
-    aliases: [chan]
-    description: Sends a message to the specified channel.
-    permission: commandsuite.chat.commands.channel
-    usage: |
-      /<command> (channel) (message)
-  join:
-    description: Joins the specified channel.
-    permission: commandsuite.chat.commands.join
-    usage: /<command> (channel)
-  leave:
-    description: Leaves the specified channel.
-    permission: commandsuite.chat.commands.leave
-    usage: /<command> (channel)
+  chatsuite:
+    aliases: [cs, csa, csafk, csw, cswhisper, csc, cschan, csj, csjoin, csl, csleave]
+    description: The basic command for this plugin
+    permission: chatsuite.commands.help
+    usage: /<command>
 
 permissions:
-  commandsuite.chat.users:
-    description: Sets this group's chat format to the 'users' group
-    default: true
-  commandsuite.chat.commands.whisper:
+  chatsuite.commands.whisper:
     description: Allows this user to use '/whisper'
     default: false
-  commandsuite.chat.commands.afk:
+  chatsuite.commands.afk:
     description: Allows this user to use '/afk'
     default: false
-  commandsuite.chat.commands.global:
+  chatsuite.commands.global:
     description: Allows this user to use '/global'
     default: false
-  commandsuite.chat.commands.join:
+  chatsuite.commands.join:
     description: Allows this user to use '/join'
     default: false
-  commandsuite.chat.commands.leave:
+  chatsuite.commands.leave:
     description: Allows this user to use '/leave'
     default: false
-  commandsuite.chat.commands.*:
+  chatsuite.commands.*:
     description: Enables all chat commands
     default: op
     children:
-      commandsuite.chat.commands.whisper: true
-      commandsuite.chat.commands.afk: true
-      commandsuite.chat.commands.global: true
-      commandsuite.chat.commands.join: true
-      commandsuite.chat.commands.leave: true
+      chatsuite.commands.whisper: true
+      chatsuite.commands.afk: true
+      chatsuite.commands.global: true
+      chatsuite.commands.join: true
+      chatsuite.commands.leave: true

@@ -1,0 +1,21 @@
+plugin:
+    allow_channels: true
+    afk_invincibility: false
+    # This is the default channel a player will be chatting in. A value of 'global'
+    # means that they will chat to everyone on the server, while 'world' means
+    # that only players on their current world will see their messages.
+    default_channel: world
+    global_channel_name: 'Global'
+groups:
+    users:
+        weight: 1
+        channel: '&A[&B%c&A] '
+        prefix: '&A[&B-&A]&B '
+        group: ''
+        suffix: ''
+        afk: ' &A[&7afk&A]'
+        format:
+            global: '%c%p%n&A@&B%w&A%afk&F: %m'
+            message: '%c%p%n%s%afk&F: %m'
+            whisper_send: 'To %t>>&F %m'
+            whisper_receive: 'From %t>>&F %m'
