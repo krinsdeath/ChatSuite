@@ -145,10 +145,10 @@ public class ChatCore extends JavaPlugin {
         commandHandler = new CommandHandler(this, permissionHandler);
         // register the commands
         commandHandler.registerCommand(new AfkCommand(this));
-        commandHandler.registerCommand(new WhisperCommand(this));
-        commandHandler.registerCommand(new ChannelCommand(this));
-        commandHandler.registerCommand(new LocaleCommand(this));
-        commandHandler.registerCommand(new HelpCommand(this));
+        //commandHandler.registerCommand(new WhisperCommand(this));
+        //commandHandler.registerCommand(new ChannelCommand(this));
+        //commandHandler.registerCommand(new LocaleCommand(this));
+        //commandHandler.registerCommand(new HelpCommand(this));
     }
 
     // logging and information

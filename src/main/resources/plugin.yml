@@ -12,27 +12,19 @@ commands:
     usage: /<command>
 
 permissions:
-  chatsuite.commands.whisper:
+  chatsuite.whisper:
     description: Allows this user to use '/whisper'
     default: false
-  chatsuite.commands.afk:
+  chatsuite.afk:
     description: Allows this user to use '/afk'
     default: false
-  chatsuite.commands.global:
+  chatsuite.global:
     description: Allows this user to use '/global'
     default: false
-  chatsuite.commands.join:
+  chatsuite.join:
     description: Allows this user to use '/join'
     default: false
-  chatsuite.commands.leave:
+  chatsuite.leave:
     description: Allows this user to use '/leave'
     default: false
-  chatsuite.commands.*:
-    description: Enables all chat commands
-    default: op
-    children:
-      chatsuite.commands.whisper: true
-      chatsuite.commands.afk: true
-      chatsuite.commands.global: true
-      chatsuite.commands.join: true
-      chatsuite.commands.leave: true
+    

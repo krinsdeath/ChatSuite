@@ -24,7 +24,7 @@ public class AfkCommand extends ChatSuiteCommand {
         this.addKey("csa");
         this.addKey("csafk");
         this.addKey("afk");
-        this.setPermission("chatsuite.commands.afk", "Allows you to set your AFK status.", PermissionDefault.TRUE);
+        this.setPermission("chatsuite.afk", "Allows you to set your AFK status.", PermissionDefault.TRUE);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class AfkCommand extends ChatSuiteCommand {
                 sender.sendMessage(line);
             }
         } else {
-            ColoredMessage message = buildMessage(plugin.getLocaleManager().getAfkLines(p.getLocale(), true));
+            ColoredMessage message = buildMessage(plugin.getLocaleManager().getAfkLines(p.getLocale(), false));
             for (String line : message.getContents()) {
                 line = line.replaceAll("%msg", p.getAwayMessage());
                 sender.sendMessage(line);

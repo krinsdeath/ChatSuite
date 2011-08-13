@@ -22,14 +22,12 @@ public class ChannelManager {
             Channel chan = channels.get(channel);
             if (chan == null) {
                 chan = new Channel(plugin, channel);
-                chan.addPlayer(player.getName());
                 plugin.debug("Channel '" + channel + "' created");
-            } else {
-                if (!chan.contains(player.getName())) {
-                    chan.addPlayer(player.getName());
-                }
             }
-            plugin.debug(player.getName() + " added to channel '" + channel + "'");
+            if (!chan.contains(player.getName())) {
+                chan.addPlayer(player.getName());
+                plugin.debug(player.getName() + " added to channel '" + channel + "'");
+            }
             channels.put(channel, chan);
         }
     }
