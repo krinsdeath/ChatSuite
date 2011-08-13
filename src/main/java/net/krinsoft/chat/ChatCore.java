@@ -1,9 +1,15 @@
 package net.krinsoft.chat;
 
+import com.pneumaticraft.commandhandler.CommandHandler;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
-import net.krinsoft.chat.commands.CommandHandler;
+import net.krinsoft.chat.commands.AfkCommand;
+import net.krinsoft.chat.commands.ChannelCommand;
+import net.krinsoft.chat.commands.HelpCommand;
+import net.krinsoft.chat.commands.LocaleCommand;
+import net.krinsoft.chat.commands.WhisperCommand;
 import net.krinsoft.chat.listeners.ChatListener;
 import net.krinsoft.chat.listeners.EntityListener;
 import net.krinsoft.chat.listeners.PlayerListener;
@@ -54,7 +60,9 @@ public class ChatCore extends JavaPlugin {
 
     private ChannelManager channelManager;
     private WorldManager worldManager;
+    private LocaleManager localeManager;
     private CommandHandler commandHandler;
+    private CSPermissions permissionHandler;
 
     // maps
     private HashMap<String, ChatPlayer> players = new HashMap<String, ChatPlayer>();
@@ -79,19 +87,20 @@ public class ChatCore extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        return commandHandler.handle(cs, cmd, label, args);
+        return false;
     }
 
     private void initConfiguration() {
         ChatConfiguration settings = new ChatConfiguration(this);
-        config = new Configuration(settings.buildDefault("config.yml"));
+        config = new Configuration(settings.buildDefault(getDataFolder(), "config.yml"));
         config.load();
-        worldConfig = new Configuration(settings.buildDefault("worlds.yml"));
+        worldConfig = new Configuration(settings.buildDefault(new File(getDataFolder() + "/languages"), "en.yml"));
         worldConfig.load();
         allowChannels = config.getBoolean("plugin.allow_channels", false);
         afkInvincibility = config.getBoolean("plugin.afk_invincibility", false);
         channelManager = new ChannelManager(this);
         worldManager = new WorldManager(this);
+        localeManager = new LocaleManager(this);
         ChatPlayer.init(this);
     }
 
@@ -127,7 +136,19 @@ public class ChatCore extends JavaPlugin {
         pListener = new PlayerListener(this);
         eListener = new EntityListener(this);
         chatListener = new ChatListener(this);
-        commandHandler = new CommandHandler(this);
+        initCommandHelper();
+    }
+
+    private void initCommandHelper() {
+        // set up the handlers
+        permissionHandler = new CSPermissions(this);
+        commandHandler = new CommandHandler(this, permissionHandler);
+        // register the commands
+        commandHandler.registerCommand(new AfkCommand(this));
+        commandHandler.registerCommand(new WhisperCommand(this));
+        commandHandler.registerCommand(new ChannelCommand(this));
+        commandHandler.registerCommand(new LocaleCommand(this));
+        commandHandler.registerCommand(new HelpCommand(this));
     }
 
     // logging and information
@@ -189,12 +210,12 @@ public class ChatCore extends JavaPlugin {
         return (players.get(p.getName()) == null);
     }
 
-    public ConfigurationNode getGroupNode(String group) {
-        return config.getNode("groups." + group);
+    public ConfigurationNode getNode(String path) {
+        return config.getNode(path);
     }
 
-    public List<String> getGroups() {
-        return config.getKeys("groups");
+    public List<String> getList(String path) {
+        return config.getKeys(path);
     }
 
     public int getWeight(String group) {
@@ -228,6 +249,11 @@ public class ChatCore extends JavaPlugin {
     // CHANNELS
     public ChannelManager getChannelManager() {
         return this.channelManager;
+    }
+
+    // LOCALIZATIONS
+    public LocaleManager getLocaleManager() {
+        return this.localeManager;
     }
 
 }

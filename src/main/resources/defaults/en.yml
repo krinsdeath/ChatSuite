@@ -1,0 +1,6 @@
+afk:
+  away:
+  - 'You are now marked as &Aaway&F:'
+  - '&B%msg'
+  back: 'You are now &Aback&F.'
+  generic: "I'm away right now."

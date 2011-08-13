@@ -1,4 +1,6 @@
 plugin:
+    default_locale: en
+    locales: [en]
     allow_channels: true
     afk_invincibility: false
     # This is the default channel a player will be chatting in. A value of 'global'

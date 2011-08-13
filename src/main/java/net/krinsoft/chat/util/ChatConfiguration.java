@@ -17,8 +17,8 @@ public class ChatConfiguration {
         plugin = aThis;
     }
 
-    public File buildDefault(String filename) {
-        File file = new File(plugin.getDataFolder(), filename);
+    public File buildDefault(File p, String filename) {
+        File file = new File(p, filename);
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             InputStream in = ChatCore.class.getResourceAsStream("/defaults/" + file.getName());

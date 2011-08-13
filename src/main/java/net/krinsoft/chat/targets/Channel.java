@@ -32,6 +32,10 @@ public class Channel implements Target {
         return this.name;
     }
 
+    public String toNode() {
+        return this.name.replaceAll("\\s", "_").toLowerCase();
+    }
+
     public List<String> getOccupants() {
         return occupants;
     }

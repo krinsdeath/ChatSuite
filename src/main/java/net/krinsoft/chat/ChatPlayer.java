@@ -75,7 +75,7 @@ public class ChatPlayer {
     private String name; // name of the player
     private String world; // the player's current world
     private String group; // the player's group
-    private String global;
+    private String global; // the player's raw global string
     private String format; // the player's raw format string
     private String send; // the player's raw whisper send string
     private String receive; // the player's raw whisper receive string
@@ -83,11 +83,13 @@ public class ChatPlayer {
     private boolean afk; // whether the player is afk or not
     private String afkMessage; // the message the player set when they went afk
 
+    private String locale;
+
     protected ChatPlayer(Player p) {
         this.name = p.getName();
         this.world = p.getWorld().getName();
         int weight = 0;
-        for (String key : plugin.getGroups()) {
+        for (String key : plugin.getList("groups")) {
             int i = plugin.getWeight(key);
             if (p.hasPermission("commandsuite.chat." + key) && i > weight) {
                 weight = i;
@@ -95,7 +97,7 @@ public class ChatPlayer {
             }
         }
         plugin.debug("Player " + this.name + " set to group '" + this.group + "' (Weight: " + weight + ")");
-        ConfigurationNode node = plugin.getGroupNode(this.group);
+        ConfigurationNode node = plugin.getNode("groups." + this.group);
         global = node.getString("format.global", "");
         format = node.getString("format.message", "");
         send = node.getString("format.whisper_send", "");
@@ -104,10 +106,6 @@ public class ChatPlayer {
 
     public String getWorld() {
         return this.world;
-    }
-
-    public void updateWorld(String w) {
-        this.world = w;
     }
 
     protected String getFormat(Type t) {
@@ -209,7 +207,7 @@ public class ChatPlayer {
 
     private String channelMessage(Type t, Channel chan, String message) {
         message = parse(getFormat(t), null, message);
-        message = message.replaceAll("%c", plugin.getGroupNode(this.group).getString("channel"));
+        message = message.replaceAll("%c", plugin.getNode("groups." + this.group).getString("channel"));
         String rep = "";
         if (plugin.getWorldManager().getWorld(chan.getName()) != null) {
             rep = plugin.getWorldManager().getAlias(chan.getName());
@@ -236,7 +234,7 @@ public class ChatPlayer {
     }
 
     private String parse(String format, String target, String message) {
-        ConfigurationNode node = plugin.getGroupNode(this.group);
+        ConfigurationNode node = plugin.getNode("groups." + this.group);
         format = parsePrefix(format, node.getString("prefix"));
         format = parseGroup(format, node.getString("group"));
         format = parseSuffix(format, node.getString("suffix"));
@@ -298,5 +296,22 @@ public class ChatPlayer {
     private String parseMessage(String format, String message) {
         format = MESSAGE.matcher(format).replaceAll(message);
         return format;
+    }
+
+    public boolean isAfk() {
+        return this.afk;
+    }
+
+    public void toggleAfk(String msg) {
+        this.afkMessage = msg;
+        this.afk = !this.afk;
+    }
+
+    public String getAwayMessage() {
+        return this.afkMessage;
+    }
+
+    public String getLocale() {
+        return this.locale;
     }
 }
