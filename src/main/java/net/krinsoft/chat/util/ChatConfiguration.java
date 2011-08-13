@@ -11,18 +11,21 @@ import net.krinsoft.chat.ChatCore;
  * @author krinsdeath
  */
 public class ChatConfiguration {
-    private ChatCore plugin;
+    private static ChatCore plugin;
 
-    public ChatConfiguration(ChatCore aThis) {
-        plugin = aThis;
+    public static void init(ChatCore p) {
+        plugin = p;
     }
 
-    public File buildDefault(File p, String filename) {
+    public static File buildDefault(File p, String filename) {
+        plugin.debug("Building file references..");
         File file = new File(p, filename);
         if (!file.exists()) {
             file.getParentFile().mkdirs();
+            plugin.debug("Fetching resource... " + file.getName());
             InputStream in = ChatCore.class.getResourceAsStream("/defaults/" + file.getName());
             if (in != null) {
+                plugin.debug("Resource exists as: " + file.getName());
                 FileOutputStream out = null;
                 try {
                     out = new FileOutputStream(file);

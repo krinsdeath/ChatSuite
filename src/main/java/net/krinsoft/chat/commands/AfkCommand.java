@@ -12,7 +12,7 @@ import org.bukkit.permissions.PermissionDefault;
 
 /**
  *
- * @author krinsdeath
+ * @author krinsdeath (Jeff Wardian)
  */
 public class AfkCommand extends ChatSuiteCommand {
 
@@ -21,34 +21,31 @@ public class AfkCommand extends ChatSuiteCommand {
         this.plugin = (ChatCore) plugin;
         this.setName("Sets your AFK status.");
         this.setCommandUsage("/cs afk \"[message]\"");
+        this.setArgRange(0, 1);
+        this.addKey("cs afk");
         this.addKey("csa");
         this.addKey("csafk");
-        this.addKey("afk");
         this.setPermission("chatsuite.afk", "Allows you to set your AFK status.", PermissionDefault.TRUE);
     }
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
+        plugin.debug("Got to afk handler");
         ChatPlayer p = plugin.getPlayer((Player) sender);
+        if (p == null) { return; }
         if (args.isEmpty()) {
-            p.toggleAfk(plugin.getLocaleManager().getAfkDefault(p.getLocale()));
+            p.toggleAfk(plugin.getLocaleManager().getAfk(p.getLocale(), "generic").toString());
         } else {
-            if (args.get(0).equals("afk")) {
-                if (args.size() > 1) {
-                    p.toggleAfk(args.get(1));
-                }
-            } else {
-                p.toggleAfk(args.get(0));
-            }
+            p.toggleAfk(args.get(0));
         }
         if (p.isAfk()) {
-            ColoredMessage message = buildMessage(plugin.getLocaleManager().getAfkLines(p.getLocale(), true));
+            ColoredMessage message = buildMessage(plugin.getLocaleManager().getAfk(p.getLocale(), "away"));
             for (String line : message.getContents()) {
                 line = line.replaceAll("%msg", p.getAwayMessage());
                 sender.sendMessage(line);
             }
         } else {
-            ColoredMessage message = buildMessage(plugin.getLocaleManager().getAfkLines(p.getLocale(), false));
+            ColoredMessage message = buildMessage(plugin.getLocaleManager().getAfk(p.getLocale(), "back"));
             for (String line : message.getContents()) {
                 line = line.replaceAll("%msg", p.getAwayMessage());
                 sender.sendMessage(line);

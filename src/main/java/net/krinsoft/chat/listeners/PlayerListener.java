@@ -67,6 +67,9 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
     @Override
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (event.isCancelled()) { return; }
+        if (!plugin.isPlayerRegistered(event.getPlayer())) {
+            return;
+        }
         plugin.getChannelManager().playerWorldChange(event.getPlayer(), event.getFrom().getWorld().getName(), event.getTo().getWorld().getName());
     }
 }

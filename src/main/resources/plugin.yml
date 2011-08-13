@@ -5,26 +5,8 @@ author: krinsdeath
 softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core]
 
 commands:
-  chatsuite:
-    aliases: [cs, csa, csafk, csw, cswhisper, csc, cschan, csj, csjoin, csl, csleave]
+  cs:
+    aliases: [csh, cshelp, csa, csafk, csw, cswhisper, csc, cschan, csj, csjoin, csl, csleave]
     description: The basic command for this plugin
     permission: chatsuite.commands.help
     usage: /<command>
-
-permissions:
-  chatsuite.whisper:
-    description: Allows this user to use '/whisper'
-    default: false
-  chatsuite.afk:
-    description: Allows this user to use '/afk'
-    default: false
-  chatsuite.global:
-    description: Allows this user to use '/global'
-    default: false
-  chatsuite.join:
-    description: Allows this user to use '/join'
-    default: false
-  chatsuite.leave:
-    description: Allows this user to use '/leave'
-    default: false
-    

@@ -1,19 +1,18 @@
 package net.krinsoft.chat;
 
 import com.pneumaticraft.commandhandler.CommandHandler;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 import net.krinsoft.chat.commands.AfkCommand;
-import net.krinsoft.chat.commands.ChannelCommand;
 import net.krinsoft.chat.commands.HelpCommand;
-import net.krinsoft.chat.commands.LocaleCommand;
-import net.krinsoft.chat.commands.WhisperCommand;
 import net.krinsoft.chat.listeners.ChatListener;
 import net.krinsoft.chat.listeners.EntityListener;
 import net.krinsoft.chat.listeners.PlayerListener;
 import net.krinsoft.chat.util.ChatConfiguration;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,8 +25,10 @@ import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 
 /**
- *
- * @author krinsdeath
+ * @author krinsdeath (Jeff Wardian)
+ * @copyright 2011-2012 All Rights Reserved
+ * @license MIT
+ * @version 1.0
  */
 public class ChatCore extends JavaPlugin {
 
@@ -87,15 +88,19 @@ public class ChatCore extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        return false;
+        if (!isEnabled()) {
+            cs.sendMessage(ChatColor.RED + "no.");
+            return true;
+        }
+        ArrayList<String> allArgs = new ArrayList<String>(Arrays.asList(args));
+        allArgs.add(0, label);
+        return this.commandHandler.locateAndRunCommand(cs, allArgs);
     }
 
     private void initConfiguration() {
-        ChatConfiguration settings = new ChatConfiguration(this);
-        config = new Configuration(settings.buildDefault(getDataFolder(), "config.yml"));
+        ChatConfiguration.init(this);
+        config = new Configuration(ChatConfiguration.buildDefault(getDataFolder(), "config.yml"));
         config.load();
-        worldConfig = new Configuration(settings.buildDefault(new File(getDataFolder() + "/languages"), "en.yml"));
-        worldConfig.load();
         allowChannels = config.getBoolean("plugin.allow_channels", false);
         afkInvincibility = config.getBoolean("plugin.afk_invincibility", false);
         channelManager = new ChannelManager(this);
@@ -148,7 +153,7 @@ public class ChatCore extends JavaPlugin {
         //commandHandler.registerCommand(new WhisperCommand(this));
         //commandHandler.registerCommand(new ChannelCommand(this));
         //commandHandler.registerCommand(new LocaleCommand(this));
-        //commandHandler.registerCommand(new HelpCommand(this));
+        commandHandler.registerCommand(new HelpCommand(this));
     }
 
     // logging and information

@@ -18,13 +18,13 @@ public class CSPermissions implements PermissionsInterface {
     }
 
     public boolean canChatHere(CommandSender cs, Channel chan) {
-        String node = "chatsuite.channel.chat." + chan.toNode();
+        String node = "chatsuite.access." + chan.toNode();
         if (cs instanceof ConsoleCommandSender) return true;
         if (cs.hasPermission(node)) {
             return true;
         } else if (cs.isPermissionSet(node) && !cs.hasPermission(node)) {
             return false;
-        } else if (cs.hasPermission("*") && !cs.isPermissionSet(node)) {
+        } else if (cs.hasPermission("chatsuite.access.*") && !cs.isPermissionSet(node)) {
             return true;
         }
         return false;
@@ -50,12 +50,22 @@ public class CSPermissions implements PermissionsInterface {
 
     @Override
     public boolean hasAnyPermission(CommandSender cs, List<String> list, boolean bln) {
+        for (String node : list) {
+            if (cs.hasPermission(node)) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public boolean hasAllPermission(CommandSender cs, List<String> list, boolean bln) {
-        return false;
+        for (String node : list) {
+            if (!cs.hasPermission(node)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

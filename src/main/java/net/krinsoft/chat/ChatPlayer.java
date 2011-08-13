@@ -88,10 +88,11 @@ public class ChatPlayer {
     protected ChatPlayer(Player p) {
         this.name = p.getName();
         this.world = p.getWorld().getName();
+        this.locale = plugin.getConfiguration().getString("plugin.default_locale", "en");
         int weight = 0;
         for (String key : plugin.getList("groups")) {
             int i = plugin.getWeight(key);
-            if (p.hasPermission("commandsuite.chat." + key) && i > weight) {
+            if (p.hasPermission("chatsuite.groups." + key) && i > weight) {
                 weight = i;
                 this.group = key;
             }

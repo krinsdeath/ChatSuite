@@ -4,3 +4,23 @@ afk:
   - '&B%msg'
   back: 'You are now &Aback&F.'
   generic: "I'm away right now."
+
+help:
+  help:
+    - '&A=== Help: &BMain&A ==='
+    - '&AAliases: &B/csh&A, &B/cshelp&A, &B/cs'
+    - '&A/cs help &B[topic]&A - &FDisplays help on the specified topic'
+    - '&A/cs help &Bafk&A - &FDisplays AFK command usage and help'
+  afk:
+    - '&A=== Help: &BAFK&A ==='
+    - '&AAliases: &B/csa&A, &B/csafk'
+    - '&A/cs afk "&Bmessage here&A" - &FWill set you to AFK with the'
+    - '&Fprovided message'
+    - '&A/csa &Bgone&A - &FOne word messages will work, but for multiple'
+    - '&Flines, you need &Bquotations&F (as above)'
+  chan:
+    - ''
+    - ''
+  whisper:
+    - ''
+    - ''

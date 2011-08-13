@@ -29,7 +29,7 @@
                 <directory>${basedir}/src/main/resources/</directory>
                 <includes>
                     <include>plugin.yml</include>
-                    <include>defaults/config.yml</include>
+                    <include>defaults/</include>
                 </includes>
             </resource>
         </resources>
