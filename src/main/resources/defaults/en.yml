@@ -5,22 +5,32 @@ afk:
   back: 'You are now &Aback&F.'
   generic: "I'm away right now."
 
+error:
+  invalid_target: &CThe target specified (&3%target&C) doesn't exist.
+  permission: &CYou do not have permission to do that.
+
 help:
   help:
-    - '&A=== Help: &BMain&A ==='
-    - '&AAliases: &B/csh&A, &B/cshelp&A, &B/cs'
+    - '&A=== Help: &BMain &A==='
+    - '&AAliases: &B%aliases'
     - '&A/cs help &B[topic]&A - &FDisplays help on the specified topic'
     - '&A/cs help &Bafk&A - &FDisplays AFK command usage and help'
+    - '&A/cs help &Bwhisper&A - &FDisplays Whisper command usage and help'
+    - '&A/cs help &Bchannel&A - &FDisplays Channel command usage and help'
   afk:
-    - '&A=== Help: &BAFK&A ==='
-    - '&AAliases: &B/csa&A, &B/csafk'
+    - '&A=== Help: &BAFK &A==='
+    - '&AAliases: &B%aliases'
     - '&A/cs afk "&Bmessage here&A" - &FWill set you to AFK with the'
     - '&Fprovided message'
-    - '&A/csa &Bgone&A - &FOne word messages will work, but for multiple'
-    - '&Flines, you need &Bquotations&F (as above)'
-  chan:
-    - ''
-    - ''
+    - '&A/csa &Bgone&A - &FOne word messages will work, but for multiple words, &B"you need quotations"&F (as above)'
+  channel:
+    - '&A=== Help: &BChannel &A==='
+    - '&AAliases: &b%aliases'
+    - '&A/csc &Bjoin channel&A - &FJoins the specified channel, or creates one'
+    - '&A/csc &Bleave (channel)&A - &FLeaves the specified channel, or your current channel'
+    - '&A/csc &Binvite player&A - &FInvites the specified player to your channel'
+    - '&A/csc &Bkick player&A - &FKicks the specified player from your current channel (must be channel owner or server admin)'
   whisper:
-    - ''
-    - ''
+    - '&A=== Help: &BWhisper &A==='
+    - '&AAliases: &B%aliases'
+    - '&A/csw Player "Howdy, Player!" - &FWhispers "Howdy, Player!" to the specified player.'

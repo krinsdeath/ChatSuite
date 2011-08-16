@@ -8,6 +8,10 @@ plugin:
     # that only players on their current world will see their messages.
     default_channel: world
     global_channel_name: 'Global'
+    # persist_user_settings will determine whether or not individual user settings
+    # like localizations and channels will be persisted between sessions
+    # if this is set to true, it will increase overhead by a small amount
+    persist_user_settings: false
 groups:
     users:
         weight: 1
@@ -19,5 +23,5 @@ groups:
         format:
             global: '%c%p%n&A@&B%w&A%afk&F: %m'
             message: '%c%p%n%s%afk&F: %m'
-            whisper_send: 'To %t>>&F %m'
-            whisper_receive: 'From %t>>&F %m'
+            whisper_send: '&6To &B%t&6>>&F %m'
+            whisper_receive: '&6From &B%t&6>>&F %m'

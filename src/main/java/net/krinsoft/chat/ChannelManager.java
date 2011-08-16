@@ -18,18 +18,16 @@ public class ChannelManager {
     }
 
     public void addPlayerToChannel(Player player, String channel) {
-        if (plugin.getPlayer(player) != null) {
-            Channel chan = channels.get(channel);
-            if (chan == null) {
-                chan = new Channel(plugin, channel);
-                plugin.debug("Channel '" + channel + "' created");
-            }
-            if (!chan.contains(player.getName())) {
-                chan.addPlayer(player.getName());
-                plugin.debug(player.getName() + " added to channel '" + channel + "'");
-            }
-            channels.put(channel, chan);
+        Channel chan = channels.get(channel);
+        if (chan == null) {
+            chan = new Channel(plugin, channel);
+            plugin.debug("Channel '" + channel + "' created");
         }
+        if (!chan.contains(player.getName())) {
+            chan.addPlayer(player.getName());
+            plugin.debug(player.getName() + " added to channel '" + channel + "'");
+        }
+        channels.put(channel, chan);
     }
 
     public void removePlayerFromChannel(Player player, String channel) {
@@ -55,9 +53,11 @@ public class ChannelManager {
     }
 
     public void playerWorldChange(Player player, String from, String to) {
-        if (!plugin.isPlayerRegistered(player)) { return; }
-        removePlayerFromChannel(player, from);
-        addPlayerToChannel(player, to);
+        if (plugin.getPlayerManager().isPlayerRegistered(player)) {
+            removePlayerFromChannel(player, from);
+            addPlayerToChannel(player, to);
+            plugin.getPlayerManager().getPlayer(player).setChannel(to);
+        }
     }
 
     void removePlayerFromAllChannels(Player player) {

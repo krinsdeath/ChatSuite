@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
  */
 public class ColoredMessage {
     private final static Pattern COLOR = Pattern.compile("(?i)&([0-F])");
+    private final List<String> contents = new ArrayList<String>();
 
-    private List<String> contents = new ArrayList<String>();
     public ColoredMessage(List<String> lines) {
         for (String line : lines) {
             this.contents.add(COLOR.matcher(line).replaceAll("\u00A7$1"));

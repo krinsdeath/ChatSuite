@@ -1,7 +1,7 @@
 package net.krinsoft.chat.events;
 
 import net.krinsoft.chat.ChatCore;
-import net.krinsoft.chat.ChatPlayer;
+import net.krinsoft.chat.targets.ChatPlayer;
 import net.krinsoft.chat.targets.Channel;
 import org.bukkit.event.Event;
 
@@ -17,7 +17,7 @@ public class ChannelMessage extends Event {
     public ChannelMessage(ChatCore plugin, Channel target, String source, String message) {
         super("ChatSuiteChannelMessage");
         this.channel = target;
-        this.source = plugin.getPlayer(source);
+        this.source = plugin.getPlayerManager().getPlayer(source);
         this.message = message;
     }
 

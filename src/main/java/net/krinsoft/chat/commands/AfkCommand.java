@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.krinsoft.chat.ChatCore;
-import net.krinsoft.chat.ChatPlayer;
+import net.krinsoft.chat.targets.ChatPlayer;
 import net.krinsoft.chat.util.ColoredMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ public class AfkCommand extends ChatSuiteCommand {
     public AfkCommand(ChatCore plugin) {
         super(plugin);
         this.plugin = (ChatCore) plugin;
-        this.setName("Sets your AFK status.");
+        this.setName("chatsuite afk");
         this.setCommandUsage("/cs afk \"[message]\"");
         this.setArgRange(0, 1);
         this.addKey("cs afk");
@@ -30,8 +30,8 @@ public class AfkCommand extends ChatSuiteCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        plugin.debug("Got to afk handler");
-        ChatPlayer p = plugin.getPlayer((Player) sender);
+        if (!(sender instanceof Player)) { return; }
+        ChatPlayer p = plugin.getPlayerManager().getPlayer((Player) sender);
         if (p == null) { return; }
         if (args.isEmpty()) {
             p.toggleAfk(plugin.getLocaleManager().getAfk(p.getLocale(), "generic").toString());

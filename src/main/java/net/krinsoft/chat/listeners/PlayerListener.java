@@ -1,13 +1,14 @@
 package net.krinsoft.chat.listeners;
 
 import net.krinsoft.chat.ChatCore;
-import net.krinsoft.chat.ChatPlayer;
+import net.krinsoft.chat.targets.ChatPlayer;
 import net.krinsoft.chat.events.ChannelMessage;
 import net.krinsoft.chat.targets.Channel;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -24,18 +25,18 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
     @Override
     public void onPlayerJoin(PlayerJoinEvent event) {
-        plugin.registerPlayer(event.getPlayer());
+        plugin.getPlayerManager().registerPlayer(event.getPlayer());
     }
 
     @Override
     public void onPlayerKick(PlayerKickEvent event) {
         if (event.isCancelled()) { return; }
-        plugin.unregisterPlayer(event.getPlayer());
+        plugin.getPlayerManager().unregisterPlayer(event.getPlayer());
     }
 
     @Override
     public void onPlayerQuit(PlayerQuitEvent event) {
-        plugin.unregisterPlayer(event.getPlayer());
+        plugin.getPlayerManager().unregisterPlayer(event.getPlayer());
     }
 
     @Override
@@ -45,14 +46,10 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         if (msg.contains("%")) {
             msg = msg.replaceAll("%", "");
         }
-        ChatPlayer p = plugin.getPlayer(event.getPlayer().getName());
+        ChatPlayer p = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
         if (p != null) {
             Channel c = null;
-            if (plugin.getChannelManager().getDefaultChannel().equalsIgnoreCase("global")) {
-                c = plugin.getChannelManager().getGlobalChannel();
-            } else {
-                c = plugin.getChannelManager().getChannel(event.getPlayer().getWorld().getName());
-            }
+            c = plugin.getChannelManager().getChannel(p.getChannel());
             ChannelMessage e = new ChannelMessage(plugin, c, event.getPlayer().getName(), msg);
             plugin.getServer().getPluginManager().callEvent(e);
             event.setCancelled(true);
@@ -67,9 +64,17 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
     @Override
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (event.isCancelled()) { return; }
-        if (!plugin.isPlayerRegistered(event.getPlayer())) {
+        if (!plugin.getPlayerManager().isPlayerRegistered(event.getPlayer())) {
             return;
         }
         plugin.getChannelManager().playerWorldChange(event.getPlayer(), event.getFrom().getWorld().getName(), event.getTo().getWorld().getName());
+    }
+
+    @Override
+    public void onPlayerPortal(PlayerPortalEvent event) {
+        if (event.isCancelled()) { return; }
+        if (plugin.getPlayerManager().isPlayerRegistered(event.getPlayer())) {
+            plugin.getChannelManager().playerWorldChange(event.getPlayer(), event.getFrom().getWorld().getName(), event.getTo().getWorld().getName());
+        }
     }
 }

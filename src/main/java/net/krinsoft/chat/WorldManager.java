@@ -8,6 +8,7 @@ package net.krinsoft.chat;
 import com.onarandombox.MultiverseCore.MVWorld;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import java.util.HashMap;
+import java.util.List;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
@@ -27,15 +28,15 @@ public class WorldManager {
     }
 
     public String getAlias(String world) {
-        if (aliases.containsKey(world)) {
-            return aliases.get(world);
-        } else {
-            return world;
-        }
+        return (aliases.containsKey(world) ? aliases.get(world) : world);
     }
 
     public ChatWorld getWorld(String world) {
         return worlds.get(world);
+    }
+
+    public List<ChatWorld> getWorlds() {
+        return (List<ChatWorld>) worlds.values();
     }
 
     private void fetchWorlds() {
