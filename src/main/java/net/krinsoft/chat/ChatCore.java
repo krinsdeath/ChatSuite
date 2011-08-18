@@ -3,204 +3,164 @@ package net.krinsoft.chat;
 import com.pneumaticraft.commandhandler.CommandHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
-import net.krinsoft.chat.commands.AfkCommand;
-import net.krinsoft.chat.commands.ChannelCommand;
-import net.krinsoft.chat.commands.HelpCommand;
-import net.krinsoft.chat.commands.WhisperCommand;
-import net.krinsoft.chat.listeners.ChatListener;
-import net.krinsoft.chat.listeners.EntityListener;
-import net.krinsoft.chat.listeners.PlayerListener;
-import net.krinsoft.chat.util.ChatConfiguration;
-import org.bukkit.ChatColor;
+import net.krinsoft.chat.managers.ChannelManager;
+import net.krinsoft.chat.managers.ConfigManager;
+import net.krinsoft.chat.managers.PlayerManager;
+import net.krinsoft.chat.managers.WorldManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
+import org.bukkit.util.config.ConfigurationNode;
 
 /**
- * @author krinsdeath (Jeff Wardian)
- * @copyright 2011-2012 All Rights Reserved
- * @license MIT
- * @version 1.0
+ *
+ * @author krinsdeath
  */
 public class ChatCore extends JavaPlugin {
-
-    public enum Info {
-        AUTHORS,
-        NAME,
-        FULLNAME,
-        VERSION;
-    }
-
-    // logger
+    // debug/logger
     private final static Logger LOGGER = Logger.getLogger("ChatSuite");
-
-    // listeners
-    private PlayerListener pListener;
-    private EntityListener eListener;
-    private ChatListener chatListener;
-
-    // plugin info and managers
-    private PluginDescriptionFile pdf;
-    private PluginManager pm;
     private boolean debug = true;
 
-    // configuration details and flags
-    private Configuration worldConfig;
-    private boolean afkInvincibility = false;
-    private boolean allowChannels = false;
+    // listener instances
 
+    // manager instances
+    private CommandHandler commandHandler;
+    private ChatPermissions permissionHandler;
     private ConfigManager configManager;
+    private PlayerManager playerManager;
     private ChannelManager channelManager;
     private WorldManager worldManager;
-    private LocaleManager localeManager;
-    private PlayerManager playerManager;
-    private CommandHandler commandHandler;
-    private CSPermissions permissionHandler;
 
     @Override
     public void onEnable() {
-        pdf = getDescription();
-        initConfiguration();
-        initEvents();
-        log(info() + " enabled.");
+        initManagers();
+        initListeners();
     }
 
     @Override
     public void onDisable() {
-        pListener = null;
-        eListener = null;
-        commandHandler = null;
-        playerManager = null;
-        localeManager = null;
-        channelManager = null;
-        worldManager = null;
-        configManager = null;
+        clean();
     }
 
     @Override
-    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        if (!isEnabled()) {
-            cs.sendMessage(ChatColor.RED + "no.");
-            return true;
-        }
-        ArrayList<String> allArgs = new ArrayList<String>(Arrays.asList(args));
-        allArgs.add(0, label);
-        return this.commandHandler.locateAndRunCommand(cs, allArgs);
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        List<String> full = new ArrayList<String>();
+        full.addAll(Arrays.asList(args));
+        full.add(0, label);
+        return this.commandHandler.locateAndRunCommand(sender, full);
     }
 
-    private void initConfiguration() {
-        configManager = new ConfigManager(this);
-        allowChannels = configManager.getPluginNode().getBoolean("plugin.allow_channels", false);
-        afkInvincibility = configManager.getPluginNode().getBoolean("plugin.afk_invincibility", false);
-        channelManager = new ChannelManager(this);
-        worldManager = new WorldManager(this);
-        localeManager = new LocaleManager(this);
-        playerManager = new PlayerManager(this);
+    // populate the managers
+    // init players
+    // create channels
+    // set up worlds
+    private void initManagers() {
+        this.configManager = new ConfigManager(this);
+        this.worldManager = new WorldManager(this);
+        this.channelManager = new ChannelManager(this);
+        this.playerManager = new PlayerManager(this);
+        this.permissionHandler = new ChatPermissions(this);
+        this.commandHandler = new CommandHandler(this, this.permissionHandler);
     }
 
-    private void initEvents() {
-        // set up the listeners
-        initListeners();
-        pm = getServer().getPluginManager();
-
-        // register events
-        // ---
-        // player events
-        pm.registerEvent(Type.PLAYER_CHAT, pListener, Priority.Highest, this);
-        pm.registerEvent(Type.PLAYER_JOIN, pListener, Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_QUIT, pListener, Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_KICK, pListener, Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_TELEPORT, pListener, Priority.Monitor, this);
-        pm.registerEvent(Type.PLAYER_PORTAL, pListener, Priority.Monitor, this);
-        if (afkInvincibility) {
-            pm.registerEvent(Type.PLAYER_MOVE, pListener, Priority.Low, this);
-            pm.registerEvent(Type.ENTITY_DAMAGE, eListener, Priority.Normal, this);
-        }
-        // ---
-        // chat event
-        pm.registerEvent(Type.CUSTOM_EVENT, chatListener, Priority.Normal, this);
-    }
-
+    // initialize the listener instances
     private void initListeners() {
-        pListener = new PlayerListener(this);
-        eListener = new EntityListener(this);
-        chatListener = new ChatListener(this);
-        initCommandHelper();
+
     }
 
-    private void initCommandHelper() {
-        // set up the handlers
-        permissionHandler = new CSPermissions(this);
-        commandHandler = new CommandHandler(this, permissionHandler);
-        // register the commands
-        commandHandler.registerCommand(new AfkCommand(this));
-        commandHandler.registerCommand(new WhisperCommand(this));
-        commandHandler.registerCommand(new ChannelCommand(this));
-        //commandHandler.registerCommand(new LocaleCommand(this));
-        commandHandler.registerCommand(new HelpCommand(this));
+    private void clean() {
+        this.commandHandler = null;
+        this.permissionHandler = null;
+        this.worldManager = null;
+        this.channelManager = null;
+        this.playerManager = null;
     }
 
-    // logging and information
+    /**
+     * Logs standard information, normal messages
+     * @param message
+     */
+    public void log(String message) {
+        message = "[" + getDescription().getName() + "] " + message;
+        LOGGER.info(message);
+    }
+
+    /**
+     * Logs warnings, error stuff
+     * @param message
+     */
+    public void warn(String message) {
+        message = "[" + getDescription().getName() + "] " + message;
+        LOGGER.warning(message);
+    }
+
+    /**
+     * Logs debug messages, developer stuff
+     * @param message
+     */
     public void debug(String message) {
         if (debug) {
-            message = "[" + info(Info.NAME) + "] [Debug] " + message;
+            message = "[" + getDescription().getName() + "] [Debug] " + message;
             LOGGER.info(message);
         }
     }
 
-    public void log(String message) {
-        message = "[" + info(Info.NAME) + "] " + message;
-        LOGGER.info(message);
-    }
-
-    public String info() {
-        return info(Info.FULLNAME) + " by " + info(Info.AUTHORS);
-    }
-
-    public String info(Info i) {
-        switch (i) {
-            case AUTHORS: return pdf.getAuthors().toString().replaceAll("[\\[\\]]", "");
-            case NAME: return pdf.getName();
-            case FULLNAME: return pdf.getFullName();
-            case VERSION: return pdf.getVersion();
-            default: return pdf.getFullName();
-        }
-    }
-
-    // CONFIGURATIONS
-    public ConfigManager getConfigManager() {
-        return this.configManager;
-    }
-
-    // WORLDS
+    /**
+     * Get the world manager, for per-world chat settings
+     * @return
+     * the world manager instance
+     */
     public WorldManager getWorldManager() {
         return this.worldManager;
     }
-    
-    // CHANNELS
+
+    /**
+     * Gets a configuration node relevant to the world specified
+     * @param world
+     * the world whose node we're fetching
+     * @return
+     * a node for the world, or null
+     */
+    public ConfigurationNode getWorldNode(String world) {
+        if (this.getConfigManager().getWorldNode(world) == null) {
+            this.getConfigManager().newWorld(world);
+        }
+        return this.getConfigManager().getWorldNode(world);
+    }
+
+    /**
+     * Get the channel manager, for handling channels, their settings and occupants
+     * @return
+     * the channel manager instance
+     */
     public ChannelManager getChannelManager() {
         return this.channelManager;
     }
 
-    // LOCALIZATIONS
-    public LocaleManager getLocaleManager() {
-        return this.localeManager;
-    }
-
-    // COMMANDS
-    public CommandHandler getCommandHandler() {
-        return this.commandHandler;
-    }
-
-    // PLAYERS
+    /**
+     * Get the player manager, for creating new instances of players and changing
+     * settings for those instances
+     * @return
+     * the player manager instance
+     */
     public PlayerManager getPlayerManager() {
         return this.playerManager;
     }
 
+    /**
+     * Get the configuration manager, for reading the configuration files
+     * @return
+     * the config manager instance
+     */
+    public ConfigManager getConfigManager() {
+        return this.configManager;
+    }
+
+    @Override
+    public Configuration getConfiguration() {
+        return null;
+    }
 }
