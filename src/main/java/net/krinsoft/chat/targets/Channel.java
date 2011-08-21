@@ -15,10 +15,12 @@ public class Channel implements Target {
     private List<String> occupants = new ArrayList<String>();
     private ChatCore plugin;
     private String name;
+    private String type;
 
-    public Channel(ChatCore plugin, String name) {
+    public Channel(ChatCore plugin, String name, String type) {
         this.plugin = plugin;
         this.name = name;
+        this.type = type;
     }
 
     public String getName() {
@@ -52,4 +54,7 @@ public class Channel implements Target {
         return occupants.contains(player);
     }
 
+    public boolean isPrivate() {
+        return this.type.equalsIgnoreCase("private");
+    }
 }

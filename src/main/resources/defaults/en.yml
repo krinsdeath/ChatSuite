@@ -5,6 +5,10 @@ afk:
   back: 'You are now &Aback&F.'
   generic: "I'm away right now."
 
+messages:
+  channel_switch: '&6You are now chatting in: &A%c'
+  not_in_channel: "&CYou aren't in that channel!"
+
 error:
   invalid_target: &CThe target specified (&3%target&C) doesn't exist.
   permission: &CYou do not have permission to do that.
@@ -25,12 +29,13 @@ help:
     - '&A/csa &Bgone&A - &FOne word messages will work, but for multiple words, &B"you need quotations"&F (as above)'
   channel:
     - '&A=== Help: &BChannel &A==='
-    - '&AAliases: &b%aliases'
+    - '&AAliases: &B%aliases'
     - '&A/csc &Bjoin channel&A - &FJoins the specified channel, or creates one'
     - '&A/csc &Bleave (channel)&A - &FLeaves the specified channel, or your current channel'
     - '&A/csc &Binvite player&A - &FInvites the specified player to your channel'
-    - '&A/csc &Bkick player&A - &FKicks the specified player from your current channel (must be channel owner or server admin)'
+    - '&A/csc &Bcreate (channel) (type)&A - &FCreates the specified channel. Type can be &6PUBLIC&F or &6PRIVATE&F'
+    - '&A/csc &Bsay (channel) "[message here]"&A - &FSends a message to the specified channel'
   whisper:
     - '&A=== Help: &BWhisper &A==='
     - '&AAliases: &B%aliases'
-    - '&A/csw Player "Howdy, Player!" - &FWhispers "Howdy, Player!" to the specified player.'
+    - '&A/csw Player "Howdy, Player!" - &FWhispers "Howdy, Player!" to the specified player'

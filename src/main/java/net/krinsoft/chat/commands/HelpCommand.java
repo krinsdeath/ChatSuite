@@ -48,11 +48,11 @@ public class HelpCommand extends ChatSuiteCommand {
                     }
                 }
                 aliases = buildAliases(c);
-            } else if (args.get(0).equalsIgnoreCase("chan")) {
-                msg = new ColoredMessage(plugin.getLocaleManager().getHelp(loc, "chan"));
+            } else if (args.get(0).equalsIgnoreCase("channel")) {
+                msg = new ColoredMessage(plugin.getLocaleManager().getHelp(loc, "channel"));
                 Command c = null;
                 for (Command cmd : plugin.getCommandHandler().getAllCommands()) {
-                    if (cmd.getCommandName().equalsIgnoreCase("chatsuite chan")) {
+                    if (cmd.getCommandName().equalsIgnoreCase("chatsuite channel")) {
                         c = cmd;
                         break;
                     }

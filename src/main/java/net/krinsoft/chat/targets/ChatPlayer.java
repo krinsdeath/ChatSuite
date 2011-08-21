@@ -120,11 +120,14 @@ public class ChatPlayer implements Target {
 
     public void setChannel(String channel) {
         this.channel = channel;
-        this.world = channel;
     }
 
     public String getChannel() {
         return this.channel;
+    }
+
+    public void setWorld(String world) {
+        this.world = world;
     }
 
     public String getWorld() {

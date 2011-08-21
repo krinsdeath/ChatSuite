@@ -6,12 +6,12 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 import net.krinsoft.chat.commands.AfkCommand;
 import net.krinsoft.chat.commands.ChannelCommand;
+import net.krinsoft.chat.commands.ChannelSayCommand;
 import net.krinsoft.chat.commands.HelpCommand;
 import net.krinsoft.chat.commands.WhisperCommand;
 import net.krinsoft.chat.listeners.ChatListener;
 import net.krinsoft.chat.listeners.EntityListener;
 import net.krinsoft.chat.listeners.PlayerListener;
-import net.krinsoft.chat.util.ChatConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -142,6 +142,7 @@ public class ChatCore extends JavaPlugin {
         commandHandler.registerCommand(new AfkCommand(this));
         commandHandler.registerCommand(new WhisperCommand(this));
         commandHandler.registerCommand(new ChannelCommand(this));
+        commandHandler.registerCommand(new ChannelSayCommand(this));
         //commandHandler.registerCommand(new LocaleCommand(this));
         commandHandler.registerCommand(new HelpCommand(this));
     }

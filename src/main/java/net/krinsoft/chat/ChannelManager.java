@@ -18,21 +18,21 @@ public class ChannelManager {
     }
 
     public void addPlayerToChannel(Player player, String channel) {
-        Channel chan = channels.get(channel);
+        Channel chan = channels.get(channel.toLowerCase());
         if (chan == null) {
-            chan = new Channel(plugin, channel);
+            chan = new Channel(plugin, channel, "public");
             plugin.debug("Channel '" + channel + "' created");
         }
         if (!chan.contains(player.getName())) {
             chan.addPlayer(player.getName());
             plugin.debug(player.getName() + " added to channel '" + channel + "'");
         }
-        channels.put(channel, chan);
+        channels.put(channel.toLowerCase(), chan);
     }
 
     public void removePlayerFromChannel(Player player, String channel) {
         // get the specified channel
-        Channel chan = channels.get(channel);
+        Channel chan = channels.get(channel.toLowerCase());
         if (chan == null) {
             // no channel by that name existed, so we do nothing
             return;
@@ -43,10 +43,10 @@ public class ChannelManager {
                 plugin.debug(player.getName() + " removed from channel '" + channel + "'");
                 if (chan.getOccupants().size() < 1) {
                     // channel is empty! let's get rid of it
-                    channels.remove(channel);
+                    channels.remove(channel.toLowerCase());
                     plugin.debug("Channel '" + channel + "' removed.");
                 } else {
-                    channels.put(channel, chan);
+                    channels.put(channel.toLowerCase(), chan);
                 }
             }
         }
@@ -57,6 +57,7 @@ public class ChannelManager {
             removePlayerFromChannel(player, from);
             addPlayerToChannel(player, to);
             plugin.getPlayerManager().getPlayer(player).setChannel(to);
+            plugin.getPlayerManager().getPlayer(player).setWorld(plugin.getWorldManager().getAlias(to));
         }
     }
 
@@ -70,15 +71,20 @@ public class ChannelManager {
     }
 
     public Channel getChannel(String channel) {
-        return channels.get(channel);
+        return channels.get(channel.toLowerCase());
     }
 
     public Channel getGlobalChannel() {
-        return channels.get(plugin.getConfiguration().getString("plugin.global_channel_name", "Global"));
+        return channels.get(plugin.getConfiguration().getString("plugin.global_channel_name", "Global").toLowerCase());
     }
 
     public String getDefaultChannel() {
-        return plugin.getConfiguration().getString("plugin.default_channel", "world");
+        return plugin.getConfiguration().getString("plugin.default_channel", "world").toLowerCase();
     }
 
+    public void createChannel(String channel, String player, String type) {
+        Channel chan = new Channel(plugin, channel, type);
+        chan.addPlayer(player);
+        channels.put(channel.toLowerCase(), chan);
+    }
 }

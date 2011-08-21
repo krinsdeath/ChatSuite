@@ -37,15 +37,31 @@ public class LocaleManager {
     }
 
     public Object getAfk(String loc, String key) {
-        return locales.get(loc).getProperty("afk." + key);
+        String l = verifyLocale(loc);
+        return locales.get(l).getProperty("afk." + key);
     }
 
     public Object getHelp(String loc, String key) {
-        return locales.get(loc).getProperty("help." + key);
+        String l = verifyLocale(loc);
+        return locales.get(l).getProperty("help." + key);
+    }
+
+    public Object getMessage(String loc, String key) {
+        String l = verifyLocale(loc);
+        return locales.get(l).getProperty("messages." + key);
     }
 
     public Object getError(String loc, String key) {
-        return locales.get(loc).getProperty("error." + key);
+        String l = verifyLocale(loc);
+        return locales.get(l).getProperty("error." + key);
+    }
+
+    private String verifyLocale(String loc) {
+        String l = loc;
+        if (locales.get(l) == null) {
+            l = LOCALE;
+        }
+        return l;
     }
 
 }
