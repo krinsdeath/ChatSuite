@@ -54,12 +54,6 @@
             </resource>
         </resources>
     </build>
-    <repositories>
-        <repository>
-            <id>OnARandomBox</id>
-            <url>http://repo.onarandombox.com/artifactory/repo</url>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>

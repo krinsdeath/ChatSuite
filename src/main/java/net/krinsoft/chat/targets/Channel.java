@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.interfaces.Target;
+import net.krinsoft.chat.util.ColoredMessage;
 import org.bukkit.entity.Player;
 
 /**
@@ -16,6 +17,7 @@ public class Channel implements Target {
     private ChatCore plugin;
     private String name;
     private String type;
+    private List<String> invites = new ArrayList<String>();
 
     public Channel(ChatCore plugin, String name, String type) {
         this.plugin = plugin;
@@ -56,5 +58,19 @@ public class Channel implements Target {
 
     public boolean isPrivate() {
         return this.type.equalsIgnoreCase("private");
+    }
+
+    public void invite(String inviter, String player) {
+        if (occupants.contains(inviter) && !occupants.contains(player)) {
+            ColoredMessage msg = new ColoredMessage(plugin.getLocaleManager().getMessage(plugin.getPlayerManager().getPlayer(player).getLocale(), "channel_invite"));
+            for (String line : msg.getContents()) {
+                plugin.getServer().getPlayer(player).sendMessage(line.replaceAll("%c", this.name));
+            }
+            invites.add(player);
+        }
+    }
+
+    public boolean hasInvite(String player) {
+        return (invites.contains(player) || occupants.contains(player));
     }
 }

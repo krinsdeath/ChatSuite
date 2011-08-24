@@ -25,6 +25,7 @@ public final class ConfigManager {
         this.plugin = aThis;
         this.config = new Configuration(buildDefault(this.plugin.getDataFolder(), "config.yml"));
         this.config.load();
+        this.plugin.debug = this.config.getBoolean("plugin.debug", false);
     }
 
     public File buildDefault(File p, String filename) {

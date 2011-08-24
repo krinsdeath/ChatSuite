@@ -30,8 +30,8 @@ public class CSPermissions implements PermissionsInterface {
         return false;
     }
 
-    public boolean canCreateChannel(CommandSender cs, Channel chan) {
-        return false;
+    public boolean canCreateChannel(CommandSender cs) {
+        return cs.hasPermission("chatsuite.create");
     }
 
     @Override
@@ -42,7 +42,7 @@ public class CSPermissions implements PermissionsInterface {
             return true;
         } else if (cs.isPermissionSet(node) && !cs.hasPermission(node)) {
             return false;
-        } else if (cs.hasPermission("*") && !cs.isPermissionSet(node)) {
+        } else if (cs.hasPermission("chatsuite.*") && !cs.isPermissionSet(node)) {
             return true;
         }
         return false;

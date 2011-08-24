@@ -2,11 +2,32 @@ name: ChatSuite
 main: net.krinsoft.chat.ChatCore
 version: ${project.version}
 author: krinsdeath
-softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core]
+softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core, Privileges]
 
 commands:
   cs:
-    aliases: [csh, cshelp, csa, csafk, csw, cswhisper, csc, cschan, csj, csjoin, csl, csleave]
+    aliases:
+      - csh
+      - cshelp
+      - csa
+      - csafk
+      - csw
+      - cswhisper
+      - csc
+      - cschan
+      - cschannel
+      - cscj
+      - cscjoin
+      - cscl
+      - cscleave
+      - cscs
+      - cscsay
+      - cscc
+      - csccreate
+      - csci
+      - cscinvite
+      - csl
+      - cslist
     description: The basic command for this plugin
     permission: chatsuite.commands.help
     usage: /<command>

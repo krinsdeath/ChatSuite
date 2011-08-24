@@ -31,11 +31,11 @@ public class ChannelSayCommand extends ChatSuiteCommand {
 
     @Override
     public void runCommand(CommandSender cs, List<String> args) {
-        if (plugin.getChannelManager().getChannel(args.get(0)) != null) {
-            // channel isn't null
-            if (cs instanceof Player) {
-                // sender is a player, check if he's in the channel
-                ChatPlayer p = plugin.getPlayerManager().getPlayer((Player)cs);
+        if (cs instanceof Player) {
+            // sender is a player, check if he's in the channel
+            ChatPlayer p = plugin.getPlayerManager().getPlayer((Player) cs);
+            if (plugin.getChannelManager().getChannel(args.get(0)) != null) {
+                // channel isn't null
                 if (plugin.getChannelManager().getChannel(args.get(0)).contains(p.getName())) {
                     // player is in the channel
                     if (!p.getChannel().equals(args.get(0).toLowerCase())) { // player's in the channel, but it's not his active channel
@@ -47,17 +47,19 @@ public class ChannelSayCommand extends ChatSuiteCommand {
                     }
                     ChannelMessage msg = new ChannelMessage(plugin, plugin.getChannelManager().getChannel(args.get(0)), p.getName(), args.get(1));
                     plugin.getServer().getPluginManager().callEvent(msg);
-                } else {
-                    // player isn't in the channel, so warn him he can't chat there
+                } else { // player isn't in the channel, so warn him he can't chat there
                     ColoredMessage cm = new ColoredMessage(plugin.getLocaleManager().getMessage(p.getLocale(), "not_in_channel"));
                     for (String line : cm.getContents()) {
                         cs.sendMessage(line.replaceAll("%c", args.get(0)));
                     }
                 }
-            } // sender wasn't a player; do nothing for now
-        } else {
-            // channel was null, let the player know
-        }
+            } else { // channel was null
+                ColoredMessage cm = new ColoredMessage(plugin.getLocaleManager().getMessage(p.getLocale(), "channel_does_not_exist"));
+                for (String line : cm.getContents()) {
+                    cs.sendMessage(line.replaceAll("%c", args.get(0)));
+                }
+            }
+        }// sender wasn't a player; do nothing for now
     }
 
 }

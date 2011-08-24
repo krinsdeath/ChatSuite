@@ -6,6 +6,11 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 import net.krinsoft.chat.commands.AfkCommand;
 import net.krinsoft.chat.commands.ChannelCommand;
+import net.krinsoft.chat.commands.ChannelCreateCommand;
+import net.krinsoft.chat.commands.ChannelInviteCommand;
+import net.krinsoft.chat.commands.ChannelJoinCommand;
+import net.krinsoft.chat.commands.ChannelLeaveCommand;
+import net.krinsoft.chat.commands.ChannelListCommand;
 import net.krinsoft.chat.commands.ChannelSayCommand;
 import net.krinsoft.chat.commands.HelpCommand;
 import net.krinsoft.chat.commands.WhisperCommand;
@@ -48,12 +53,10 @@ public class ChatCore extends JavaPlugin {
     // plugin info and managers
     private PluginDescriptionFile pdf;
     private PluginManager pm;
-    private boolean debug = true;
+    protected boolean debug = true;
 
     // configuration details and flags
     private Configuration worldConfig;
-    private boolean afkInvincibility = false;
-    private boolean allowChannels = false;
 
     private ConfigManager configManager;
     private ChannelManager channelManager;
@@ -96,8 +99,6 @@ public class ChatCore extends JavaPlugin {
 
     private void initConfiguration() {
         configManager = new ConfigManager(this);
-        allowChannels = configManager.getPluginNode().getBoolean("plugin.allow_channels", false);
-        afkInvincibility = configManager.getPluginNode().getBoolean("plugin.afk_invincibility", false);
         channelManager = new ChannelManager(this);
         worldManager = new WorldManager(this);
         localeManager = new LocaleManager(this);
@@ -118,13 +119,9 @@ public class ChatCore extends JavaPlugin {
         pm.registerEvent(Type.PLAYER_KICK, pListener, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_TELEPORT, pListener, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_PORTAL, pListener, Priority.Monitor, this);
-        if (afkInvincibility) {
-            pm.registerEvent(Type.PLAYER_MOVE, pListener, Priority.Low, this);
-            pm.registerEvent(Type.ENTITY_DAMAGE, eListener, Priority.Normal, this);
-        }
         // ---
         // chat event
-        pm.registerEvent(Type.CUSTOM_EVENT, chatListener, Priority.Normal, this);
+        pm.registerEvent(Type.CUSTOM_EVENT, chatListener, Priority.Highest, this);
     }
 
     private void initListeners() {
@@ -143,6 +140,11 @@ public class ChatCore extends JavaPlugin {
         commandHandler.registerCommand(new WhisperCommand(this));
         commandHandler.registerCommand(new ChannelCommand(this));
         commandHandler.registerCommand(new ChannelSayCommand(this));
+        commandHandler.registerCommand(new ChannelCreateCommand(this));
+        commandHandler.registerCommand(new ChannelJoinCommand(this));
+        commandHandler.registerCommand(new ChannelLeaveCommand(this));
+        commandHandler.registerCommand(new ChannelInviteCommand(this));
+        commandHandler.registerCommand(new ChannelListCommand(this));
         //commandHandler.registerCommand(new LocaleCommand(this));
         commandHandler.registerCommand(new HelpCommand(this));
     }

@@ -32,7 +32,13 @@ public class WorldManager {
     }
 
     public ChatWorld getWorld(String world) {
-        return worlds.get(world);
+        String a = world;
+        for (String w : aliases.keySet()) {
+            if (aliases.get(w).equals(world)) {
+                a = w;
+            }
+        }
+        return worlds.get(a);
     }
 
     public List<ChatWorld> getWorlds() {

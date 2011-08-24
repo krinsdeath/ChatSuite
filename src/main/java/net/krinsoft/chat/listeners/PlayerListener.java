@@ -57,11 +57,6 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
     }
 
     @Override
-    public void onPlayerMove(PlayerMoveEvent event) {
-        if (event.isCancelled()) { return; }
-    }
-
-    @Override
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (event.isCancelled()) { return; }
         if (!plugin.getPlayerManager().isPlayerRegistered(event.getPlayer())) {

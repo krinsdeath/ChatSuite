@@ -1,6 +1,8 @@
 package net.krinsoft.chat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import net.krinsoft.chat.targets.Channel;
 import org.bukkit.entity.Player;
@@ -38,7 +40,7 @@ public class ChannelManager {
             return;
         } else {
             // remove the player from the channel
-            if (chan.contains(player.getName())) {
+            if (chan.contains(player.getName()) && listChannels(player.getName()).size() > 1) {
                 chan.removePlayer(player.getName());
                 plugin.debug(player.getName() + " removed from channel '" + channel + "'");
                 if (chan.getOccupants().size() < 1) {
@@ -86,5 +88,15 @@ public class ChannelManager {
         Channel chan = new Channel(plugin, channel, type);
         chan.addPlayer(player);
         channels.put(channel.toLowerCase(), chan);
+    }
+
+    public List<String> listChannels(String player) {
+        List<String> list = new ArrayList<String>();
+        for (String key : channels.keySet()) {
+            if (channels.get(key).contains(player)) {
+                list.add(key);
+            }
+        }
+        return list;
     }
 }
