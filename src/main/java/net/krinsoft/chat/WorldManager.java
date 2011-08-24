@@ -56,7 +56,7 @@ public class WorldManager {
         if (tmp != null) {
             plugin.debug("Found Multiverse-Core! Registering aliases...");
             MultiverseCore multiverse = (MultiverseCore) tmp;
-            for (MVWorld mv : multiverse.getMVWorlds()) {
+            for (MVWorld mv : multiverse.getWorldManager().getMVWorlds()) {
                 aliases.put(mv.getName(), mv.getColoredWorldString());
             }
         }
