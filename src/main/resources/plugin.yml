@@ -29,5 +29,4 @@ commands:
       - csl
       - cslist
     description: The basic command for this plugin
-    permission: chatsuite.commands.help
     usage: /<command>

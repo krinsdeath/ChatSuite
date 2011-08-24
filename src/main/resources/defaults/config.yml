@@ -1,7 +1,8 @@
 plugin:
-    debug: false
     default_locale: en
     locales: [en]
+    allow_channels: true
+    afk_invincibility: false
     # This is the default channel a player will be chatting in. A value of 'global'
     # means that they will chat to everyone on the server, while 'world' means
     # that only players on their current world will see their messages.
@@ -12,15 +13,39 @@ plugin:
     # if this is set to true, it will increase overhead by a small amount
     persist_user_settings: false
 groups:
-    users:
+    default:
         weight: 1
+        channel: ''
+        prefix: '&A[&7d&A]&B'
+        group: ''
+        suffix: ''
+        afk: ''
+        format:
+            global: '%c %p %n&A@&B%w&F: %m'
+            message: '%p %n&A@&B%w&F: %m'
+            whisper_send: '&6To &B%t&6>>&F %m'
+            whisper_receive: '&6From &B%t&6>>&F %m'
+    users:
+        weight: 2
         channel: '&A[&B%c&A]'
         prefix: '&A[&B-&A]&B'
         group: ''
         suffix: ''
-        afk: '&A[&7afk&A]'
+        afk: '&A[&6afk&A]'
         format:
             global: '%c %p %n&A@&B%w &A%afk&F: %m'
+            message: '%c %p %n %afk&F: %m'
+            whisper_send: '&6To &B%t&6>>&F %m'
+            whisper_receive: '&6From &B%t&6>>&F %m'
+    admins:
+        weight: 3
+        channel: '&A[&B%c&A]'
+        prefix: '&A[&C@&A]&B'
+        group: ''
+        suffix: ''
+        afk: ' &A[&6afk&A]'
+        format:
+            global: '%c %p %n&A@&B%w&A%afk&F: %m'
             message: '%c %p %n %afk&F: %m'
             whisper_send: '&6To &B%t&6>>&F %m'
             whisper_receive: '&6From &B%t&6>>&F %m'
