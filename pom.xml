@@ -5,7 +5,7 @@
     <groupId>net.krinsoft</groupId>
     <artifactId>ChatSuite</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>ChatSuite</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,6 +65,12 @@
             <groupId>com.onarandombox.multiversecore</groupId>
             <artifactId>Multiverse-Core</artifactId>
             <version>2.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.massivecraft</groupId>
+            <artifactId>factions</artifactId>
+            <version>1.4.7</version>
             <type>jar</type>
         </dependency>
     </dependencies>

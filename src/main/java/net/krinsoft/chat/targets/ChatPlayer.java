@@ -1,10 +1,12 @@
 package net.krinsoft.chat.targets;
 
+import com.massivecraft.factions.Factions;
 import java.util.regex.Pattern;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.ConfigManager;
 import net.krinsoft.chat.interfaces.Target;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.ConfigurationNode;
 
 /**
@@ -18,6 +20,7 @@ public class ChatPlayer implements Target {
     private final static Pattern TARGET_DISPLAY = Pattern.compile("(%dt)");
     private final static Pattern PREFIX = Pattern.compile("(%p)");
     private final static Pattern SUFFIX = Pattern.compile("(%s)");
+    private final static Pattern FACTION = Pattern.compile("(%f)");
     private final static Pattern GROUP = Pattern.compile("(%g)");
     private final static Pattern AFK = Pattern.compile("(%afk)");
     private final static Pattern WORLD = Pattern.compile("(%w)");
@@ -67,10 +70,15 @@ public class ChatPlayer implements Target {
     }
 
     private static ChatCore plugin; // instance of the main plugin
+    private static Factions factions; // instance of the factions plugin
 
     // initialize the plugin instance
     public static void init(ChatCore aThis) {
         plugin = aThis; // initialize the plugin instance
+        Plugin tmp = plugin.getServer().getPluginManager().getPlugin("Factions");
+        if (tmp != null) {
+            factions = (Factions) tmp;
+        }
     }
 
     // general stuff
@@ -78,6 +86,7 @@ public class ChatPlayer implements Target {
     private String world; // the player's current world
     private String group; // the player's group
     private String channel;
+    private String faction;
     private String global; // the player's raw global string
     private String format; // the player's raw format string
     private String send; // the player's raw whisper send string
@@ -259,6 +268,7 @@ public class ChatPlayer implements Target {
         format = parsePrefix(format, node.getString("prefix"));
         format = parseGroup(format, node.getString("group"));
         format = parseSuffix(format, node.getString("suffix"));
+        format = parseFaction(format);
         format = parseWorld(format, plugin.getWorldManager().getAlias(this.world));
         format = parseTarget(format, target);
         format = parseSelf(format);
@@ -284,6 +294,13 @@ public class ChatPlayer implements Target {
 
     private String parseSuffix(String format, String suffix) {
         format = SUFFIX.matcher(format).replaceAll(suffix);
+        return format;
+    }
+
+    private String parseFaction(String format) {
+        if (factions != null) {
+            format = FACTION.matcher(format).replaceAll(factions.getPlayerFactionTag(plugin.getServer().getPlayer(name)));
+        }
         return format;
     }
 

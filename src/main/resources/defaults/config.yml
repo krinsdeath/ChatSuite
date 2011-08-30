@@ -13,6 +13,14 @@ plugin:
     # if this is set to true, it will increase overhead by a small amount
     persist_user_settings: false
 groups:
+    # %f = faction format
+    # %c = channel name
+    # %n = player name; %dn = player display name
+    # %t = target name; %dt = target display name
+    # %p = prefix; %s = suffix
+    # %w = world
+    # %m = sent message
+    # &0-F = color codes, case-insensitive
     default:
         weight: 1
         channel: ''
