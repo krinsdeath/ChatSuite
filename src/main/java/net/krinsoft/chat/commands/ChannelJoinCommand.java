@@ -21,9 +21,9 @@ public class ChannelJoinCommand extends ChatSuiteCommand {
         this.setName("chatsuite join");
         this.setCommandUsage("cs help channel");
         this.setArgRange(1, 1);
-        this.addKey("cs chan join");
+        this.addKey("chatsuite channel join");
+        this.addKey("cs channel join");
         this.addKey("csc join");
-        this.addKey("cscjoin");
         this.addKey("cscj");
         this.setPermission("chatsuite.join", "Allows this user to join channels", PermissionDefault.TRUE);
     }

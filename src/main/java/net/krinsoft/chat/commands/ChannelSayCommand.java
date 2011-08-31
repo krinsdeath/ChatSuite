@@ -20,11 +20,9 @@ public class ChannelSayCommand extends ChatSuiteCommand {
         this.plugin = (ChatCore) plugin;
         this.setName("chatsuite say");
         this.setArgRange(2, 2);
+        this.addKey("chatsuite channel say");
         this.addKey("cs channel say");
-        this.addKey("cs chan say");
-        this.addKey("cschan say");
         this.addKey("csc say");
-        this.addKey("cscsay");
         this.addKey("cscs");
         this.setPermission("chatsuite.say", "Allows the user to say messages to channels.", PermissionDefault.TRUE);
     }

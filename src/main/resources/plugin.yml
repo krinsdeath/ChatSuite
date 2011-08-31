@@ -5,29 +5,19 @@ author: krinsdeath
 softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core, Privileges]
 
 commands:
-  cs:
+  chatsuite:
     aliases:
+      - cs
       - csh
-      - cshelp
       - csa
-      - csafk
       - csw
-      - cswhisper
       - csc
-      - cschan
-      - cschannel
       - cscj
-      - cscjoin
       - cscl
-      - cscleave
       - cscs
-      - cscsay
       - cscc
-      - csccreate
       - csci
-      - cscinvite
       - csl
-      - cslist
       - csd
       - csv
     description: The basic command for this plugin

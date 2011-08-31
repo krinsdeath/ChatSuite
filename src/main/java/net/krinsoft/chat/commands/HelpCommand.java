@@ -3,7 +3,6 @@ package net.krinsoft.chat.commands;
 import com.pneumaticraft.commandhandler.Command;
 import java.util.List;
 import net.krinsoft.chat.ChatCore;
-import net.krinsoft.chat.targets.ChatPlayer;
 import net.krinsoft.chat.util.ColoredMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,6 +19,7 @@ public class HelpCommand extends ChatSuiteCommand {
         this.setName("chatsuite help");
         this.setCommandUsage("/cs help");
         this.setArgRange(0, 1);
+        this.addKey("chatsuite help");
         this.addKey("cs help");
         this.addKey("cshelp");
         this.addKey("csh");

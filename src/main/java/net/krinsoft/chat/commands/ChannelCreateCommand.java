@@ -20,9 +20,9 @@ public class ChannelCreateCommand extends ChatSuiteCommand {
         this.setName("chatsuite create");
         this.setCommandUsage("/cs help channel");
         this.setArgRange(2, 2);
-        this.addKey("cs chan create");
+        this.addKey("chatsuite channel create");
+        this.addKey("cs channel create");
         this.addKey("csc create");
-        this.addKey("csccreate");
         this.addKey("cscc");
         this.setPermission("chatsuite.create", "Allows this user to create public and private channels.", PermissionDefault.OP);
     }

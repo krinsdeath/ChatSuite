@@ -20,6 +20,7 @@ public class ChannelListCommand extends ChatSuiteCommand {
         this.setName("chatsuite list");
         this.setCommandUsage("/cs help list");
         this.setArgRange(0, 0);
+        this.addKey("chatsuite list");
         this.addKey("cs list");
         this.addKey("cslist");
         this.addKey("csl");

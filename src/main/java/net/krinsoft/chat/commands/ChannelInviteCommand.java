@@ -20,9 +20,9 @@ public class ChannelInviteCommand extends ChatSuiteCommand {
         this.setName("chatsuite invite");
         this.setCommandUsage("/cs help channel");
         this.setArgRange(1, 2);
-        this.addKey("cs chan invite");
+        this.addKey("chatsuite channel invite");
+        this.addKey("cs channel invite");
         this.addKey("csc invite");
-        this.addKey("cscinvite");
         this.addKey("csci");
         this.setPermission("chatsuite.invite", "Allows users to invite others into their channels.", PermissionDefault.OP);
     }
