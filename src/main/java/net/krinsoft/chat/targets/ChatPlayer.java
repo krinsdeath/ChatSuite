@@ -97,11 +97,11 @@ public class ChatPlayer implements Target {
 
     private String locale;
 
-    public ChatPlayer(Player p) {
+    public ChatPlayer(Player p, String loc) {
         ConfigManager config = plugin.getConfigManager();
         this.name = p.getName();
         this.world = p.getWorld().getName();
-        this.locale = config.getPluginNode().getString("default_locale", "en");
+        this.locale = loc;
         if (config.getPluginNode().getString("default_channel", "world").equalsIgnoreCase("world")) {
             this.channel = this.world;
         } else {
@@ -110,7 +110,7 @@ public class ChatPlayer implements Target {
         int weight = 0;
         for (String key : config.getGroups()) {
             int i = config.getGroupNode(key).getInt("weight", 1);
-            if (p.hasPermission("chatsuite.groups." + key) && i > weight) {
+            if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
                 weight = i;
                 this.group = key;
             }
@@ -351,5 +351,9 @@ public class ChatPlayer implements Target {
 
     public String getLocale() {
         return this.locale;
+    }
+
+    public void setLocale(String loc) {
+        this.locale = loc;
     }
 }

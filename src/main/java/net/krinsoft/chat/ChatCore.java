@@ -12,7 +12,11 @@ import net.krinsoft.chat.commands.ChannelJoinCommand;
 import net.krinsoft.chat.commands.ChannelLeaveCommand;
 import net.krinsoft.chat.commands.ChannelListCommand;
 import net.krinsoft.chat.commands.ChannelSayCommand;
+import net.krinsoft.chat.commands.DebugCommand;
 import net.krinsoft.chat.commands.HelpCommand;
+import net.krinsoft.chat.commands.LocaleCommand;
+import net.krinsoft.chat.commands.ReloadCommand;
+import net.krinsoft.chat.commands.VersionCommand;
 import net.krinsoft.chat.commands.WhisperCommand;
 import net.krinsoft.chat.listeners.ChatListener;
 import net.krinsoft.chat.listeners.EntityListener;
@@ -53,7 +57,7 @@ public class ChatCore extends JavaPlugin {
     // plugin info and managers
     private PluginDescriptionFile pdf;
     private PluginManager pm;
-    protected boolean debug = true;
+    public boolean debug = true;
 
     // configuration details and flags
     private Configuration worldConfig;
@@ -65,6 +69,10 @@ public class ChatCore extends JavaPlugin {
     private PlayerManager playerManager;
     private CommandHandler commandHandler;
     private CSPermissions permissionHandler;
+
+    public boolean allow_channels = true;
+    public boolean allow_whispers = true;
+    public boolean allow_afk = true;
 
     @Override
     public void onEnable() {
@@ -97,7 +105,7 @@ public class ChatCore extends JavaPlugin {
         return this.commandHandler.locateAndRunCommand(cs, allArgs);
     }
 
-    private void initConfiguration() {
+    public void initConfiguration() {
         configManager = new ConfigManager(this);
         channelManager = new ChannelManager(this);
         worldManager = new WorldManager(this);
@@ -136,17 +144,26 @@ public class ChatCore extends JavaPlugin {
         permissionHandler = new CSPermissions(this);
         commandHandler = new CommandHandler(this, permissionHandler);
         // register the commands
-        commandHandler.registerCommand(new AfkCommand(this));
-        commandHandler.registerCommand(new WhisperCommand(this));
-        commandHandler.registerCommand(new ChannelCommand(this));
-        commandHandler.registerCommand(new ChannelSayCommand(this));
-        commandHandler.registerCommand(new ChannelCreateCommand(this));
-        commandHandler.registerCommand(new ChannelJoinCommand(this));
-        commandHandler.registerCommand(new ChannelLeaveCommand(this));
-        commandHandler.registerCommand(new ChannelInviteCommand(this));
-        commandHandler.registerCommand(new ChannelListCommand(this));
-        //commandHandler.registerCommand(new LocaleCommand(this));
+        if (allow_afk) {
+            commandHandler.registerCommand(new AfkCommand(this));
+        }
+        if (allow_whispers) {
+            commandHandler.registerCommand(new WhisperCommand(this));
+        }
+        if (allow_channels) {
+            commandHandler.registerCommand(new ChannelCommand(this));
+            commandHandler.registerCommand(new ChannelSayCommand(this));
+            commandHandler.registerCommand(new ChannelCreateCommand(this));
+            commandHandler.registerCommand(new ChannelJoinCommand(this));
+            commandHandler.registerCommand(new ChannelLeaveCommand(this));
+            commandHandler.registerCommand(new ChannelInviteCommand(this));
+            commandHandler.registerCommand(new ChannelListCommand(this));
+        }
+        commandHandler.registerCommand(new LocaleCommand(this));
         commandHandler.registerCommand(new HelpCommand(this));
+        commandHandler.registerCommand(new ReloadCommand(this));
+        commandHandler.registerCommand(new VersionCommand(this));
+        commandHandler.registerCommand(new DebugCommand(this));
     }
 
     // logging and information

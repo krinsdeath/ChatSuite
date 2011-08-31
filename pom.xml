@@ -5,10 +5,12 @@
     <groupId>net.krinsoft</groupId>
     <artifactId>ChatSuite</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <name>ChatSuite</name>
+    <description>A powerful, configurable, and advanced Chat Manager for Bukkit and Super Permissions</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.number>b22</project.build.number>
     </properties>
     <build>
         <plugins>

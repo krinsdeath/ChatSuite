@@ -1,6 +1,6 @@
 name: ChatSuite
 main: net.krinsoft.chat.ChatCore
-version: ${project.version}
+version: ${project.version}-${project.build.number}
 author: krinsdeath
 softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core, Privileges]
 
@@ -28,5 +28,7 @@ commands:
       - cscinvite
       - csl
       - cslist
+      - csd
+      - csv
     description: The basic command for this plugin
     usage: /<command>

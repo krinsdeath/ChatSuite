@@ -17,6 +17,7 @@ public class ChannelManager {
 
     public ChannelManager(ChatCore aThis) {
         plugin = aThis;
+        plugin.getConfigManager().getPluginNode().getBoolean("allow_channels", true);
     }
 
     public void addPlayerToChannel(Player player, String channel) {

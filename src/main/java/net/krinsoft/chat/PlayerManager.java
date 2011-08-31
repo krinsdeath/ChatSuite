@@ -1,8 +1,10 @@
 package net.krinsoft.chat;
 
+import java.io.File;
 import net.krinsoft.chat.targets.ChatPlayer;
 import java.util.HashMap;
 import org.bukkit.entity.Player;
+import org.bukkit.util.config.Configuration;
 
 /**
  *
@@ -12,10 +14,15 @@ public class PlayerManager {
     private ChatCore plugin;
 
     private HashMap<String, ChatPlayer> players = new HashMap<String, ChatPlayer>();
+    private Configuration user;
+    private boolean persist = false;
 
     public PlayerManager(ChatCore plugin) {
         this.plugin = plugin;
         ChatPlayer.init(plugin);
+        persist = this.plugin.getConfigManager().getPluginNode().getBoolean("persist_user_settings", false);
+        user = new Configuration(new File(plugin.getDataFolder(), "users.yml"));
+        user.load();
         buildPlayerList();
     }
 
@@ -61,10 +68,13 @@ public class PlayerManager {
         if (players.containsKey(player.getName())) {
             return;
         }
-        players.put(player.getName(), new ChatPlayer(player));
+        players.put(player.getName(), new ChatPlayer(player, getLocale(player.getName())));
         plugin.getChannelManager().addPlayerToChannel(player, player.getWorld().getName());
         plugin.getChannelManager().addPlayerToChannel(player, plugin.getConfigManager().getPluginNode().getString("global_channel_name", "Global"));
         plugin.debug("Player '" + player.getName() + "' registered");
+        if (persist) {
+            user.save();
+        }
     }
 
     public void unregisterPlayer(Player player) {
@@ -74,6 +84,13 @@ public class PlayerManager {
         plugin.getChannelManager().removePlayerFromAllChannels(player);
         players.remove(player.getName());
         plugin.debug("Player '" + player.getName() + "' unregistered");
+        if (persist) {
+            user.save();
+        }
+    }
+
+    public String getLocale(String player) {
+        return user.getString(player + ".locale", plugin.getLocaleManager().getLocaleKey());
     }
 
 }

@@ -1,7 +1,12 @@
 plugin:
     default_locale: en
     locales: [en]
+    # if allow_channels is false, your users will be unable to use any channel
+    # related commands, and as such the default channel will become their permanent
+    # chat place (it is recommended to set default_channel to global if you set this to false)
+    # note: a change to this setting will require a full /reload or server restart
     allow_channels: true
+    allow_whispers: true
     afk_invincibility: false
     # This is the default channel a player will be chatting in. A value of 'global'
     # means that they will chat to everyone on the server, while 'world' means
@@ -12,6 +17,7 @@ plugin:
     # like localizations and channels will be persisted between sessions
     # if this is set to true, it will increase overhead by a small amount
     persist_user_settings: false
+    debug: false
 groups:
     # %f = faction format
     # %c = channel name
@@ -39,9 +45,9 @@ groups:
         prefix: '&A[&B-&A]&B'
         group: ''
         suffix: ''
-        afk: '&A[&6afk&A]'
+        afk: ' &A[&6afk&A]'
         format:
-            global: '%c %p %n&A@&B%w &A%afk&F: %m'
+            global: '%c %p %n&A@&B%w&A%afk&F: %m'
             message: '%c %p %n %afk&F: %m'
             whisper_send: '&6To &B%t&6>>&F %m'
             whisper_receive: '&6From &B%t&6>>&F %m'

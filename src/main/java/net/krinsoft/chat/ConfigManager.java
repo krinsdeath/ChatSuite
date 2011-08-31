@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 
@@ -26,6 +28,11 @@ public final class ConfigManager {
         this.config = new Configuration(buildDefault(this.plugin.getDataFolder(), "config.yml"));
         this.config.load();
         this.plugin.debug = this.config.getBoolean("plugin.debug", false);
+        this.plugin.allow_channels = this.config.getBoolean("plugin.allow_channels", true);
+        this.plugin.allow_whispers = this.config.getBoolean("plugin.allow_whispers", true);
+        this.plugin.allow_afk = this.config.getBoolean("plugin.allow_afk", true);
+        this.config.save();
+        registerGroupNodes();
     }
 
     public File buildDefault(File p, String filename) {
@@ -71,6 +78,23 @@ public final class ConfigManager {
 
     public List<String> getGroups() {
         return this.config.getKeys("groups");
+    }
+
+    private void registerGroupNodes() {
+        int priority = Integer.MAX_VALUE;
+        String def = "";
+        for (String key : getGroups()) {
+            if (getGroupNode(key).getInt("weight", 0) < priority) {
+                priority = getGroupNode(key).getInt("weight", 0);
+                def = key;
+            }
+            Permission perm = new Permission("chatsuite.groups." + key);
+            perm.setDefault(PermissionDefault.OP);
+            if (plugin.getServer().getPluginManager().getPermission("chatsuite.groups." + key) == null) {
+                plugin.getServer().getPluginManager().addPermission(perm);
+            }
+        }
+        plugin.getServer().getPluginManager().getPermission("chatsuite.groups." + def).setDefault(PermissionDefault.TRUE);
     }
 
 }
