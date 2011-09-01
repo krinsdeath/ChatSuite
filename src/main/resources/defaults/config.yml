@@ -7,11 +7,12 @@ plugin:
     # note: a change to this setting will require a full /reload or server restart
     allow_channels: true
     allow_whispers: true
-    afk_invincibility: false
+    allow_afk: true
     # This is the default channel a player will be chatting in. A value of 'global'
     # means that they will chat to everyone on the server, while 'world' means
     # that only players on their current world will see their messages.
-    default_channel: world
+    # values for default_channel are ONLY 'global' or 'world'
+    default_channel: global
     global_channel_name: 'Global'
     # persist_user_settings will determine whether or not individual user settings
     # like localizations and channels will be persisted between sessions
@@ -20,6 +21,7 @@ plugin:
     debug: false
 groups:
     # %f = faction format
+    # %h = Heroes class
     # %c = channel name
     # %n = player name; %dn = player display name
     # %t = target name; %dt = target display name

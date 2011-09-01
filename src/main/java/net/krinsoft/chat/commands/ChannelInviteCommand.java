@@ -18,7 +18,9 @@ public class ChannelInviteCommand extends ChatSuiteCommand {
         super(plugin);
         this.plugin = (ChatCore) plugin;
         this.setName("chatsuite invite");
-        this.setCommandUsage("/cs help channel");
+        this.setCommandUsage("/chatsuite channel invite [player] [channel]");
+        this.addCommandExample("/csc invite [player] [channel] -- Invite the specified player to the specified channel");
+        this.addCommandExample("/csci Player aChannel -- Invites 'Player' to 'aChannel'");
         this.setArgRange(1, 2);
         this.addKey("chatsuite channel invite");
         this.addKey("cs channel invite");

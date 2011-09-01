@@ -18,7 +18,9 @@ public class ChannelCreateCommand extends ChatSuiteCommand {
         super(plugin);
         this.plugin = (ChatCore) plugin;
         this.setName("chatsuite create");
-        this.setCommandUsage("/cs help channel");
+        this.setCommandUsage("/chatsuite channel create [channel] [type]");
+        this.addCommandExample("/csc create \"My Channel\" public -- Create a channel called 'My Channel' that anyone can join");
+        this.addCommandExample("/csc create aChannel private -- Create a private channel called aChannel");
         this.setArgRange(2, 2);
         this.addKey("chatsuite channel create");
         this.addKey("cs channel create");

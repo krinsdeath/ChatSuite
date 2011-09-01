@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package net.krinsoft.chat.listeners;
 
 import net.krinsoft.chat.ChatCore;
@@ -41,6 +36,7 @@ public class ChatListener extends CustomEventListener {
         String msg = player.message(c, event.getMessage());
         if (msg != null) {
             for (String p : c.getOccupants()) {
+                msg = player.parseFaction(msg, p);
                 plugin.getServer().getPlayer(p).sendMessage(msg);
             }
         }

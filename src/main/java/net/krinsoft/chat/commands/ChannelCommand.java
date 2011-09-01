@@ -19,6 +19,11 @@ public class ChannelCommand extends ChatSuiteCommand {
         this.plugin = (ChatCore) plugin;
         this.setName("chatsuite channel");
         this.setCommandUsage("/cs help channel");
+        this.addCommandExample("/csc join ? -- show Join command usage and examples");
+        this.addCommandExample("/csc leave ? -- show Leave command usage and examples");
+        this.addCommandExample("/csc create ? -- show Create command usage and examples");
+        this.addCommandExample("/csc invite ? -- show Invite command usage and examples");
+        this.addCommandExample("/csc say ? -- show Say command usage and examples");
         this.setArgRange(1, 3);
         this.addKey("chatsuite channel");
         this.addKey("cs channel");

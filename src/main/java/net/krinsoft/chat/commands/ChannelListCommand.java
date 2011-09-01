@@ -18,7 +18,7 @@ public class ChannelListCommand extends ChatSuiteCommand {
         super(plugin);
         this.plugin = (ChatCore) plugin;
         this.setName("chatsuite list");
-        this.setCommandUsage("/cs help list");
+        this.setCommandUsage("/chatsuite list");
         this.setArgRange(0, 0);
         this.addKey("chatsuite list");
         this.addKey("cs list");

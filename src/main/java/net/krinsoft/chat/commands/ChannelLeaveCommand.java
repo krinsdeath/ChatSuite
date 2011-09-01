@@ -19,7 +19,9 @@ public class ChannelLeaveCommand extends ChatSuiteCommand {
         super(plugin);
         this.plugin = (ChatCore) plugin;
         this.setName("chatsuite leave");
-        this.setCommandUsage("/cs help channel");
+        this.setCommandUsage("/chatsuite channel leave [channel]");
+        this.addCommandExample("/csc leave [channel] -- Leaves the specified channel.");
+        this.addCommandExample("/csc leave aChannel");
         this.setArgRange(1, 1);
         this.addKey("chatsuite channel leave");
         this.addKey("cs channel leave");

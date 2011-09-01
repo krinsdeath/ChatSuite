@@ -31,7 +31,6 @@ public final class ConfigManager {
         this.plugin.allow_channels = this.config.getBoolean("plugin.allow_channels", true);
         this.plugin.allow_whispers = this.config.getBoolean("plugin.allow_whispers", true);
         this.plugin.allow_afk = this.config.getBoolean("plugin.allow_afk", true);
-        this.config.save();
         registerGroupNodes();
     }
 

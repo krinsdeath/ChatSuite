@@ -7,7 +7,6 @@ import net.krinsoft.chat.targets.Channel;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -41,19 +40,22 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
     @Override
     public void onPlayerChat(PlayerChatEvent event) {
-        if (event.isCancelled()) { return; }
+        if (event.isCancelled()) {
+            return;
+        }
         String msg = event.getMessage();
-        if (msg.contains("%")) {
-            msg = msg.replaceAll("%", "");
-        }
         ChatPlayer p = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
-        if (p != null) {
-            Channel c = null;
-            c = plugin.getChannelManager().getChannel(p.getChannel());
-            ChannelMessage e = new ChannelMessage(plugin, c, event.getPlayer().getName(), msg);
-            plugin.getServer().getPluginManager().callEvent(e);
+        if (event.getMessage().startsWith("!")) {
+            event.getPlayer().sendMessage(p.getField(event.getMessage().substring(1)));
             event.setCancelled(true);
+            return;
         }
+        if (p == null) { return; }
+        Channel c = plugin.getChannelManager().getChannel(p.getChannel());
+        if (c == null) { return; }
+        ChannelMessage e = new ChannelMessage(plugin, c, event.getPlayer().getName(), msg);
+        plugin.getServer().getPluginManager().callEvent(e);
+        event.setCancelled(true);
     }
 
     @Override

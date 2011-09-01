@@ -19,7 +19,9 @@ public class ChannelJoinCommand extends ChatSuiteCommand {
         super(plugin);
         this.plugin = (ChatCore) plugin;
         this.setName("chatsuite join");
-        this.setCommandUsage("cs help channel");
+        this.setCommandUsage("/chatsuite channel join [channel]");
+        this.addCommandExample("/csc join [channel] -- Joins the specified channel, provided you have access");
+        this.addCommandExample("/csc join aChannel");
         this.setArgRange(1, 1);
         this.addKey("chatsuite channel join");
         this.addKey("cs channel join");

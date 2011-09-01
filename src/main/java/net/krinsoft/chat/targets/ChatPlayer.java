@@ -1,5 +1,7 @@
 package net.krinsoft.chat.targets;
 
+import com.herocraftonline.dev.heroes.Heroes;
+import com.herocraftonline.dev.heroes.persistence.Hero;
 import com.massivecraft.factions.Factions;
 import java.util.regex.Pattern;
 import net.krinsoft.chat.ChatCore;
@@ -21,6 +23,7 @@ public class ChatPlayer implements Target {
     private final static Pattern PREFIX = Pattern.compile("(%p)");
     private final static Pattern SUFFIX = Pattern.compile("(%s)");
     private final static Pattern FACTION = Pattern.compile("(%f)");
+    private final static Pattern HEROES = Pattern.compile("(%h)");
     private final static Pattern GROUP = Pattern.compile("(%g)");
     private final static Pattern AFK = Pattern.compile("(%afk)");
     private final static Pattern WORLD = Pattern.compile("(%w)");
@@ -71,13 +74,20 @@ public class ChatPlayer implements Target {
 
     private static ChatCore plugin; // instance of the main plugin
     private static Factions factions; // instance of the factions plugin
+    private static Heroes heroes;
 
     // initialize the plugin instance
     public static void init(ChatCore aThis) {
         plugin = aThis; // initialize the plugin instance
         Plugin tmp = plugin.getServer().getPluginManager().getPlugin("Factions");
         if (tmp != null) {
+            plugin.debug("Found Factions! Hooking...");
             factions = (Factions) tmp;
+        }
+        tmp = plugin.getServer().getPluginManager().getPlugin("Heroes");
+        if (tmp != null) {
+            plugin.debug("Found Heroes! Hooking...");
+            heroes = (Heroes) tmp;
         }
     }
 
@@ -105,7 +115,7 @@ public class ChatPlayer implements Target {
         if (config.getPluginNode().getString("default_channel", "world").equalsIgnoreCase("world")) {
             this.channel = this.world;
         } else {
-            this.channel = config.getPluginNode().getString("default_channel_name", "Global");
+            this.channel = config.getPluginNode().getString("global_channel_name", "Global");
         }
         int weight = 0;
         for (String key : config.getGroups()) {
@@ -141,6 +151,10 @@ public class ChatPlayer implements Target {
 
     public String getWorld() {
         return this.world;
+    }
+
+    public String getField(String field) {
+        return plugin.getConfigManager().getGroupNode(this.group).getString(field);
     }
 
     protected String getFormat(Type t) {
@@ -268,7 +282,7 @@ public class ChatPlayer implements Target {
         format = parsePrefix(format, node.getString("prefix"));
         format = parseGroup(format, node.getString("group"));
         format = parseSuffix(format, node.getString("suffix"));
-        format = parseFaction(format);
+        format = parseHero(format);
         format = parseWorld(format, plugin.getWorldManager().getAlias(this.world));
         format = parseTarget(format, target);
         format = parseSelf(format);
@@ -297,9 +311,27 @@ public class ChatPlayer implements Target {
         return format;
     }
 
-    private String parseFaction(String format) {
+    public String parseFaction(String format, String target) {
         if (factions != null) {
-            format = FACTION.matcher(format).replaceAll(factions.getPlayerFactionTag(plugin.getServer().getPlayer(name)));
+            try {
+                format = FACTION.matcher(format).replaceAll(factions.getPlayerFactionTagRelation(plugin.getServer().getPlayer(name), plugin.getServer().getPlayer(target)));
+            } catch (NullPointerException e) {
+                plugin.debug(e.getLocalizedMessage());
+            }
+        }
+        return format;
+    }
+
+    private String parseHero(String format) {
+        if (heroes != null) {
+            try {
+                Player p = plugin.getServer().getPlayer(name);
+                Hero hero = heroes.getHeroManager().getHero(p);
+                String hn = hero.getHeroClass().getName();
+                format = HEROES.matcher(format).replaceAll(hn);
+            } catch (NullPointerException e) {
+                plugin.debug(e.getLocalizedMessage());
+            }
         }
         return format;
     }

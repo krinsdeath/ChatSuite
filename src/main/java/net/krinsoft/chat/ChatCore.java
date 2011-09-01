@@ -86,6 +86,7 @@ public class ChatCore extends JavaPlugin {
     public void onDisable() {
         pListener = null;
         eListener = null;
+        chatListener = null;
         commandHandler = null;
         playerManager = null;
         localeManager = null;

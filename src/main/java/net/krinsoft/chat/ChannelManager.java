@@ -59,7 +59,9 @@ public class ChannelManager {
         if (plugin.getPlayerManager().isPlayerRegistered(player)) {
             removePlayerFromChannel(player, from);
             addPlayerToChannel(player, to);
-            plugin.getPlayerManager().getPlayer(player).setChannel(to);
+            if (plugin.getPlayerManager().getPlayer(player).getChannel().equals(from)) {
+                plugin.getPlayerManager().getPlayer(player).setChannel(to);
+            }
             plugin.getPlayerManager().getPlayer(player).setWorld(plugin.getWorldManager().getAlias(to));
         }
     }

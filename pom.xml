@@ -10,7 +10,7 @@
     <description>A powerful, configurable, and advanced Chat Manager for Bukkit and Super Permissions</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.number>b22</project.build.number>
+        <project.build.number>b26</project.build.number>
     </properties>
     <build>
         <plugins>
@@ -73,6 +73,12 @@
             <groupId>com.massivecraft</groupId>
             <artifactId>factions</artifactId>
             <version>1.4.7</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.herocraftonline</groupId>
+            <artifactId>heroes</artifactId>
+            <version>1.2.4</version>
             <type>jar</type>
         </dependency>
     </dependencies>

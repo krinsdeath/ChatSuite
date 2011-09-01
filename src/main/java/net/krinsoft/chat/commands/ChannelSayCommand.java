@@ -19,6 +19,8 @@ public class ChannelSayCommand extends ChatSuiteCommand {
         super(plugin);
         this.plugin = (ChatCore) plugin;
         this.setName("chatsuite say");
+        this.setCommandUsage("/chatsuite channel say [channel] \"[message here]\"");
+        this.addCommandExample("/csc say aChannel \"Hello there, how are you all?\"");
         this.setArgRange(2, 2);
         this.addKey("chatsuite channel say");
         this.addKey("cs channel say");
