@@ -46,3 +46,4 @@ help:
     - '&A=== Help: &BWhisper &A==='
     - '&AAliases: &B%aliases'
     - '&A/csw Player "Howdy, Player!" - &FWhispers "Howdy, Player!" to the specified player'
+    

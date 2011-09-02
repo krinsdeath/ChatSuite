@@ -311,10 +311,10 @@ public class ChatPlayer implements Target {
         return format;
     }
 
-    public String parseFaction(String format, String target) {
+    public String parseFaction(String format, String listener) {
         if (factions != null) {
             try {
-                format = FACTION.matcher(format).replaceAll(factions.getPlayerFactionTagRelation(plugin.getServer().getPlayer(name), plugin.getServer().getPlayer(target)));
+                format = FACTION.matcher(format).replaceAll(factions.getPlayerFactionTagRelation(plugin.getServer().getPlayer(name), plugin.getServer().getPlayer(listener)));
             } catch (NullPointerException e) {
                 plugin.debug(e.getLocalizedMessage());
             }

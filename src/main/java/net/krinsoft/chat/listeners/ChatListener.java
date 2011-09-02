@@ -36,8 +36,8 @@ public class ChatListener extends CustomEventListener {
         String msg = player.message(c, event.getMessage());
         if (msg != null) {
             for (String p : c.getOccupants()) {
-                msg = player.parseFaction(msg, p);
-                plugin.getServer().getPlayer(p).sendMessage(msg);
+                String tmp = player.parseFaction(msg, p);
+                plugin.getServer().getPlayer(p).sendMessage(tmp);
             }
         }
     }

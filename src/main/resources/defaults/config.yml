@@ -65,3 +65,4 @@ groups:
             message: '%c %p %n %afk&F: %m'
             whisper_send: '&6To &B%t&6>>&F %m'
             whisper_receive: '&6From &B%t&6>>&F %m'
+            

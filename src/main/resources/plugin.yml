@@ -2,7 +2,7 @@ name: ChatSuite
 main: net.krinsoft.chat.ChatCore
 version: ${project.version}-${project.build.number}
 author: krinsdeath
-softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core, Privileges, Heroes]
+softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core, Privileges, Factions, Heroes]
 
 commands:
   chatsuite:
@@ -22,3 +22,4 @@ commands:
       - csv
     description: The basic command for this plugin
     usage: /<command>
+    
