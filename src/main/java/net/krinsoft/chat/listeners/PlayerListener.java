@@ -43,13 +43,8 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         if (event.isCancelled()) {
             return;
         }
-        String msg = event.getMessage();
+        String msg = event.getMessage().replaceAll("\\$", "\\\\\\$");
         ChatPlayer p = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
-        if (event.getMessage().startsWith("!")) {
-            event.getPlayer().sendMessage(p.getField(event.getMessage().substring(1)));
-            event.setCancelled(true);
-            return;
-        }
         if (p == null) { return; }
         Channel c = plugin.getChannelManager().getChannel(p.getChannel());
         if (c == null) { return; }
