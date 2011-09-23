@@ -44,6 +44,9 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
             return;
         }
         String msg = event.getMessage().replaceAll("\\$", "\\\\\\$");
+        if (!event.getPlayer().hasPermission("chatsuite.colorize")) {
+            msg = msg.replaceAll("(?i)&([0-F])", "");
+        }
         ChatPlayer p = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
         if (p == null) { return; }
         Channel c = plugin.getChannelManager().getChannel(p.getChannel());

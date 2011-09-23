@@ -126,11 +126,7 @@ public class ChatPlayer implements Target {
             }
         }
         plugin.debug("Player " + this.name + " set to group '" + this.group + "' (Weight: " + weight + ")");
-        ConfigurationNode node = config.getGroupNode(this.group);
-        global = node.getString("format.global", "");
-        format = node.getString("format.message", "");
-        send = node.getString("format.whisper_send", "");
-        receive = node.getString("format.whisper_receive", "");
+        setGroup(this.group);
     }
 
     public String getName() {
@@ -151,6 +147,19 @@ public class ChatPlayer implements Target {
 
     public String getWorld() {
         return this.world;
+    }
+
+    public final void setGroup(String group) {
+        this.group = group;
+        updateFormat();
+    }
+
+    public final void updateFormat() {
+        ConfigurationNode node = plugin.getConfigManager().getGroupNode(this.group);
+        global = node.getString("format.global", "");
+        format = node.getString("format.message", "");
+        send = node.getString("format.whisper_send", "");
+        receive = node.getString("format.whisper_receive", "");
     }
 
     public String getField(String field) {

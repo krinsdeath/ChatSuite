@@ -1,5 +1,7 @@
 package net.krinsoft.chat.listeners;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.ChatPlayer;
 import net.krinsoft.chat.events.ChannelMessage;
@@ -35,7 +37,12 @@ public class ChatListener extends CustomEventListener {
         Channel c = event.getTarget();
         String msg = player.message(c, event.getMessage());
         if (msg != null) {
-            for (String p : c.getOccupants()) {
+            List<String> occupants = new ArrayList<String>(c.getOccupants());
+            for (String p : occupants) {
+                if (plugin.getServer().getPlayer(p) == null) {
+                    c.removePlayer(p);
+                    continue;
+                }
                 String tmp = player.parseFaction(msg, p);
                 plugin.getServer().getPlayer(p).sendMessage(tmp);
             }

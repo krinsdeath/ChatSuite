@@ -25,6 +25,7 @@ public class ReloadCommand extends ChatSuiteCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         plugin.initConfiguration();
+        sender.sendMessage("ChatSuite configuration reloaded.");
     }
 
 }

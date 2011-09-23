@@ -18,12 +18,17 @@ public class PlayerManager {
     private boolean persist = false;
 
     public PlayerManager(ChatCore plugin) {
+        clear();
         this.plugin = plugin;
         ChatPlayer.init(plugin);
         persist = this.plugin.getConfigManager().getPluginNode().getBoolean("persist_user_settings", false);
         user = new Configuration(new File(plugin.getDataFolder(), "users.yml"));
         user.load();
         buildPlayerList();
+    }
+
+    private void clear() {
+        players.clear();
     }
 
     private void buildPlayerList() {
@@ -43,7 +48,26 @@ public class PlayerManager {
         if (players.get(p.getName()) == null) {
             registerPlayer(p);
         }
+        groupUpdate(p);
         return players.get(p.getName());
+    }
+
+    /**
+     * Update the player's group.
+     * @param p
+     */
+    public void groupUpdate(Player p) {
+        ConfigManager config = plugin.getConfigManager();
+        String group = "";
+        int weight = 0;
+        for (String key : config.getGroups()) {
+            int i = config.getGroupNode(key).getInt("weight", 1);
+            if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
+                weight = i;
+                group = key;
+            }
+        }
+        players.get(p.getName()).setGroup((group == null ? "default" : group));
     }
 
     /**

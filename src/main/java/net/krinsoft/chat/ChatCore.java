@@ -69,6 +69,7 @@ public class ChatCore extends JavaPlugin {
     private PlayerManager playerManager;
     private CommandHandler commandHandler;
     private CSPermissions permissionHandler;
+    private double chVersion = 1;
 
     public boolean allow_channels = true;
     public boolean allow_whispers = true;
@@ -77,6 +78,10 @@ public class ChatCore extends JavaPlugin {
     @Override
     public void onEnable() {
         pdf = getDescription();
+        if (!validateCommandHandler()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         initConfiguration();
         initEvents();
         log(info() + " enabled.");
@@ -104,6 +109,23 @@ public class ChatCore extends JavaPlugin {
         ArrayList<String> allArgs = new ArrayList<String>(Arrays.asList(args));
         allArgs.add(0, label);
         return this.commandHandler.locateAndRunCommand(cs, allArgs);
+    }
+
+    private boolean validateCommandHandler() {
+        try {
+            commandHandler = new CommandHandler(this, null);
+            if (this.commandHandler.getVersion() >= chVersion) {
+                return true;
+            } else {
+                LOGGER.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
+                LOGGER.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
+                return false;
+            }
+        } catch (Throwable t) {
+        }
+        LOGGER.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
+        LOGGER.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
+        return false;
     }
 
     public void initConfiguration() {
