@@ -55,6 +55,9 @@ public class ChatListener extends CustomEventListener {
         String message = event.getMessage();
         if (event.isWhisperAllowed()) {
             source.whisper("whisper_send", target.getName(), message);
+            if (target.isAfk()) {
+                source.whisper("whisper_receive", target.getName(), target.getAwayMessage());
+            }
             target.whisper("whisper_receive", source.getName(), message);
         }
     }

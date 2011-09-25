@@ -302,7 +302,6 @@ public class ChatPlayer implements Target {
 
     private String parseAfk(String format, String afk) {
         if (this.afk) {
-            format = MESSAGE.matcher(format).replaceAll(afkMessage);
             format = AFK.matcher(format).replaceAll(afk);
             return format;
         } else {

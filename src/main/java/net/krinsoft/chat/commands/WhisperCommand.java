@@ -26,7 +26,7 @@ public class WhisperCommand extends ChatSuiteCommand {
         this.plugin = (ChatCore) plugin;
         this.setName("chatsuite whisper");
         this.setCommandUsage("/cs whisper [player] \"[message]\"");
-        this.setArgRange(2, 2);
+        this.setArgRange(2, 16);
         this.addKey("chatsuite whisper");
         this.addKey("cs whisper");
         this.addKey("csw");
@@ -35,6 +35,11 @@ public class WhisperCommand extends ChatSuiteCommand {
 
     @Override
     public void runCommand(CommandSender cs, List<String> args) {
+        String message = "";
+        for (int i = 1; i < args.size(); i++) {
+            message += args.get(i) + " ";
+        }
+        message = message.trim();
         Player target = plugin.getServer().getPlayer(args.get(0));
         if (target == null) {
             String l = plugin.getLocaleManager().getLocaleKey();
@@ -47,7 +52,7 @@ public class WhisperCommand extends ChatSuiteCommand {
             }
             return;
         } else {
-            WhisperMessage msg = new WhisperMessage(plugin, ((Player)cs).getName(), target.getName(), args.get(1));
+            WhisperMessage msg = new WhisperMessage(plugin, ((Player)cs).getName(), target.getName(), message);
             plugin.getServer().getPluginManager().callEvent(msg);
         }
     }

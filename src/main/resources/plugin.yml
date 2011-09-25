@@ -10,6 +10,7 @@ commands:
       - cs
       - csh
       - csa
+      - csafk
       - csw
       - csc
       - cscj

@@ -28,6 +28,7 @@ groups:
     # %p = prefix; %s = suffix
     # %w = world
     # %m = sent message
+    # %afk = afk format
     # &0-F = color codes, case-insensitive
     default:
         weight: 1
