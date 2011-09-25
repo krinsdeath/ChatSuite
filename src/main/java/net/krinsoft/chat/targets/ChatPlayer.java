@@ -96,7 +96,6 @@ public class ChatPlayer implements Target {
     private String world; // the player's current world
     private String group; // the player's group
     private String channel;
-    private String faction;
     private String global; // the player's raw global string
     private String format; // the player's raw format string
     private String send; // the player's raw whisper send string

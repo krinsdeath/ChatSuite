@@ -54,14 +54,14 @@ public class PlayerManager {
 
     /**
      * Update the player's group.
-     * @param p
+     * @param p The player to update.
      */
     public void groupUpdate(Player p) {
         ConfigManager config = plugin.getConfigManager();
-        String group = "";
+        String group = null;
         int weight = 0;
         for (String key : config.getGroups()) {
-            int i = config.getGroupNode(key).getInt("weight", 1);
+            int i = config.getGroupNode(key).getInt("weight", 0);
             if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
                 weight = i;
                 group = key;
@@ -81,6 +81,7 @@ public class PlayerManager {
         if (players.get(p) == null) {
             registerPlayer(plugin.getServer().getPlayer(p));
         }
+        groupUpdate(plugin.getServer().getPlayer(p));
         return players.get(p);
     }
 
