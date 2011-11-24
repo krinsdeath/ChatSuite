@@ -4,12 +4,11 @@ import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.ChatPlayer;
 import net.krinsoft.chat.events.ChannelMessage;
 import net.krinsoft.chat.targets.Channel;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  *
@@ -57,19 +56,11 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
     }
 
     @Override
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (event.isCancelled()) { return; }
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         if (!plugin.getPlayerManager().isPlayerRegistered(event.getPlayer())) {
             return;
         }
-        plugin.getChannelManager().playerWorldChange(event.getPlayer(), event.getFrom().getWorld().getName(), event.getTo().getWorld().getName());
+        plugin.getChannelManager().playerWorldChange(event.getPlayer(), event.getFrom().getName(), event.getPlayer().getWorld().getName());
     }
 
-    @Override
-    public void onPlayerPortal(PlayerPortalEvent event) {
-        if (event.isCancelled()) { return; }
-        if (plugin.getPlayerManager().isPlayerRegistered(event.getPlayer())) {
-            plugin.getChannelManager().playerWorldChange(event.getPlayer(), event.getFrom().getWorld().getName(), event.getTo().getWorld().getName());
-        }
-    }
 }

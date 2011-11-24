@@ -5,8 +5,9 @@
 
 package net.krinsoft.chat;
 
-import com.onarandombox.MultiverseCore.MVWorld;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.MultiverseCore.api.MVWorldManager;
+import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import java.util.HashMap;
 import java.util.List;
 import org.bukkit.World;
@@ -20,6 +21,7 @@ public class WorldManager {
     private ChatCore plugin;
     private HashMap<String, String> aliases = new HashMap<String, String>();
     private HashMap<String, ChatWorld> worlds = new HashMap<String, ChatWorld>();
+    private MVWorldManager MVWorldManager;
 
     public WorldManager(ChatCore aThis) {
         plugin = aThis;
@@ -28,6 +30,10 @@ public class WorldManager {
     }
 
     public String getAlias(String world) {
+        if (MVWorldManager != null && MVWorldManager.isMVWorld(world)) {
+            MultiverseWorld w = MVWorldManager.getMVWorld(world);
+            if (w != null) { return w.getColoredWorldString(); }
+        }
         return (aliases.containsKey(world) ? aliases.get(world) : world);
     }
 
@@ -57,22 +63,23 @@ public class WorldManager {
             plugin.debug("Found Multiverse-Core! Registering aliases...");
             MultiverseCore multiverse = (MultiverseCore) tmp;
             // Nest a bunch of method attempts for various Multiverse-Core versions
-            try {
-                for (MVWorld mv : multiverse.getMVWorldManager().getMVWorlds()) {
-                    aliases.put(mv.getName(), mv.getColoredWorldString());
-                }
-            } catch (NoSuchMethodError e) {
-                try {
-                    for (MVWorld mv : multiverse.getWorldManager().getMVWorlds()) {
-                        aliases.put(mv.getName(), mv.getColoredWorldString());
-                    }
-                } catch (NoSuchMethodError e) {
-                    plugin.debug(e.getLocalizedMessage());
-                    for (MVWorld mv : multiverse.getMVWorlds()) {
-                        aliases.put(mv.getName(), mv.getColoredWorldString());
-                    }
-                }
+            MVWorldManager = multiverse.getMVWorldManager();
+            for (MultiverseWorld mv : multiverse.getMVWorldManager().getMVWorlds()) {
+                aliases.put(mv.getName(), mv.getColoredWorldString());
             }
+//            } catch (NoSuchMethodError e) {
+//                try {
+//                    MVWorldManager = multiverse.getWorldManager();
+//                    for (MultiverseWorld mv : multiverse.getWorldManager().getMVWorlds()) {
+//                        aliases.put(mv.getName(), mv.getColoredWorldString());
+//                    }
+//                } catch (NoSuchMethodError ex) {
+//                    plugin.debug(e.getLocalizedMessage());
+//                    for (MultiverseWorld mv : multiverse.getMVWorlds()) {
+//                        aliases.put(mv.getName(), mv.getColoredWorldString());
+//                    }
+//                }
+//            }
         }
     }
 

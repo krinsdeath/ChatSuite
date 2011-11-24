@@ -190,6 +190,11 @@ public class ChatCore extends JavaPlugin {
     }
 
     // logging and information
+    public void chat(String player, String message) {
+        message = "[" + player + "] " + message;
+        LOGGER.info(message.replaceAll("[^a-zA-Z0-9,\\.\\)\\(\\[\\]\\s]", ""));
+    }
+
     public void debug(String message) {
         if (debug) {
             message = "[" + info(Info.NAME) + "] [Debug] " + message;

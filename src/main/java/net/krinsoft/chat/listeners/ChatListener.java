@@ -38,6 +38,7 @@ public class ChatListener extends CustomEventListener {
         String msg = player.message(c, event.getMessage());
         if (msg != null) {
             List<String> occupants = new ArrayList<String>(c.getOccupants());
+            plugin.chat(player.getName(), event.getMessage());
             for (String p : occupants) {
                 if (plugin.getServer().getPlayer(p) == null) {
                     c.removePlayer(p);
