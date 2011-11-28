@@ -58,6 +58,7 @@ public class ChatCore extends JavaPlugin {
     private PluginDescriptionFile pdf;
     private PluginManager pm;
     public boolean debug = true;
+    public boolean chatLog = true;
 
     // configuration details and flags
     private Configuration worldConfig;
@@ -191,8 +192,10 @@ public class ChatCore extends JavaPlugin {
 
     // logging and information
     public void chat(String player, String message) {
-        message = "[" + player + "] " + message;
-        LOGGER.info(message.replaceAll("[^a-zA-Z0-9,\\.\\)\\(\\[\\]\\s]", ""));
+        if (chatLog) {
+            message = "[" + player + "] " + message;
+            LOGGER.info(message.replaceAll("[^a-zA-Z0-9,\\.\\)\\(\\[\\]\\s]", ""));
+        }
     }
 
     public void debug(String message) {

@@ -28,6 +28,7 @@ public final class ConfigManager {
         this.config = new Configuration(buildDefault(this.plugin.getDataFolder(), "config.yml"));
         this.config.load();
         this.plugin.debug = this.config.getBoolean("plugin.debug", false);
+        this.plugin.chatLog = this.config.getBoolean("plugin.logger", false);
         this.plugin.allow_channels = this.config.getBoolean("plugin.allow_channels", true);
         this.plugin.allow_whispers = this.config.getBoolean("plugin.allow_whispers", true);
         this.plugin.allow_afk = this.config.getBoolean("plugin.allow_afk", true);

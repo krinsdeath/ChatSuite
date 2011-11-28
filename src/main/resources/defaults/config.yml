@@ -18,6 +18,9 @@ plugin:
     # like localizations and channels will be persisted between sessions
     # if this is set to true, it will increase overhead by a small amount
     persist_user_settings: false
+    # Should we log chat?
+    logger: false
+    # Output debug messages?
     debug: false
 groups:
     # %f = faction format

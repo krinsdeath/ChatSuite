@@ -10,8 +10,14 @@
     <description>A powerful, configurable, and advanced Chat Manager for Bukkit and Super Permissions</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.number>b47</project.build.number>
+        <project.build.number>b52</project.build.number>
     </properties>
+    <repositories>
+        <repository>
+            <id>OnARandomBox</id>
+            <url>http://repo.onarandombox.com/artifactory/repo</url>
+        </repository>
+    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -60,24 +66,24 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0-R1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>com.onarandombox.multiversecore</groupId>
+            <groupId>com.onarandombox.MultiverseCore</groupId>
             <artifactId>Multiverse-Core</artifactId>
             <version>2.2</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.massivecraft</groupId>
-            <artifactId>factions</artifactId>
+            <artifactId>Factions</artifactId>
             <version>1.4.7</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.herocraftonline</groupId>
-            <artifactId>heroes</artifactId>
+            <artifactId>Heroes</artifactId>
             <version>1.2.4</version>
             <type>jar</type>
         </dependency>

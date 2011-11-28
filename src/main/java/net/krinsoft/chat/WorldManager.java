@@ -62,9 +62,8 @@ public class WorldManager {
         if (tmp != null) {
             plugin.debug("Found Multiverse-Core! Registering aliases...");
             MultiverseCore multiverse = (MultiverseCore) tmp;
-            // Nest a bunch of method attempts for various Multiverse-Core versions
             MVWorldManager = multiverse.getMVWorldManager();
-            for (MultiverseWorld mv : multiverse.getMVWorldManager().getMVWorlds()) {
+            for (MultiverseWorld mv : MVWorldManager.getMVWorlds()) {
                 aliases.put(mv.getName(), mv.getColoredWorldString());
             }
 //            } catch (NoSuchMethodError e) {
