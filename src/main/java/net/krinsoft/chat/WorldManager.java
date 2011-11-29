@@ -66,19 +66,6 @@ public class WorldManager {
             for (MultiverseWorld mv : MVWorldManager.getMVWorlds()) {
                 aliases.put(mv.getName(), mv.getColoredWorldString());
             }
-//            } catch (NoSuchMethodError e) {
-//                try {
-//                    MVWorldManager = multiverse.getWorldManager();
-//                    for (MultiverseWorld mv : multiverse.getWorldManager().getMVWorlds()) {
-//                        aliases.put(mv.getName(), mv.getColoredWorldString());
-//                    }
-//                } catch (NoSuchMethodError ex) {
-//                    plugin.debug(e.getLocalizedMessage());
-//                    for (MultiverseWorld mv : multiverse.getMVWorlds()) {
-//                        aliases.put(mv.getName(), mv.getColoredWorldString());
-//                    }
-//                }
-//            }
         }
     }
 
