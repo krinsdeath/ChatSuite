@@ -5,12 +5,12 @@
     <groupId>net.krinsoft</groupId>
     <artifactId>ChatSuite</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.10</version>
+    <version>1.1.0</version>
     <name>ChatSuite</name>
     <description>A powerful, configurable, and advanced Chat Manager for Bukkit and Super Permissions</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.number>b52</project.build.number>
+        <project.build.number>b56</project.build.number>
     </properties>
     <repositories>
         <repository>
@@ -70,7 +70,7 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>com.onarandombox.MultiverseCore</groupId>
+            <groupId>com.onarandombox.multiversecore</groupId>
             <artifactId>Multiverse-Core</artifactId>
             <version>2.2</version>
             <type>jar</type>

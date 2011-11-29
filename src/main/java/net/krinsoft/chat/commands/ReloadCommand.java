@@ -19,6 +19,8 @@ public class ReloadCommand extends ChatSuiteCommand {
         this.setArgRange(0, 0);
         this.addKey("chatsuite reload");
         this.addKey("cs reload");
+        this.addKey("c reload");
+        this.addKey("c -r");
         this.setPermission("chatsuite.reload", "Allows this user to reload ChatSuite.", PermissionDefault.OP);
     }
 

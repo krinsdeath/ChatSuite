@@ -24,6 +24,7 @@ public class AfkCommand extends ChatSuiteCommand {
         this.setArgRange(0, 1);
         this.addKey("chatsuite afk");
         this.addKey("cs afk");
+        this.addKey("c afk");
         this.addKey("csa");
         this.setPermission("chatsuite.afk", "Allows you to set your AFK status.", PermissionDefault.TRUE);
     }

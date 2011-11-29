@@ -1,10 +1,12 @@
 package net.krinsoft.chat;
 
 import java.io.File;
+import java.io.IOException;
 import net.krinsoft.chat.targets.ChatPlayer;
 import java.util.HashMap;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
 
 /**
  *
@@ -14,7 +16,7 @@ public class PlayerManager {
     private ChatCore plugin;
 
     private HashMap<String, ChatPlayer> players = new HashMap<String, ChatPlayer>();
-    private Configuration user;
+    private FileConfiguration user;
     private boolean persist = false;
 
     public PlayerManager(ChatCore plugin) {
@@ -22,8 +24,16 @@ public class PlayerManager {
         this.plugin = plugin;
         ChatPlayer.init(plugin);
         persist = this.plugin.getConfigManager().getPluginNode().getBoolean("persist_user_settings", false);
-        user = new Configuration(new File(plugin.getDataFolder(), "users.yml"));
-        user.load();
+        user = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "users.yml"));
+        user.setDefaults(YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "users.yml")));
+        user.options().copyDefaults(true);
+        if (persist) {
+            try {
+                user.save(new File(plugin.getDataFolder(), "users.yml"));
+            } catch (IOException ex) {
+                plugin.debug("Error saving users file.");
+            }
+        }
         buildPlayerList();
     }
 
@@ -98,7 +108,11 @@ public class PlayerManager {
         plugin.getChannelManager().addPlayerToChannel(player, plugin.getConfigManager().getPluginNode().getString("global_channel_name", "Global"));
         plugin.debug("Player '" + player.getName() + "' registered");
         if (persist) {
-            user.save();
+            try {
+                user.save(new File(plugin.getDataFolder(), "users.yml"));
+            } catch (IOException ex) {
+                plugin.debug("Error saving users file.");
+            }
         }
     }
 
@@ -110,7 +124,11 @@ public class PlayerManager {
         players.remove(player.getName());
         plugin.debug("Player '" + player.getName() + "' unregistered");
         if (persist) {
-            user.save();
+            try {
+                user.save(new File(plugin.getDataFolder(), "users.yml"));
+            } catch (IOException ex) {
+                plugin.debug("Error saving users file.");
+            }
         }
     }
 

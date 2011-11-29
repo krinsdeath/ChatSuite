@@ -30,11 +30,11 @@ public class WorldManager {
     }
 
     public String getAlias(String world) {
-        if (MVWorldManager != null && MVWorldManager.isMVWorld(world)) {
-            MultiverseWorld w = MVWorldManager.getMVWorld(world);
-            if (w != null) { return w.getColoredWorldString(); }
-        }
         return (aliases.containsKey(world) ? aliases.get(world) : world);
+    }
+
+    public void setAlias(String world, String alias) {
+        aliases.put(world, alias);
     }
 
     public ChatWorld getWorld(String world) {

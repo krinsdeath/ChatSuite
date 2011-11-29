@@ -9,11 +9,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.util.Set;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
 
 /**
  *
@@ -21,12 +23,21 @@ import org.bukkit.util.config.ConfigurationNode;
  */
 public final class ConfigManager {
     private ChatCore plugin;
-    private Configuration config;
+    private FileConfiguration config = null;
 
     public ConfigManager(ChatCore aThis) {
         this.plugin = aThis;
-        this.config = new Configuration(buildDefault(this.plugin.getDataFolder(), "config.yml"));
-        this.config.load();
+        // build the default configuration
+        this.config = YamlConfiguration.loadConfiguration(new File(this.plugin.getDataFolder(), "config.yml"));
+        Configuration defConf = YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/defaults/config.yml"));
+        this.config.setDefaults(defConf);
+        this.config.options().copyDefaults(true);
+        try {
+            this.config.save(new File(this.plugin.getDataFolder(), "config.yml"));
+        } catch (IOException ex) {
+            plugin.debug("Error saving default configuration");
+        }
+        
         this.plugin.debug = this.config.getBoolean("plugin.debug", false);
         this.plugin.chatLog = this.config.getBoolean("plugin.logger", false);
         this.plugin.allow_channels = this.config.getBoolean("plugin.allow_channels", true);
@@ -68,16 +79,16 @@ public final class ConfigManager {
         return file;
     }
 
-    public ConfigurationNode getPluginNode() {
-        return this.config.getNode("plugin");
+    public ConfigurationSection getPluginNode() {
+        return this.config.getConfigurationSection("plugin");
     }
 
-    public ConfigurationNode getGroupNode(String key) {
-        return this.config.getNode("groups." + key);
+    public ConfigurationSection getGroupNode(String key) {
+        return this.config.getConfigurationSection("groups." + key);
     }
 
-    public List<String> getGroups() {
-        return this.config.getKeys("groups");
+    public Set<String> getGroups() {
+        return this.config.getConfigurationSection("groups").getKeys(false);
     }
 
     private void registerGroupNodes() {

@@ -25,6 +25,7 @@ public class ChannelLeaveCommand extends ChatSuiteCommand {
         this.setArgRange(1, 1);
         this.addKey("chatsuite channel leave");
         this.addKey("cs channel leave");
+        this.addKey("c channel leave");
         this.addKey("csc leave");
         this.addKey("cscl");
         this.setPermission("chatsuite.leave", "Allows this user to leave channels", PermissionDefault.TRUE);

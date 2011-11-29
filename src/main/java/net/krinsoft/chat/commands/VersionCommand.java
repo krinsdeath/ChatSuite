@@ -19,6 +19,8 @@ public class VersionCommand extends ChatSuiteCommand {
         this.setArgRange(0, 0);
         this.addKey("chatsuite version");
         this.addKey("cs version");
+        this.addKey("c version");
+        this.addKey("c -v");
         this.addKey("csv");
         this.setPermission("chatsuite.version", "Allows the user to check ChatSuite's version", PermissionDefault.TRUE);
     }

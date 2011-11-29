@@ -21,6 +21,7 @@ public class HelpCommand extends ChatSuiteCommand {
         this.setArgRange(0, 1);
         this.addKey("chatsuite help");
         this.addKey("cs help");
+        this.addKey("c help");
         this.addKey("cshelp");
         this.addKey("csh");
         this.addKey("cs");

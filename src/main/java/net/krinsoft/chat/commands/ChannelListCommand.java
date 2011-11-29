@@ -22,6 +22,7 @@ public class ChannelListCommand extends ChatSuiteCommand {
         this.setArgRange(0, 0);
         this.addKey("chatsuite list");
         this.addKey("cs list");
+        this.addKey("c list");
         this.addKey("cslist");
         this.addKey("csl");
         this.setPermission("chatsuite.list", "Allows users to list the channels they're in.", PermissionDefault.TRUE);

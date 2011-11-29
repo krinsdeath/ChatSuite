@@ -27,7 +27,9 @@ public class LocaleCommand extends ChatSuiteCommand {
         this.setArgRange(1, 1);
         this.addKey("chatsuite locale");
         this.addKey("cs locale");
+        this.addKey("c locale");
         this.addKey("cs loc");
+        this.addKey("c loc");
         this.setPermission("chatsuite.locale", "Allows the user to set his localization settings.", PermissionDefault.TRUE);
     }
 
@@ -37,7 +39,7 @@ public class LocaleCommand extends ChatSuiteCommand {
             return;
         }
         ChatPlayer p = plugin.getPlayerManager().getPlayer((Player)sender);
-        if (plugin.getConfigManager().getPluginNode().getStringList("locales", null).contains(args.get(0).toLowerCase())) {
+        if (plugin.getConfigManager().getPluginNode().getStringList("locales").contains(args.get(0).toLowerCase())) {
             p.setLocale(args.get(0).toLowerCase());
             ColoredMessage msg = new ColoredMessage(plugin.getLocaleManager().getMessage(p.getLocale(), "locale_changed"));
             for (String line : msg.getContents()) {

@@ -19,6 +19,7 @@ public class DebugCommand extends ChatSuiteCommand {
         this.setArgRange(0, 1);
         this.addKey("chatsuite debug");
         this.addKey("cs debug");
+        this.addKey("c debug");
         this.addKey("csd");
         this.setPermission("chatsuite.debug", "Toggles debug messages on or off.", PermissionDefault.OP);
     }

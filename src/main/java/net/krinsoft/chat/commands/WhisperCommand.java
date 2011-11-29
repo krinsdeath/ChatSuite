@@ -29,6 +29,7 @@ public class WhisperCommand extends ChatSuiteCommand {
         this.setArgRange(2, 16);
         this.addKey("chatsuite whisper");
         this.addKey("cs whisper");
+        this.addKey("c whisper");
         this.addKey("csw");
         this.setPermission("chatsuite.whisper", "Whispers a message to another user", PermissionDefault.TRUE);
     }

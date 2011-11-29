@@ -20,6 +20,7 @@ import net.krinsoft.chat.commands.VersionCommand;
 import net.krinsoft.chat.commands.WhisperCommand;
 import net.krinsoft.chat.listeners.ChatListener;
 import net.krinsoft.chat.listeners.EntityListener;
+import net.krinsoft.chat.listeners.MultiverseListener;
 import net.krinsoft.chat.listeners.PlayerListener;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -29,7 +30,6 @@ import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 
 /**
  * @author krinsdeath (Jeff Wardian)
@@ -53,15 +53,13 @@ public class ChatCore extends JavaPlugin {
     private PlayerListener pListener;
     private EntityListener eListener;
     private ChatListener chatListener;
+    private MultiverseListener MVListener;
 
     // plugin info and managers
     private PluginDescriptionFile pdf;
     private PluginManager pm;
     public boolean debug = true;
     public boolean chatLog = true;
-
-    // configuration details and flags
-    private Configuration worldConfig;
 
     private ConfigManager configManager;
     private ChannelManager channelManager;
@@ -93,6 +91,7 @@ public class ChatCore extends JavaPlugin {
         pListener = null;
         eListener = null;
         chatListener = null;
+        MVListener = null;
         commandHandler = null;
         playerManager = null;
         localeManager = null;
@@ -154,12 +153,14 @@ public class ChatCore extends JavaPlugin {
         // ---
         // chat event
         pm.registerEvent(Type.CUSTOM_EVENT, chatListener, Priority.Highest, this);
+        pm.registerEvent(Type.CUSTOM_EVENT, MVListener, Priority.Monitor, this);
     }
 
     private void initListeners() {
         pListener = new PlayerListener(this);
         eListener = new EntityListener(this);
         chatListener = new ChatListener(this);
+        MVListener = new MultiverseListener(this);
         initCommandHelper();
     }
 

@@ -29,7 +29,7 @@ public class ChatListener extends CustomEventListener {
         } else if (e instanceof WhisperMessage) {
             WhisperMessage event = (WhisperMessage) e;
             onWhisperMessage(event);
-        }
+        } 
     }
 
     public void onChannelMessage(ChannelMessage event) {

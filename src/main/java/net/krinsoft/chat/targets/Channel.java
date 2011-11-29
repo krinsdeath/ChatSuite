@@ -25,6 +25,7 @@ public class Channel implements Target {
         this.type = type;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }

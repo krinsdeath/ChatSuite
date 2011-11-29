@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import net.krinsoft.chat.targets.Channel;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 /**
@@ -17,7 +18,8 @@ public class ChannelManager {
 
     public ChannelManager(ChatCore aThis) {
         plugin = aThis;
-        plugin.getConfigManager().getPluginNode().getBoolean("allow_channels", true);
+        ConfigurationSection p = plugin.getConfigManager().getPluginNode();
+        p.getBoolean("allow_channels", true);
     }
 
     public void addPlayerToChannel(Player player, String channel) {

@@ -27,6 +27,7 @@ public class ChannelCommand extends ChatSuiteCommand {
         this.setArgRange(1, 3);
         this.addKey("chatsuite channel");
         this.addKey("cs channel");
+        this.addKey("c channel");
         this.addKey("csc");
         this.setPermission("chatsuite.channel", "Allows the user to chat in channels.", PermissionDefault.TRUE);
     }

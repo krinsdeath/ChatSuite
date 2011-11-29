@@ -7,9 +7,9 @@ import java.util.regex.Pattern;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.ConfigManager;
 import net.krinsoft.chat.interfaces.Target;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.config.ConfigurationNode;
 
 /**
  *
@@ -128,6 +128,7 @@ public class ChatPlayer implements Target {
         setGroup(this.group);
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
@@ -154,7 +155,7 @@ public class ChatPlayer implements Target {
     }
 
     public final void updateFormat() {
-        ConfigurationNode node = plugin.getConfigManager().getGroupNode(this.group);
+        ConfigurationSection node = plugin.getConfigManager().getGroupNode(this.group);
         global = node.getString("format.global", "");
         format = node.getString("format.message", "");
         send = node.getString("format.whisper_send", "");
@@ -286,7 +287,7 @@ public class ChatPlayer implements Target {
     }
 
     private String parse(String format, String target, String message) {
-        ConfigurationNode node = plugin.getConfigManager().getGroupNode(this.group);
+        ConfigurationSection node = plugin.getConfigManager().getGroupNode(this.group);
         format = parsePrefix(format, node.getString("prefix"));
         format = parseGroup(format, node.getString("group"));
         format = parseSuffix(format, node.getString("suffix"));

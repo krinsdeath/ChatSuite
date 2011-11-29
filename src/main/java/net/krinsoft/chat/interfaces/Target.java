@@ -6,4 +6,6 @@ package net.krinsoft.chat.interfaces;
  */
 public interface Target {
 
+    public String getName();
+
 }
