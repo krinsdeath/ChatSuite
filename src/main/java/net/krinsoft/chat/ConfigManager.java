@@ -92,20 +92,26 @@ public final class ConfigManager {
     }
 
     private void registerGroupNodes() {
-        int priority = Integer.MAX_VALUE;
-        String def = "";
+        int defs = Integer.MAX_VALUE;
+        int ops = 0;
+        String def = "", op = "";
         for (String key : getGroups()) {
-            if (getGroupNode(key).getInt("weight", 0) < priority) {
-                priority = getGroupNode(key).getInt("weight", 0);
+            if (getGroupNode(key).getInt("weight", 0) < defs) {
+                defs = getGroupNode(key).getInt("weight", 0);
                 def = key;
             }
+            if (getGroupNode(key).getInt("weight", 0) > ops) {
+                ops = getGroupNode(key).getInt("weight", 0);
+                op = key;
+            }
             Permission perm = new Permission("chatsuite.groups." + key);
-            perm.setDefault(PermissionDefault.OP);
+            perm.setDefault(PermissionDefault.FALSE);
             if (plugin.getServer().getPluginManager().getPermission("chatsuite.groups." + key) == null) {
                 plugin.getServer().getPluginManager().addPermission(perm);
             }
         }
         plugin.getServer().getPluginManager().getPermission("chatsuite.groups." + def).setDefault(PermissionDefault.TRUE);
+        plugin.getServer().getPluginManager().getPermission("chatsuite.groups." + op).setDefault(PermissionDefault.OP);
     }
 
 }
