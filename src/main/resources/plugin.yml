@@ -1,6 +1,6 @@
 name: ChatSuite
 main: net.krinsoft.chat.ChatCore
-version: ${project.version}-${project.build.number}
+version: maven-version-number
 author: krinsdeath
 softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core, Privileges, Factions, Heroes]
 
