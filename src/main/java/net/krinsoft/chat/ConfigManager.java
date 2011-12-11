@@ -28,9 +28,14 @@ public final class ConfigManager {
     public ConfigManager(ChatCore aThis) {
         this.plugin = aThis;
         // build the default configuration
-        this.config = YamlConfiguration.loadConfiguration(new File(this.plugin.getDataFolder(), "config.yml"));
-        Configuration defConf = YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/defaults/config.yml"));
-        this.config.setDefaults(defConf);
+        File conf = new File(this.plugin.getDataFolder(), "config.yml");
+        this.config = YamlConfiguration.loadConfiguration(conf);
+        if (!conf.isFile()) {
+            Configuration defConf = YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/defaults/config.yml"));
+            this.config.setDefaults(defConf);
+        } else {
+            this.config.setDefaults(YamlConfiguration.loadConfiguration(conf));
+        }
         this.config.options().copyDefaults(true);
         try {
             this.config.save(new File(this.plugin.getDataFolder(), "config.yml"));
