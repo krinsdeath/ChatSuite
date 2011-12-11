@@ -22,6 +22,8 @@ commands:
       - csl
       - csd
       - csv
+      - csn
+      - nick
     description: The basic command for this plugin
     usage: /<command>
     

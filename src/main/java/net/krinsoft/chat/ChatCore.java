@@ -15,6 +15,7 @@ import net.krinsoft.chat.commands.ChannelSayCommand;
 import net.krinsoft.chat.commands.DebugCommand;
 import net.krinsoft.chat.commands.HelpCommand;
 import net.krinsoft.chat.commands.LocaleCommand;
+import net.krinsoft.chat.commands.NickCommand;
 import net.krinsoft.chat.commands.ReloadCommand;
 import net.krinsoft.chat.commands.VersionCommand;
 import net.krinsoft.chat.commands.WhisperCommand;
@@ -189,6 +190,7 @@ public class ChatCore extends JavaPlugin {
         commandHandler.registerCommand(new ReloadCommand(this));
         commandHandler.registerCommand(new VersionCommand(this));
         commandHandler.registerCommand(new DebugCommand(this));
+        commandHandler.registerCommand(new NickCommand(this));
     }
 
     // logging and information
