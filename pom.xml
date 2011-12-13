@@ -26,6 +26,11 @@
         <url>http://pneumaticsystem.com:25579</url>
     </ciManagement>
     <!-- End Jenkins -->
+    <scm>
+        <developerConnection>scm:git:git@github.com:krinsdeath/ChatSuite.git</developerConnection>
+        <connection>scm:git:git://github.com/krinsdeath/ChatSuite.git</connection>
+        <url>https://github.com/krinsdeath/ChatSuite</url>
+    </scm>
     <profiles>
         <profile>
             <id>jenkins</id>
@@ -40,6 +45,7 @@
         </profile>
     </profiles>
     <build>
+        <finalName>${project.name}</finalName>
         <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
