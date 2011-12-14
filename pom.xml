@@ -128,12 +128,6 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>com.massivecraft</groupId>
-            <artifactId>Factions</artifactId>
-            <version>1.6.1</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>com.herocraftonline</groupId>
             <artifactId>Heroes</artifactId>
             <version>1.2.4</version>
