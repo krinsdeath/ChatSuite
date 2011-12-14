@@ -2,7 +2,6 @@ package net.krinsoft.chat.targets;
 
 import com.herocraftonline.dev.heroes.Heroes;
 import com.herocraftonline.dev.heroes.persistence.Hero;
-import com.massivecraft.factions.Factions;
 import java.util.regex.Pattern;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.ConfigManager;
@@ -73,18 +72,12 @@ public class ChatPlayer implements Target {
     }
 
     private static ChatCore plugin; // instance of the main plugin
-    private static Factions factions; // instance of the factions plugin
-    private static Heroes heroes;
+    private static Heroes heroes; // instance of the Heroes plugin
 
     // initialize the plugin instance
     public static void init(ChatCore aThis) {
         plugin = aThis; // initialize the plugin instance
-        Plugin tmp = plugin.getServer().getPluginManager().getPlugin("Factions");
-        if (tmp != null) {
-            plugin.debug("Found Factions! Hooking...");
-            factions = (Factions) tmp;
-        }
-        tmp = plugin.getServer().getPluginManager().getPlugin("Heroes");
+        Plugin tmp = plugin.getServer().getPluginManager().getPlugin("Heroes");
         if (tmp != null) {
             plugin.debug("Found Heroes! Hooking...");
             heroes = (Heroes) tmp;
@@ -316,17 +309,6 @@ public class ChatPlayer implements Target {
 
     private String parseSuffix(String format, String suffix) {
         format = SUFFIX.matcher(format).replaceAll(suffix);
-        return format;
-    }
-
-    public String parseFaction(String format, String listener) {
-        if (factions != null) {
-            try {
-                format = FACTION.matcher(format).replaceAll(factions.getPlayerFactionTagRelation(plugin.getServer().getPlayer(name), plugin.getServer().getPlayer(listener)));
-            } catch (NullPointerException e) {
-                plugin.debug(e.getLocalizedMessage());
-            }
-        }
         return format;
     }
 

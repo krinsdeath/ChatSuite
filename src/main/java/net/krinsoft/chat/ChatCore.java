@@ -154,7 +154,9 @@ public class ChatCore extends JavaPlugin {
         // ---
         // chat event
         pm.registerEvent(Type.CUSTOM_EVENT, chatListener, Priority.Highest, this);
-        pm.registerEvent(Type.CUSTOM_EVENT, MVListener, Priority.Monitor, this);
+        if (pm.getPlugin("Multiverse-Core") != null) {
+            pm.registerEvent(Type.CUSTOM_EVENT, MVListener, Priority.Monitor, this);
+        }
     }
 
     private void initListeners() {

@@ -130,7 +130,7 @@
         <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>Factions</artifactId>
-            <version>1.4.7</version>
+            <version>1.6.1</version>
             <type>jar</type>
         </dependency>
         <dependency>

@@ -44,7 +44,7 @@ public class ChatListener extends CustomEventListener {
                     c.removePlayer(p);
                     continue;
                 }
-                String tmp = player.parseFaction(msg, p);
+                String tmp = msg;
                 plugin.getServer().getPlayer(p).sendMessage(tmp);
             }
         }
