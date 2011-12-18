@@ -1,9 +1,12 @@
 package net.krinsoft.chat.listeners;
 
+import java.util.HashSet;
+import java.util.Set;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.ChatPlayer;
 import net.krinsoft.chat.events.ChannelMessage;
 import net.krinsoft.chat.targets.Channel;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -50,9 +53,21 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         if (p == null) { return; }
         Channel c = plugin.getChannelManager().getChannel(p.getChannel());
         if (c == null) { return; }
-        ChannelMessage e = new ChannelMessage(plugin, c, event.getPlayer().getName(), msg);
-        plugin.getServer().getPluginManager().callEvent(e);
-        event.setCancelled(true);
+        Set<Player> players = new HashSet<Player>();
+        for (String occ : c.getOccupants()) {
+            if (plugin.getServer().getPlayer(occ) != null) {
+                players.add(plugin.getServer().getPlayer(occ));
+            }
+        }
+        event.getRecipients().clear();
+        event.getRecipients().addAll(players);
+        //plugin.chat(event.getPlayer().getName(), msg);
+        msg = p.message(c, msg);
+        event.setFormat(msg);
+        event.setMessage("");
+        //ChannelMessage e = new ChannelMessage(plugin, c, event.getPlayer().getName(), msg);
+        //plugin.getServer().getPluginManager().callEvent(e);
+        //event.setCancelled(true);
     }
 
     @Override
