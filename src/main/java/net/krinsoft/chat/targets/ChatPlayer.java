@@ -20,10 +20,10 @@ public class ChatPlayer implements Target {
     private final static Pattern TARGET = Pattern.compile("(%t)");
     private final static Pattern TARGET_DISPLAY = Pattern.compile("(%dt)");
     private final static Pattern PREFIX = Pattern.compile("(%p)");
+    private final static Pattern GROUP = Pattern.compile("(%g)");
     private final static Pattern SUFFIX = Pattern.compile("(%s)");
     private final static Pattern FACTION = Pattern.compile("(%f)");
     private final static Pattern HEROES = Pattern.compile("(%h)");
-    private final static Pattern GROUP = Pattern.compile("(%g)");
     private final static Pattern AFK = Pattern.compile("(%afk)");
     private final static Pattern WORLD = Pattern.compile("(%w)");
     private final static Pattern WHISPER_SEND = Pattern.compile("(%!ws|%!whisper_send)");
@@ -194,18 +194,18 @@ public class ChatPlayer implements Target {
     }
 
     public boolean setFormat(String name, String msg) {
-        if (msg != null && (msg.contains("%n") || msg.contains("%d"))) {
+        if (msg != null && (msg.contains("%n") || msg.contains("%d")) && (msg.contains("%m"))) {
             Type t = Type.getTypeByName(name);
-            return setFormat(t, name);
+            return setFormat(t, msg);
         } else {
             return false;
         }
     }
 
     public boolean setFormat(int id, String msg) {
-        if (msg != null && (msg.contains("%n") || msg.contains("%d"))) {
+        if (msg != null && (msg.contains("%n") || msg.contains("%d")) && (msg.contains("%m"))) {
             Type t = Type.getTypeById(id);
-            return setFormat(t, name);
+            return setFormat(t, msg);
         } else {
             return false;
         }

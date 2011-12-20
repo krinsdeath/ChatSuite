@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.ChatPlayer;
-import net.krinsoft.chat.events.ChannelMessage;
 import net.krinsoft.chat.targets.Channel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -47,7 +46,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         }
         String msg = event.getMessage().replaceAll("\\$", "\\\\\\$");
         if (!event.getPlayer().hasPermission("chatsuite.colorize")) {
-            msg = msg.replaceAll("(?i)&([0-F])", "");
+            msg = msg.replaceAll("&([0-9a-fA-F])", "");
         }
         ChatPlayer p = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
         if (p == null) { return; }
@@ -61,10 +60,12 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         }
         event.getRecipients().clear();
         event.getRecipients().addAll(players);
+        // logger method; no longer necessary
         //plugin.chat(event.getPlayer().getName(), msg);
         msg = p.message(c, msg);
         event.setFormat(msg);
         event.setMessage("");
+        // custom event methods; no longer necessary
         //ChannelMessage e = new ChannelMessage(plugin, c, event.getPlayer().getName(), msg);
         //plugin.getServer().getPluginManager().callEvent(e);
         //event.setCancelled(true);

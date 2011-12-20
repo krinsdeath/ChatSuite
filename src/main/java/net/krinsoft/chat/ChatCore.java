@@ -145,12 +145,13 @@ public class ChatCore extends JavaPlugin {
         // register events
         // ---
         // player events
-        pm.registerEvent(Type.PLAYER_CHAT, pListener, Priority.Highest, this);
+        pm.registerEvent(Type.PLAYER_CHAT, pListener, Priority.Lowest, this);
         pm.registerEvent(Type.PLAYER_JOIN, pListener, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_QUIT, pListener, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_KICK, pListener, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_TELEPORT, pListener, Priority.Monitor, this);
         pm.registerEvent(Type.PLAYER_PORTAL, pListener, Priority.Monitor, this);
+        pm.registerEvent(Type.PLAYER_CHANGED_WORLD, pListener, Priority.Monitor, this);
         // ---
         // chat event
         pm.registerEvent(Type.CUSTOM_EVENT, chatListener, Priority.Highest, this);

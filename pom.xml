@@ -15,8 +15,8 @@
     <repositories>
         <!-- Multiverse Repository -->
         <repository>
-            <id>pneumaticsystem</id>
-            <url>http://pneumaticsystem.com:25578/nexus/content/groups/public</url>
+            <id>OnARandomBox</id>
+            <url>http://repo.onarandombox.com/artifactory/repo</url>
         </repository>
         <!-- End Multiverse -->
     </repositories>
