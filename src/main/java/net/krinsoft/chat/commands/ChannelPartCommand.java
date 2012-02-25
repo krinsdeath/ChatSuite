@@ -12,21 +12,21 @@ import java.util.List;
  *
  * @author krinsdeath
  */
-public class ChannelJoinCommand extends ChannelCommand {
+public class ChannelPartCommand extends ChannelCommand {
 
-    public ChannelJoinCommand(ChatCore instance) {
+    public ChannelPartCommand(ChatCore instance) {
         super(instance);
         plugin = instance;
-        setName("ChatSuite: Channel Join");
-        setCommandUsage("/join [channel]");
+        setName("ChatSuite: Channel Part");
+        setCommandUsage("/part [channel]");
         setArgRange(1, 1);
-        addKey("chatsuite channel join");
-        addKey("channel join");
-        addKey("ch join");
-        addKey("join");
-        addKey("chj");
-        addKey("j");
-        setPermission("chatsuite.join", "Allows this user to join channels", PermissionDefault.TRUE);
+        addKey("chatsuite channel part");
+        addKey("channel part");
+        addKey("ch part");
+        addKey("part");
+        addKey("chp");
+        addKey("p");
+        setPermission("chatsuite.part", "Allows this user to leave channels", PermissionDefault.TRUE);
     }
 
     @Override
@@ -35,9 +35,8 @@ public class ChannelJoinCommand extends ChannelCommand {
         Player player = plugin.getServer().getPlayer(sender.getName());
         Channel channel = plugin.getChannelManager().getChannel(args.get(0));
         if (channel != null) {
-            channel.join(player);
+            channel.part(player);
         } else {
-            // channel was null, do nothing
             error(player, "That channel doesn't exist.");
         }
     }

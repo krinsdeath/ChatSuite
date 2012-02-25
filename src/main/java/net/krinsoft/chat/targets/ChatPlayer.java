@@ -2,47 +2,41 @@ package net.krinsoft.chat.targets;
 
 import com.herocraftonline.dev.heroes.Heroes;
 import com.herocraftonline.dev.heroes.persistence.Hero;
-import java.util.regex.Pattern;
-import net.krinsoft.chat.ChatCore;
-import net.krinsoft.chat.ConfigManager;
-import net.krinsoft.chat.interfaces.Target;
+import net.krinsoft.chat.PlayerManager;
+import net.krinsoft.chat.api.Target;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author krinsdeath
  */
 public class ChatPlayer implements Target {
-    private final static Pattern SELF = Pattern.compile("(%n)");
-    private final static Pattern SELF_DISPLAY = Pattern.compile("(%dn)");
-    private final static Pattern TARGET = Pattern.compile("(%t)");
-    private final static Pattern TARGET_DISPLAY = Pattern.compile("(%dt)");
-    private final static Pattern PREFIX = Pattern.compile("(%p)");
-    private final static Pattern GROUP = Pattern.compile("(%g)");
-    private final static Pattern SUFFIX = Pattern.compile("(%s)");
-    private final static Pattern FACTION = Pattern.compile("(%f)");
-    private final static Pattern HEROES = Pattern.compile("(%h)");
+    private final static Pattern SELF = Pattern.compile("(%name|%n)");
+    private final static Pattern SELF_DISPLAY = Pattern.compile("(%display|%dn)");
+    private final static Pattern TARGET = Pattern.compile("(%target|%t|%channel|%c)");
+    private final static Pattern TARGET_DISPLAY = Pattern.compile("(%disp_target|%dt)");
+    private final static Pattern PREFIX = Pattern.compile("(%prefix|%p)");
+    private final static Pattern GROUP = Pattern.compile("(%group|%g)");
+    private final static Pattern SUFFIX = Pattern.compile("(%suffix|%s)");
+    private final static Pattern HEROES = Pattern.compile("(%hero|%h)");
     private final static Pattern AFK = Pattern.compile("(%afk)");
-    private final static Pattern WORLD = Pattern.compile("(%w)");
-    private final static Pattern WHISPER_SEND = Pattern.compile("(%!ws|%!whisper_send)");
-    private final static Pattern WHISPER_RECEIVE = Pattern.compile("(%!wr|%!whisper_receive)");
-    private final static Pattern MESSAGE = Pattern.compile("(%m)");
-    private final static Pattern CHANNEL = Pattern.compile("(%c)");
+    private final static Pattern WORLD = Pattern.compile("(%world|%w)");
     private final static Pattern COLOR = Pattern.compile("(?i)&([0-F])");
 
-    protected enum Type {
-        NORMAL(0, "normal"),
-        WHISPER_SEND(1, "whisper_send"),
-        WHISPER_RECEIVE(2, "whisper_receive"),
-        GLOBAL(3, "global");
+    public enum Type {
+        NORMAL("normal"),
+        WHISPER_SEND("whisper_send"),
+        WHISPER_RECEIVE("whisper_receive"),
+        GLOBAL("global");
 
-        private int id;
         private String type;
 
-        private Type(int id, String type) {
-            this.id = id;
+        private Type(String type) {
             this.type = type;
         }
 
@@ -50,246 +44,95 @@ public class ChatPlayer implements Target {
             return this.type;
         }
 
-        public static Type getTypeById(int id) {
-            switch (id) {
-                case 0: return NORMAL;
-                case 1: return WHISPER_SEND;
-                case 2: return WHISPER_RECEIVE;
-                case 3: return GLOBAL;
-                default: return NORMAL;
-            }
-        }
-
-        public static Type getTypeByName(String name) {
-            name = name.replaceAll("[\\s]", "_");
-            for (Type type : Type.values()) {
-                if (type.getName().equalsIgnoreCase(name)) {
-                    return type;
-                }
-            }
-            return null;
-        }
-    }
-
-    private static ChatCore plugin; // instance of the main plugin
-    private static Heroes heroes; // instance of the Heroes plugin
-
-    // initialize the plugin instance
-    public static void init(ChatCore aThis) {
-        plugin = aThis; // initialize the plugin instance
-        Plugin tmp = plugin.getServer().getPluginManager().getPlugin("Heroes");
-        if (tmp != null) {
-            plugin.debug("Found Heroes! Hooking...");
-            heroes = (Heroes) tmp;
-        }
     }
 
     // general stuff
-    private String name; // name of the player
+    private PlayerManager manager;
+    private Player player;
+    private String name;
     private String world; // the player's current world
     private String group; // the player's group
-    private String channel;
-    private String global; // the player's raw global string
-    private String format; // the player's raw format string
-    private String send; // the player's raw whisper send string
-    private String receive; // the player's raw whisper receive string
-
+    private Target target;
+    private Target reply;
     private boolean afk; // whether the player is afk or not
-    private String afkMessage; // the message the player set when they went afk
+    private String afk_message;
 
-    private String locale;
+    private List<String> auto_join;
 
-    public ChatPlayer(Player p, String loc) {
-        ConfigManager config = plugin.getConfigManager();
-        this.name = p.getName();
-        this.world = p.getWorld().getName();
-        this.locale = loc;
-        if (config.getPluginNode().getString("default_channel", "world").equalsIgnoreCase("world")) {
-            this.channel = this.world;
-        } else {
-            this.channel = config.getPluginNode().getString("global_channel_name", "Global");
-        }
-        int weight = 0;
-        for (String key : config.getGroups()) {
-            int i = config.getGroupNode(key).getInt("weight", 1);
-            if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
-                weight = i;
-                this.group = key;
+    public ChatPlayer(PlayerManager man, Player p) {
+        manager = man;
+        player = p;
+        name = player.getName();
+        world = player.getWorld().getName();
+        auto_join = manager.getConfig().getStringList(name + ".auto_join");
+        if (manager.getConfig().get(name) != null) {
+            String t = manager.getConfig().getString(getName() + ".target");
+            if (t != null) {
+                if (t.startsWith("player:")) {
+                    target = manager.getPlayer(manager.getPlugin().getServer().getPlayer(t.split(":")[1]));
+                } else if (t.startsWith("channel:")) {
+                    target = manager.getPlugin().getChannelManager().getChannel(t.split(":")[1]);
+                }
             }
         }
-        plugin.debug("Player " + this.name + " set to group '" + this.group + "' (Weight: " + weight + ")");
-        setGroup(this.group);
+        if (target == null) {
+            target = manager.getPlugin().getChannelManager().getGlobalChannel();
+        }
+        int weight = 0;
+        for (String key : manager.getPlugin().getGroups()) {
+            int i = manager.getPlugin().getGroupNode(key).getInt("weight");
+            manager.getPlugin().debug(name + ": Checking " + key + "... (" + i + ")");
+            if ((player.hasPermission("chatsuite.groups." + key) || player.hasPermission("group." + key)) && i > weight) {
+                weight = i;
+                group = key;
+            }
+        }
+        if (group == null) {
+            group = player.isOp() ? manager.getPlugin().getOpGroup() : manager.getPlugin().getDefaultGroup();
+        }
+        manager.getPlugin().debug("Player " + name + " set to group '" + group + "' (Weight: " + weight + ")");
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return name;
     }
 
-    public void setChannel(String channel) {
-        this.channel = channel;
+    @Override
+    public void persist() {
+        String t = (target instanceof Channel ? "c:" + target.getName() : "p:" + target.getName());
+        manager.getConfig().set(getName() + ".target", t);
+        manager.getConfig().set(getName() + ".auto_join", auto_join);
     }
 
-    public String getChannel() {
-        return this.channel;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setWorld(String world) {
-        this.world = world;
+    public Target getTarget() {
+        return target;
     }
 
-    public String getWorld() {
-        return this.world;
+    public void setTarget(Target t) {
+        target = t;
+        player.sendMessage("[ChatSuite] Your target is now: " + target.getName());
     }
 
-    public final void setGroup(String group) {
-        this.group = group;
-        updateFormat();
+    public void setWorld(String w) {
+        world = w;
     }
 
-    public final void updateFormat() {
-        ConfigurationSection node = plugin.getConfigManager().getGroupNode(this.group);
-        global = node.getString("format.global", "");
-        format = node.getString("format.message", "");
-        send = node.getString("format.whisper_send", "");
-        receive = node.getString("format.whisper_receive", "");
-    }
-
-    public String getField(String field) {
-        return plugin.getConfigManager().getGroupNode(this.group).getString(field);
-    }
-
-    protected String getFormat(Type t) {
-        switch (t) {
-            case NORMAL: return this.format;
-            case WHISPER_SEND: return this.send;
-            case WHISPER_RECEIVE: return this.receive;
-            case GLOBAL: return this.global;
-            default: return null;
-        }
-    }
-    
-    public String getFormat(String t) {
-        Type type = Type.getTypeByName(t);
-        return getFormat(type);
-    }
-
-    public String getFormat(int id) {
-        Type type = Type.getTypeById(id);
-        return getFormat(type);
-    }
-
-    protected boolean setFormat(Type t, String msg) {
-        if (msg != null && (msg.contains("%n") || msg.contains("%d"))) {
-            switch (t) {
-                case NORMAL: return setRawMessageFormat(msg);
-                case WHISPER_SEND: return setRawWhisperSend(msg);
-                case WHISPER_RECEIVE: return setRawWhisperReceive(msg);
-                case GLOBAL: return setRawGlobal(msg);
-                default: return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public boolean setFormat(String name, String msg) {
-        if (msg != null && (msg.contains("%n") || msg.contains("%d")) && (msg.contains("%m"))) {
-            Type t = Type.getTypeByName(name);
-            return setFormat(t, msg);
-        } else {
-            return false;
-        }
-    }
-
-    public boolean setFormat(int id, String msg) {
-        if (msg != null && (msg.contains("%n") || msg.contains("%d")) && (msg.contains("%m"))) {
-            Type t = Type.getTypeById(id);
-            return setFormat(t, msg);
-        } else {
-            return false;
-        }
-    }
-
-    private boolean setRawMessageFormat(String msg) {
-        this.format = msg;
-        return true;
-    }
-
-    private boolean setRawWhisperSend(String msg) {
-        this.send = msg;
-        return true;
-    }
-
-    private boolean setRawWhisperReceive(String msg) {
-        this.receive = msg;
-        return true;
-    }
-
-    private boolean setRawGlobal(String msg) {
-        this.global = msg;
-        return true;
-    }
-
-    public String message(Target target, String message) {
-        if (target instanceof Channel) {
-            Channel channel = (Channel) target;
-            if (channel.contains(this.name)) {
-                plugin.debug("Channel: " + channel.getName());
-                if (channel.getName().equals(plugin.getChannelManager().getGlobalChannel().getName())) {
-                    return COLOR.matcher(channelMessage(Type.GLOBAL, channel, message)).replaceAll("\u00A7$1");
-                } else {
-                    return COLOR.matcher(channelMessage(Type.NORMAL, channel, message)).replaceAll("\u00A7$1");
-                }
-            } else {
-                plugin.debug(this.name + " tried to chat on a channel they're not in!");
-            }
-        } else if (target instanceof ChatPlayer) {
-            whisper(Type.WHISPER_SEND, ((ChatPlayer)target).getName(), message);
-        }
-        return null;
-    }
-
-    private String channelMessage(Type t, Channel chan, String message) {
-        message = parse(getFormat(t), null, message);
-        message = message.replaceAll("%c", plugin.getConfigManager().getGroupNode(this.group).getString("channel"));
-        String rep = "";
-        if (plugin.getWorldManager().getWorld(chan.getName()) != null) {
-            rep = plugin.getWorldManager().getAlias(chan.getName());
-        } else {
-            rep = chan.getName();
-        }
-        message = message.replaceAll("%c", rep);
-        return message;
-    }
-
-    protected void whisper(Type type, String target, String message) {
-        String format = getFormat(type);
-        String formatted = COLOR.matcher(parse(format, target, message)).replaceAll("\u00A7$1");
-        plugin.getServer().getPlayer(this.name).sendMessage(formatted);
-    }
-
-    public void whisper(String type, String target, String message) {
-        Type t = Type.getTypeByName(type);
-        whisper(t, target, message);
-    }
-
-    public void whisper(int type, String target, String message) {
-        Type t = Type.getTypeById(type);
-        whisper(t, target, message);
-    }
-
-    private String parse(String format, String target, String message) {
-        ConfigurationSection node = plugin.getConfigManager().getGroupNode(this.group);
+    public String parse(String format) {
+        ConfigurationSection node = manager.getPlugin().getGroupNode(group);
         format = parsePrefix(format, node.getString("prefix"));
         format = parseGroup(format, node.getString("group"));
         format = parseSuffix(format, node.getString("suffix"));
         format = parseHero(format);
-        format = parseWorld(format, plugin.getWorldManager().getAlias(this.world));
-        format = parseTarget(format, target);
+        format = parseWorld(format, manager.getPlugin().getWorldManager().getAlias(world));
+        format = parseTarget(format);
         format = parseSelf(format);
         format = parseAfk(format, node.getString("afk"));
-        format = parseMessage(format, message);
+        format = parseColors(format);
         return format;
     }
 
@@ -313,14 +156,16 @@ public class ChatPlayer implements Target {
     }
 
     private String parseHero(String format) {
-        if (heroes != null) {
+        Plugin tmp = manager.getPlugin().getServer().getPluginManager().getPlugin("Heroes");
+        if (tmp != null) {
             try {
-                Player p = plugin.getServer().getPlayer(name);
-                Hero hero = heroes.getHeroManager().getHero(p);
-                String hn = hero.getHeroClass().getName();
-                format = HEROES.matcher(format).replaceAll(hn);
-            } catch (NullPointerException e) {
-                plugin.debug(e.getLocalizedMessage());
+                Heroes heroes = (Heroes) tmp;
+                Player player = manager.getPlugin().getServer().getPlayer(getName());
+                Hero hero = heroes.getHeroManager().getHero(player);
+                String hero_name = hero.getHeroClass().getName();
+                format = HEROES.matcher(format).replaceAll(hero_name);
+            } catch (Exception e) {
+                manager.getPlugin().warn("An error occurred while parsing a Hero class: " + e.getLocalizedMessage());
             }
         }
         return format;
@@ -337,15 +182,19 @@ public class ChatPlayer implements Target {
     }
 
     private String parseSelf(String format) {
-        format = SELF.matcher(format).replaceAll(this.name);
-        format = SELF_DISPLAY.matcher(format).replaceAll(plugin.getServer().getPlayer(this.name).getDisplayName());
+        format = SELF.matcher(format).replaceAll(getName());
+        format = SELF_DISPLAY.matcher(format).replaceAll(manager.getPlugin().getServer().getPlayer(getName()).getDisplayName());
         return format;
     }
 
-    private String parseTarget(String format, String target) {
+    private String parseTarget(String format) {
         if (target != null) {
-            format = TARGET.matcher(format).replaceAll(target);
-            Player p = plugin.getServer().getPlayer(target);
+            if (target instanceof Channel) {
+                format = TARGET.matcher(format).replaceAll(((Channel)target).getColoredName());
+            } else {
+                format = TARGET.matcher(format).replaceAll(target.getName());
+            }
+            Player p = manager.getPlugin().getServer().getPlayer(target.getName());
             if (p != null) {
                 format = TARGET_DISPLAY.matcher(format).replaceAll(p.getDisplayName());
             }
@@ -353,29 +202,82 @@ public class ChatPlayer implements Target {
         return format;
     }
 
-    private String parseMessage(String format, String message) {
-        format = MESSAGE.matcher(format).replaceAll(message);
-        return format;
+    private String parseColors(String format) {
+        return COLOR.matcher(format).replaceAll("\u00A7$1");
     }
 
-    public boolean isAfk() {
-        return this.afk;
-    }
-
-    public void toggleAfk(String msg) {
-        this.afkMessage = msg;
+    public void toggleAfk(String message) {
+        this.afk_message = message;
         this.afk = !this.afk;
     }
 
-    public String getAwayMessage() {
-        return this.afkMessage;
+    ///////////////////////
+    // MESSAGING METHODS //
+    ///////////////////////
+
+    public void sendMessage(String message) {
+        player.sendMessage(message);
     }
 
-    public String getLocale() {
-        return this.locale;
+    public void whisperTo(Target to, String message) {
+        reply = to;
+        String format = getFormattedWhisperTo();
+        format = format.replaceAll("(%message|%m)", message);
+        player.sendMessage(format);
+        if (to instanceof ChatPlayer && ((ChatPlayer)to).afk) {
+            player.sendMessage(to.getName() + " is afk: " + ((ChatPlayer)to).afk_message);
+        }
     }
 
-    public void setLocale(String loc) {
-        this.locale = loc;
+    public void whisperFrom(Target from, String message) {
+        reply = from;
+        String format = getFormattedWhisperFrom();
+        format = format.replaceAll("(%message|%m)", message);
+        player.sendMessage(format);
+    }
+
+    public String getFormattedWhisperTo() {
+        String format = manager.getPlugin().getConfig().getString("groups." + group + ".format.to");
+        if (format == null) {
+            format = manager.getPlugin().getConfig().getString("format.to");
+            if (format == null) {
+                format = "&7[To] %t>>&F: %m";
+            }
+        }
+        format = whisperParse(format);
+        format = parse(format);
+        return format;
+    }
+
+    public String getFormattedWhisperFrom() {
+        String format = manager.getPlugin().getConfig().getString("groups." + group + ".format.from");
+        if (format == null) {
+            format = manager.getPlugin().getConfig().getString("format.from");
+            if (format == null) {
+                format = "&7[From] %t>>&F: %m";
+            }
+        }
+        format = whisperParse(format);
+        format = parse(format);
+        return format;
+    }
+
+    protected String whisperParse(String format) {
+        format = TARGET.matcher(format).replaceAll(reply.getName());
+        format = TARGET_DISPLAY.matcher(format).replaceAll(reply.getName());
+        return format;
+    }
+
+    public String getFormattedMessage() {
+        String format = manager.getPlugin().getConfig().getString("groups." + group + ".format.message");
+        if (format == null) {
+            format = manager.getPlugin().getConfig().getString("format.message");
+            if (format == null) {
+                format = "[%t] %p %n&F: %m";
+            }
+        }
+        format = parse(format);
+        format = format.replaceAll("(%message|%m)", "%2\\$s");
+        return format;
     }
 }

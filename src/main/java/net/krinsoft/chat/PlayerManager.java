@@ -1,44 +1,70 @@
 package net.krinsoft.chat;
 
-import java.io.File;
-import java.io.IOException;
+import net.krinsoft.chat.api.Manager;
 import net.krinsoft.chat.targets.ChatPlayer;
-import java.util.HashMap;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.util.HashMap;
 
 /**
  *
  * @author krinsdeath
  */
-public class PlayerManager {
+public class PlayerManager implements Manager {
     private ChatCore plugin;
 
     private HashMap<String, ChatPlayer> players = new HashMap<String, ChatPlayer>();
-    private FileConfiguration user;
+    private FileConfiguration configuration;
+    private File config;
     private boolean persist = false;
 
-    public PlayerManager(ChatCore plugin) {
-        clear();
-        this.plugin = plugin;
-        ChatPlayer.init(plugin);
-        persist = this.plugin.getConfigManager().getPluginNode().getBoolean("persist_user_settings", false);
-        user = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "users.yml"));
-        user.setDefaults(YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "users.yml")));
-        user.options().copyDefaults(true);
-        if (persist) {
-            try {
-                user.save(new File(plugin.getDataFolder(), "users.yml"));
-            } catch (IOException ex) {
-                plugin.debug("Error saving users file.");
-            }
+    public PlayerManager(ChatCore instance) {
+        clean();
+        plugin = instance;
+        persist = plugin.getConfig().getBoolean("plugin.persist_user_settings");
+        config = new File(plugin.getDataFolder(), "players.yml");
+        if (!config.exists()) {
+            getConfig().setDefaults(YamlConfiguration.loadConfiguration(plugin.getClass().getResourceAsStream("/defaults/players.yml")));
+            getConfig().options().copyDefaults(true);
+            saveConfig();
         }
+        saveConfig();
         buildPlayerList();
     }
 
-    private void clear() {
+    public void clean() {
+        saveConfig();
         players.clear();
+    }
+
+    @Override
+    public FileConfiguration getConfig() {
+        if (configuration == null) {
+            configuration = YamlConfiguration.loadConfiguration(config);
+            configuration.setDefaults(YamlConfiguration.loadConfiguration(config));
+        }
+        return configuration;
+    }
+
+    @Override
+    public void saveConfig() {
+        if (!persist) { return; }
+        try {
+            for (ChatPlayer p : players.values()) {
+                p.persist();
+            }
+            getConfig().save(config);
+        } catch (Exception e) {
+            plugin.warn("An error occurred while saving 'players.yml'");
+        }
+    }
+
+    @Override
+    public ChatCore getPlugin() {
+        return plugin;
     }
 
     private void buildPlayerList() {
@@ -58,41 +84,7 @@ public class PlayerManager {
         if (players.get(p.getName()) == null) {
             registerPlayer(p);
         }
-        groupUpdate(p);
         return players.get(p.getName());
-    }
-
-    /**
-     * Update the player's group.
-     * @param p The player to update.
-     */
-    public void groupUpdate(Player p) {
-        ConfigManager config = plugin.getConfigManager();
-        String group = null;
-        int weight = 0;
-        for (String key : config.getGroups()) {
-            int i = config.getGroupNode(key).getInt("weight", 0);
-            if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
-                weight = i;
-                group = key;
-            }
-        }
-        players.get(p.getName()).setGroup((group == null ? "default" : group));
-    }
-
-    /**
-     * Gets the ChatPlayer instance for the player specified
-     * @param p
-     * the player to fetch
-     * @return
-     * the player's ChatPlayer instance, or null
-     */
-    public ChatPlayer getPlayer(String p) {
-        if (players.get(p) == null) {
-            registerPlayer(plugin.getServer().getPlayer(p));
-        }
-        groupUpdate(plugin.getServer().getPlayer(p));
-        return players.get(p);
     }
 
     public boolean isPlayerRegistered(Player p) {
@@ -103,17 +95,10 @@ public class PlayerManager {
         if (players.containsKey(player.getName())) {
             return;
         }
-        players.put(player.getName(), new ChatPlayer(player, getLocale(player.getName())));
-        plugin.getChannelManager().addPlayerToChannel(player, player.getWorld().getName());
-        plugin.getChannelManager().addPlayerToChannel(player, plugin.getConfigManager().getPluginNode().getString("global_channel_name", "Global"));
+        players.put(player.getName(), new ChatPlayer(this, player));
+        plugin.getChannelManager().createChannel(player, player.getWorld().getName());
+        plugin.getChannelManager().getGlobalChannel().join(player);
         plugin.debug("Player '" + player.getName() + "' registered");
-        if (persist) {
-            try {
-                user.save(new File(plugin.getDataFolder(), "users.yml"));
-            } catch (IOException ex) {
-                plugin.debug("Error saving users file.");
-            }
-        }
     }
 
     public void unregisterPlayer(Player player) {
@@ -123,17 +108,6 @@ public class PlayerManager {
         plugin.getChannelManager().removePlayerFromAllChannels(player);
         players.remove(player.getName());
         plugin.debug("Player '" + player.getName() + "' unregistered");
-        if (persist) {
-            try {
-                user.save(new File(plugin.getDataFolder(), "users.yml"));
-            } catch (IOException ex) {
-                plugin.debug("Error saving users file.");
-            }
-        }
-    }
-
-    public String getLocale(String player) {
-        return user.getString(player + ".locale", plugin.getLocaleManager().getLocaleKey());
     }
 
 }

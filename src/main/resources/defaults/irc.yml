@@ -1,0 +1,15 @@
+server: irc.esper.net
+port: 6667
+nickname: ChatSuite
+realname: ChatSuite
+ident: ChatSuite
+channel: '#chatsuite'
+
+messages:
+  startup: 'ChatSuite IRC Bot Initialized.'
+  irc:
+    join: '[nick] is now on IRC.'
+    quit: '[nick] has quit IRC.'
+  mc:
+    join: '[nick] has logged in to Minecraft.'
+    quit: '[nick] has logged out of Minecraft.'

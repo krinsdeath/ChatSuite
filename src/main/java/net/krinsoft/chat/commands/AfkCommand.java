@@ -1,14 +1,12 @@
 package net.krinsoft.chat.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.ChatPlayer;
-import net.krinsoft.chat.util.ColoredMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -16,51 +14,30 @@ import org.bukkit.permissions.PermissionDefault;
  */
 public class AfkCommand extends ChatSuiteCommand {
 
-    public AfkCommand(ChatCore plugin) {
-        super(plugin);
-        this.plugin = (ChatCore) plugin;
-        this.setName("chatsuite afk");
-        this.setCommandUsage("/cs afk \"[message]\"");
-        this.setArgRange(0, 1);
-        this.addKey("chatsuite afk");
-        this.addKey("cs afk");
-        this.addKey("c afk");
-        this.addKey("csa");
-        this.setPermission("chatsuite.afk", "Allows you to set your AFK status.", PermissionDefault.TRUE);
+    public AfkCommand(ChatCore instance) {
+        super(instance);
+        plugin = instance;
+        setName("ChatSuite: AFK");
+        setCommandUsage("/afk [message]");
+        setArgRange(0, 16);
+        addKey("chatsuite afk");
+        addKey("afk");
+        setPermission("chatsuite.afk", "Allows you to set your AFK status.", PermissionDefault.TRUE);
     }
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        if (!(sender instanceof Player)) { return; }
-        ChatPlayer p = plugin.getPlayerManager().getPlayer((Player) sender);
-        if (p == null) { return; }
+        if (!validateSender(sender)) { return; }
+        ChatPlayer player = plugin.getPlayerManager().getPlayer((Player) sender);
+        if (player == null) { return; }
         if (args.isEmpty()) {
-            p.toggleAfk(plugin.getLocaleManager().getAfk(p.getLocale(), "generic").toString());
+            player.toggleAfk("I'm away.");
         } else {
-            p.toggleAfk(args.get(0));
-        }
-        if (p.isAfk()) {
-            ColoredMessage message = buildMessage(plugin.getLocaleManager().getAfk(p.getLocale(), "away"));
-            for (String line : message.getContents()) {
-                line = line.replaceAll("%msg", p.getAwayMessage());
-                sender.sendMessage(line);
+            StringBuilder message = new StringBuilder();
+            for (String arg : args) {
+                message.append(arg).append(" ");
             }
-        } else {
-            ColoredMessage message = buildMessage(plugin.getLocaleManager().getAfk(p.getLocale(), "back"));
-            for (String line : message.getContents()) {
-                line = line.replaceAll("%msg", p.getAwayMessage());
-                sender.sendMessage(line);
-            }
-        }
-    }
-
-    protected ColoredMessage buildMessage(Object obj) {
-        if (obj instanceof List) {
-            return new ColoredMessage((List<String>) obj);
-        } else if (obj instanceof String) {
-            return new ColoredMessage(Arrays.asList(obj.toString()));
-        } else {
-            return new ColoredMessage(new ArrayList<String>());
+            player.toggleAfk(message.toString().trim());
         }
     }
 

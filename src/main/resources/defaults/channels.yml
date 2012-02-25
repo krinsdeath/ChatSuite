@@ -1,0 +1,10 @@
+default: global
+
+channels:
+  global:
+    private: false
+    irc: true
+    owner: ''
+    admins: []
+    members: []
+    banned: []

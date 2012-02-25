@@ -15,17 +15,13 @@ public class NickCommand extends ChatSuiteCommand {
 
     public NickCommand(ChatCore plugin) {
         super(plugin);
-        this.setName("Nick Command");
-        this.setCommandUsage("cs nick [player] [newnick]");
-        this.addCommandExample("cs nick Player Player2 -- Makes 'Player' display as 'Player2'");
-        this.addCommandExample("cs nick Player2 -- Sets your own display name to 'Player2'");
-        this.setArgRange(0, 2);
-        this.addKey("chatsuite nick");
-        this.addKey("cs nick");
-        this.addKey("c nick");
-        this.addKey("csn");
-        this.addKey("nick");
-        this.setPermission("chatsuite.nick", "Allows this user to change their display name.", PermissionDefault.OP);
+        setName("ChatSuite: Nick");
+        setCommandUsage("nick [player] [newnick]");
+        setArgRange(0, 2);
+        addKey("chatsuite nickname");
+        addKey("nickname");
+        addKey("nick");
+        setPermission("chatsuite.nick", "Allows this user to change their display name.", PermissionDefault.OP);
     }
 
     @Override

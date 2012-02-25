@@ -1,78 +1,109 @@
 package net.krinsoft.chat.listeners;
 
+import net.krinsoft.chat.ChatCore;
+import net.krinsoft.chat.api.Target;
+import net.krinsoft.chat.events.MinecraftJoinEvent;
+import net.krinsoft.chat.events.MinecraftQuitEvent;
+import net.krinsoft.chat.targets.Channel;
+import net.krinsoft.chat.targets.ChatPlayer;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.*;
+
 import java.util.HashSet;
 import java.util.Set;
-import net.krinsoft.chat.ChatCore;
-import net.krinsoft.chat.targets.ChatPlayer;
-import net.krinsoft.chat.targets.Channel;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
  * @author krinsdeath
  */
-public class PlayerListener extends org.bukkit.event.player.PlayerListener {
+@SuppressWarnings("unused")
+public class PlayerListener implements Listener {
     private ChatCore plugin;
 
-    public PlayerListener(ChatCore aThis) {
-        plugin = aThis;
+    public PlayerListener(ChatCore instance) {
+        plugin = instance;
     }
 
-    @Override
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    void playerJoin(PlayerJoinEvent event) {
         plugin.getPlayerManager().registerPlayer(event.getPlayer());
+        if (plugin.getIRCBot() != null) {
+            MinecraftJoinEvent evt = new MinecraftJoinEvent(event.getPlayer().getName());
+            plugin.getServer().getPluginManager().callEvent(evt);
+        }
     }
 
-    @Override
-    public void onPlayerKick(PlayerKickEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    void playerKick(PlayerKickEvent event) {
         if (event.isCancelled()) { return; }
         plugin.getPlayerManager().unregisterPlayer(event.getPlayer());
+        if (plugin.getIRCBot() != null) {
+            MinecraftQuitEvent evt = new MinecraftQuitEvent(event.getPlayer().getName());
+            plugin.getServer().getPluginManager().callEvent(evt);
+        }
     }
 
-    @Override
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    void playerQuit(PlayerQuitEvent event) {
         plugin.getPlayerManager().unregisterPlayer(event.getPlayer());
+        if (plugin.getIRCBot() != null) {
+            MinecraftQuitEvent evt = new MinecraftQuitEvent(event.getPlayer().getName());
+            plugin.getServer().getPluginManager().callEvent(evt);
+        }
     }
 
-    @Override
-    public void onPlayerChat(PlayerChatEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    void playerChatLowest(PlayerChatEvent event) {
         if (event.isCancelled()) {
             return;
         }
-        String msg = event.getMessage().replaceAll("\\$", "\\\\\\$");
-        if (!event.getPlayer().hasPermission("chatsuite.colorize")) {
-            msg = msg.replaceAll("&([0-9a-fA-F])", "");
+        if (event.getPlayer().hasPermission("chatsuite.colorize")) {
+            event.setMessage(event.getMessage().replaceAll("&([0-9a-fA-F])", "\u00A7$1"));
         }
-        ChatPlayer p = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
-        if (p == null) { return; }
-        Channel c = plugin.getChannelManager().getChannel(p.getChannel());
-        if (c == null) { return; }
+        ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer());
+        if (player == null) { return; } // player object was null
+        Target target = player.getTarget();
+        if (target == null) { return; } // target object was null
+        String format = player.getFormattedMessage();
+        format = format.replaceAll("%([a-zA-Z])", "[$1]");
+        plugin.debug("Player: " + player.getName() + " / Target: " + target.getName());
         Set<Player> players = new HashSet<Player>();
-        for (String occ : c.getOccupants()) {
-            if (plugin.getServer().getPlayer(occ) != null) {
-                players.add(plugin.getServer().getPlayer(occ));
+        if (target instanceof Channel) {
+            for (Player occ : ((Channel)target).getOccupants()) {
+                if (occ != null) {
+                    players.add(occ);
+                }
             }
+        } else {
+            player.whisperTo(target, event.getMessage());
+            ((ChatPlayer)target).whisperFrom(player, event.getMessage());
+            event.setCancelled(true);
+            return;
         }
         event.getRecipients().clear();
         event.getRecipients().addAll(players);
-        // logger method; no longer necessary
-        //plugin.chat(event.getPlayer().getName(), msg);
-        msg = p.message(c, msg);
-        event.setFormat(msg);
-        event.setMessage("");
-        // custom event methods; no longer necessary
-        //ChannelMessage e = new ChannelMessage(plugin, c, event.getPlayer().getName(), msg);
-        //plugin.getServer().getPluginManager().callEvent(e);
-        //event.setCancelled(true);
+        event.setFormat(format);
+        event.setMessage(event.getMessage());
     }
 
-    @Override
-    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    void playerChatMonitor(PlayerChatEvent event) {
+        if (event.isCancelled()) { return; }
+        String message = event.getFormat();
+        message = message.replaceAll("%2\\$s", event.getMessage());
+        message = ChatColor.stripColor(message);
+        ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer());
+        if (player.getTarget() instanceof Channel) {
+            ((Channel)player.getTarget()).sendToIRC(message);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    void playerChangedWorld(PlayerChangedWorldEvent event) {
         if (!plugin.getPlayerManager().isPlayerRegistered(event.getPlayer())) {
             return;
         }

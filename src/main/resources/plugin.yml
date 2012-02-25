@@ -3,15 +3,12 @@ main: net.krinsoft.chat.ChatCore
 version: maven-version-number
 author: krinsdeath
 softdepend: [PermissionsBukkit, bPermissions, Multiverse-Core, Privileges, Factions, Heroes]
+website: http://dev.bukkit.org/server-mods/chatsuite/
 
 commands:
   chatsuite:
     aliases:
-      - c
-      - cs
       - csh
-      - csa
-      - csafk
       - csw
       - csc
       - cscj
@@ -23,7 +20,80 @@ commands:
       - csd
       - csv
       - csn
-      - nick
-    description: The basic command for this plugin
-    usage: /<command>
-    
+    description: ChatSuite's base (and fallback) command.
+    usage: |
+      /<command> channel ...
+      /<command> group ...
+      /<command> user ...
+  channel:
+    aliases: [ch]
+    description: ChatSuite's root channel command, for basic and advanced channel administration.
+    usage: |
+      /<command> ?                          - Show this message.
+      /<command> msg [channel] [message]    - Send a message to the specified channel.
+      /<command> join [channel]             - Join the specified channel.
+      /<command> part [channel]             - Leave the specified channel.
+      /<command> invite [channel] [player]  - Invite the specified user to the channel.
+      /<command> create [channel]           - Create the specified channel.
+      /<command> set [channel] [option] ... - Sets the specified option for the given channel.
+  message:
+    aliases: [chm, msg]
+    description: Sends a message to the specified channel.
+    usage: /<command> [channel] [message]
+  join:
+    aliases: [chj, j]
+    description: Joins the specified channel.
+    usage: /<command> [channel]
+  part:
+    aliases: [chp, p]
+    description: Leaves the specified channel.
+    usage: /<command> [channel]
+  boot:
+    aliases: [chb, b]
+    description: Kicks the specified player from the given channel.
+    usage: /<command> [channel] [player]
+  create:
+    aliases: [chc, c]
+    description: Creates the specified channel, as long as it doesn't already exist.
+    usage: /<command> [channel]
+  invite:
+    aliases: [chi, inv]
+    description: Invites a player to the channel.
+    usage: /<command> [channel] [player]
+  whisper:
+    aliases: [w]
+    description: Sends a message to the specified player.
+    usage: |
+      /<command> [player] [message]         - Send a message to the specified player.
+  reply:
+    aliases: [r]
+    description: Replies to the last person to send you a message.
+    usage: |
+      /<command> [message]                  - Reply to the last person who /whisper'd you.
+  target:
+    aliases: [t]
+    description: Sets your current chat target.
+    usage: |
+      /<command> c:[channel]                - Allows you to chat directly to a channel.
+      /<command> p:[player]                 - Allows you to chat directly to a player.
+  nickname:
+    aliases: [nick]
+    description: Changes your display name.
+    usage: |
+      /<command> [nickname]                 - Change your nickname.
+      /<command> [player] [nickname]        - Change the specified player's nickname.
+      /<command> -r [player]                - Reset the specified player's nickname.
+      /<command> -l                         - List all current players with nicknames.
+      /<command>                            - Reset your own nickname.
+  afk:
+    description: Toggles your afk status, with an optional message.
+    usage: |
+      /<command> [message]      - Sets you to afk with the given message.
+      /<command>                - Toggles your afk status.
+  irc:
+    description: Allows changing various settings for the IRC Bot.
+    usage: |
+      /<command> connect        - Connects the IRC bot
+      /<command> disconnect     - Shuts the IRC bot off
+      /<command> nick [nick]    - Changes the IRC bot's nickname
+      /<command> set [option]   - Changes various settings of the IRC bot

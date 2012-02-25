@@ -1,72 +1,48 @@
 plugin:
-    default_locale: en
-    locales: [en]
-    # if allow_channels is false, your users will be unable to use any channel
-    # related commands, and as such the default channel will become their permanent
-    # chat place (it is recommended to set default_channel to global if you set this to false)
-    # note: a change to this setting will require a full /reload or server restart
-    allow_channels: true
-    allow_whispers: true
+    op_fallback: true
     allow_afk: true
-    # This is the default channel a player will be chatting in. A value of 'global'
-    # means that they will chat to everyone on the server, while 'world' means
-    # that only players on their current world will see their messages.
-    # values for default_channel are ONLY 'global' or 'world'
-    default_channel: global
-    global_channel_name: 'Global'
-    # persist_user_settings will determine whether or not individual user settings
-    # like localizations and channels will be persisted between sessions
-    # if this is set to true, it will increase overhead by a small amount
+    allow_channels: true
+    allow_irc: true
+    allow_whispers: true
     persist_user_settings: false
-    # Should we log chat?
-    logger: false
-    # Output debug messages?
-    debug: false
+    debug: true
+
+format:
+  message: '[%t] %p %n&F: %m'
+  to: '&7[To] %t>>&F: %m'
+  from: '&7[From] %t>>&F: %m'
+
 groups:
-    # %f = faction format
-    # %h = Heroes class
-    # %c = channel name
-    # %n = player name; %dn = player display name
-    # %t = target name; %dt = target display name
-    # %p = prefix; %s = suffix
-    # %w = world
-    # %m = sent message
-    # %afk = afk format
-    # &0-F = color codes, case-insensitive
-    default:
+    Default:
         weight: 1
-        channel: ''
-        prefix: '&A[&7d&A]&B'
+        prefix: '&7[Default]'
         group: ''
         suffix: ''
-        afk: ''
-        format:
-            global: '%c %p %n&A@&B%w&F: %m'
-            message: '%p %n&A@&B%w&F: %m'
-            whisper_send: '&6To &B%t&6>>&F %m'
-            whisper_receive: '&6From &B%t&6>>&F %m'
-    users:
-        weight: 2
-        channel: '&A[&B%c&A]'
-        prefix: '&A[&B-&A]&B'
+    User:
+        weight: 5
+        prefix: '&8[User]'
         group: ''
         suffix: ''
-        afk: ' &A[&6afk&A]'
-        format:
-            global: '%c %p %n&A@&B%w&A%afk&F: %m'
-            message: '%c %p %n %afk&F: %m'
-            whisper_send: '&6To &B%t&6>>&F %m'
-            whisper_receive: '&6From &B%t&6>>&F %m'
-    admins:
-        weight: 3
-        channel: '&A[&B%c&A]'
-        prefix: '&A[&C@&A]&B'
+    Mod:
+        weight: 10
+        prefix: '&9[Mod]'
         group: ''
         suffix: ''
-        afk: ' &A[&6afk&A]'
+    Admin:
+        weight: 15
+        prefix: '&C[Admin]'
+        group: ''
+        suffix: ''
         format:
-            global: '%c %p %n&A@&B%w&A%afk&F: %m'
-            message: '%c %p %n %afk&F: %m'
-            whisper_send: '&6To &B%t&6>>&F %m'
-            whisper_receive: '&6From &B%t&6>>&F %m'
-            
+            message: '[%t] %p %dn&F: %m'
+            to: '&C[To] %t>>&F: %m'
+            from: '&C[From] %t>>&F: %m'
+    Owner:
+        weight: 100
+        prefix: '&2[Owner]'
+        group: ''
+        suffix: ''
+        format:
+            message: '[%t] %p %dn&F: %m'
+            to: '&2[To] %t>>&F %m'
+            from: '&2[From] %t>>&F %m'

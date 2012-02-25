@@ -11,17 +11,15 @@ import org.bukkit.permissions.PermissionDefault;
  */
 public class ReloadCommand extends ChatSuiteCommand {
 
-    public ReloadCommand(ChatCore plugin) {
-        super(plugin);
-        this.plugin = (ChatCore) plugin;
-        this.setName("chatsuite reload");
-        this.setCommandUsage("/chatsuite reload");
-        this.setArgRange(0, 0);
-        this.addKey("chatsuite reload");
-        this.addKey("cs reload");
-        this.addKey("c reload");
-        this.addKey("c -r");
-        this.setPermission("chatsuite.reload", "Allows this user to reload ChatSuite.", PermissionDefault.OP);
+    public ReloadCommand(ChatCore instance) {
+        super(instance);
+        plugin = instance;
+        setName("ChatSuite: Reload");
+        setCommandUsage("/chatsuite reload");
+        setArgRange(0, 0);
+        addKey("chatsuite reload");
+        addKey("chatsuite -r");
+        setPermission("chatsuite.reload", "Allows this user to reload ChatSuite.", PermissionDefault.OP);
     }
 
     @Override

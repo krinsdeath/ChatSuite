@@ -1,77 +1,138 @@
 package net.krinsoft.chat;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import net.krinsoft.chat.api.Manager;
+import net.krinsoft.chat.api.Target;
 import net.krinsoft.chat.targets.Channel;
-import org.bukkit.configuration.ConfigurationSection;
+import net.krinsoft.chat.targets.ChatPlayer;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.util.*;
 
 /**
  *
  * @author krinsdeath
  */
-public class ChannelManager {
+public class ChannelManager implements Manager {
     private ChatCore plugin;
     private HashMap<String, Channel> channels = new HashMap<String, Channel>();
 
-    public ChannelManager(ChatCore aThis) {
-        plugin = aThis;
-        ConfigurationSection p = plugin.getConfigManager().getPluginNode();
-        p.getBoolean("allow_channels", true);
+    private FileConfiguration configuration;
+    private File config;
+
+    public ChannelManager(ChatCore instance) {
+        clean();
+        plugin = instance;
+        registerConfiguration();
+        registerChannels();
     }
 
-    public void addPlayerToChannel(Player player, String channel) {
+    public void clean() {
+        channels.clear();
+    }
+
+    public FileConfiguration getConfig() {
+        if (configuration == null) {
+            configuration = YamlConfiguration.loadConfiguration(config);
+            configuration.setDefaults(YamlConfiguration.loadConfiguration(config));
+        }
+        return configuration;
+    }
+
+    public void saveConfig() {
+        try {
+            getConfig().save(config);
+        } catch (Exception e) {
+            plugin.warn("An error occurred while trying to save 'channels.yml'");
+        }
+    }
+
+    public ChatCore getPlugin() {
+        return plugin;
+    }
+
+    public void registerConfiguration() {
+        config = new File(plugin.getDataFolder(), "channels.yml");
+        if (!config.exists()) {
+            getConfig().setDefaults(YamlConfiguration.loadConfiguration(plugin.getClass().getResourceAsStream("/defaults/channels.yml")));
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        }
+    }
+
+    public void registerChannels() {
+        Set<String> channels = getConfig().getConfigurationSection("channels").getKeys(false);
+        for (String channel : channels) {
+            createChannel(null, channel);
+        }
+    }
+
+    public void log(String channel, String message) {
+        plugin.log("[" + channel + "] " + message);
+    }
+
+    /**
+     * Adds the specified player to the given channel
+     * @param player The player to add to the channel
+     * @param channel The name of the channel we're adding the player to
+     * @return The handle of the channel the player was added to
+     */
+    public Channel addPlayerToChannel(Player player, String channel) {
         Channel chan = channels.get(channel.toLowerCase());
         if (chan == null) {
-            chan = new Channel(plugin, channel, "public");
+            chan = new Channel(this, channel, player);
             plugin.debug("Channel '" + channel + "' created");
         }
-        if (!chan.contains(player.getName())) {
-            chan.addPlayer(player.getName());
-            plugin.debug(player.getName() + " added to channel '" + channel + "'");
+        if (!chan.contains(player)) {
+            chan.join(player);
         }
-        channels.put(channel.toLowerCase(), chan);
+        return channels.put(channel.toLowerCase(), chan);
     }
 
-    public void removePlayerFromChannel(Player player, String channel) {
+    /**
+     * Removes the specified player from the given channel
+     * @param player The player we're removing from the channel
+     * @param channel The channel we're removing the player from
+     * @return The handle of the channel the player was removed from
+     */
+    public Channel removePlayerFromChannel(Player player, String channel) {
         // get the specified channel
         Channel chan = channels.get(channel.toLowerCase());
         if (chan == null) {
             // no channel by that name existed, so we do nothing
-            return;
+            return null;
         } else {
             // remove the player from the channel
-            if (chan.contains(player.getName()) && listChannels(player.getName()).size() > 1) {
-                chan.removePlayer(player.getName());
-                plugin.debug(player.getName() + " removed from channel '" + channel + "'");
-                if (chan.getOccupants().size() < 1) {
+            if (chan.contains(player) && getPlayerChannelList(player).size() > 1) {
+                chan.part(player);
+                if (chan.getOccupants().size() < 1 && !chan.isPermanent()) {
                     // channel is empty! let's get rid of it
-                    channels.remove(channel.toLowerCase());
+                    chan = channels.remove(channel.toLowerCase());
                     plugin.debug("Channel '" + channel + "' removed.");
-                } else {
-                    channels.put(channel.toLowerCase(), chan);
                 }
             }
+            return chan;
         }
     }
 
-    public void playerWorldChange(Player player, String from, String to) {
-        if (plugin.getPlayerManager().isPlayerRegistered(player)) {
-            removePlayerFromChannel(player, from);
-            addPlayerToChannel(player, to);
-            if (plugin.getPlayerManager().getPlayer(player).getChannel().equals(from)) {
-                plugin.getPlayerManager().getPlayer(player).setChannel(to);
+    public void playerWorldChange(Player p, String from, String to) {
+        if (plugin.getPlayerManager().isPlayerRegistered(p)) {
+            ChatPlayer player = plugin.getPlayerManager().getPlayer(p);
+            removePlayerFromChannel(p, from);
+            Target target = addPlayerToChannel(p, to);
+            if (player.getTarget().getName().equals(from)) {
+                player.setTarget(target);
             }
-            plugin.getPlayerManager().getPlayer(player).setWorld(plugin.getWorldManager().getAlias(to));
+            player.setWorld(plugin.getWorldManager().getAlias(to));
         }
     }
 
     void removePlayerFromAllChannels(Player player) {
-        Set<String> keys = ((HashMap<String, Channel>) channels.clone()).keySet();
+        Set<String> keys = new HashSet<String>(channels.keySet());
         for (String c : keys) {
-            if (channels.get(c).contains(player.getName())) {
+            if (channels.get(c).contains(player)) {
                 removePlayerFromChannel(player, c);
             }
         }
@@ -82,26 +143,30 @@ public class ChannelManager {
     }
 
     public Channel getGlobalChannel() {
-        return channels.get(plugin.getConfiguration().getString("plugin.global_channel_name", "Global").toLowerCase());
+        return channels.get(getDefaultChannel());
     }
 
     public String getDefaultChannel() {
-        return plugin.getConfiguration().getString("plugin.default_channel", "world").toLowerCase();
+        return getConfig().getString("default");
     }
 
-    public void createChannel(String channel, String player, String type) {
-        Channel chan = new Channel(plugin, channel, type);
-        chan.addPlayer(player);
+    public Channel createChannel(Player player, String channel) {
+        Channel chan = new Channel(this, channel, player);
+        if (player != null) {
+            chan.join(player);
+        }
         channels.put(channel.toLowerCase(), chan);
+        return channels.get(channel.toLowerCase());
     }
 
-    public List<String> listChannels(String player) {
-        List<String> list = new ArrayList<String>();
-        for (String key : channels.keySet()) {
-            if (channels.get(key).contains(player)) {
-                list.add(key);
+    public List<Channel> getPlayerChannelList(Player player) {
+        List<Channel> list = new ArrayList<Channel>();
+        for (Channel chan : channels.values()) {
+            if (chan.contains(player)) {
+                list.add(chan);
             }
         }
         return list;
     }
+
 }

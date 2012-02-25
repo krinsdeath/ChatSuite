@@ -1,19 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package net.krinsoft.chat.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.krinsoft.chat.ChatCore;
-import net.krinsoft.chat.events.WhisperMessage;
-import net.krinsoft.chat.util.ColoredMessage;
+import net.krinsoft.chat.targets.ChatPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -23,48 +16,33 @@ public class WhisperCommand extends ChatSuiteCommand {
 
     public WhisperCommand(ChatCore plugin) {
         super(plugin);
-        this.plugin = (ChatCore) plugin;
-        this.setName("chatsuite whisper");
-        this.setCommandUsage("/cs whisper [player] \"[message]\"");
-        this.setArgRange(2, 16);
+        this.plugin = plugin;
+        this.setName("ChatSuite: Whisper");
+        this.setCommandUsage("/whisper [player] [message]");
+        this.setArgRange(2, 20);
         this.addKey("chatsuite whisper");
-        this.addKey("cs whisper");
-        this.addKey("c whisper");
-        this.addKey("csw");
+        this.addKey("whisper");
+        this.addKey("w");
         this.setPermission("chatsuite.whisper", "Whispers a message to another user", PermissionDefault.TRUE);
     }
 
     @Override
-    public void runCommand(CommandSender cs, List<String> args) {
-        String message = "";
+    public void runCommand(CommandSender sender, List<String> args) {
+        if (!validateSender(sender)) { return; }
+        Player player = plugin.getServer().getPlayer(sender.getName());
+        StringBuilder message = new StringBuilder();
         for (int i = 1; i < args.size(); i++) {
-            message += args.get(i) + " ";
+            message.append(args.get(i)).append(" ");
         }
-        message = message.trim();
         Player target = plugin.getServer().getPlayer(args.get(0));
         if (target == null) {
-            String l = plugin.getLocaleManager().getLocaleKey();
-            if (cs instanceof Player) {
-                l = plugin.getPlayerManager().getPlayer((Player)cs).getLocale();
-            }
-            ColoredMessage messages = buildMessage(plugin.getLocaleManager().getError(l, "invalid_target"));
-            for (String line : messages.getContents()) {
-                cs.sendMessage(line.replaceAll("%target", args.get(0)));
-            }
-            return;
+            error(player, "That player doesn't exist.");
         } else {
-            WhisperMessage msg = new WhisperMessage(plugin, ((Player)cs).getName(), target.getName(), message);
-            plugin.getServer().getPluginManager().callEvent(msg);
+            ChatPlayer whisper = plugin.getPlayerManager().getPlayer(player);
+            ChatPlayer whispee = plugin.getPlayerManager().getPlayer(target);
+            whisper.whisperTo(whispee, message.toString()); // player sending the whisper
+            whispee.whisperFrom(whisper, message.toString()); // player receiving the whisper
         }
     }
 
-    private ColoredMessage buildMessage(Object obj) {
-        if (obj instanceof List) {
-            return new ColoredMessage((List<String>) obj);
-        } else if (obj instanceof String) {
-            return new ColoredMessage(new ArrayList<String>(Arrays.asList((String)obj)));
-        } else {
-            return new ColoredMessage(new ArrayList<String>());
-        }
-    }
 }
