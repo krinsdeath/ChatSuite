@@ -14,20 +14,30 @@ public class MinecraftMessageEvent extends Event {
     public static HandlerList getHandlerList() { return HANDLERS; }
     private final static HandlerList HANDLERS = new HandlerList();
 
-    private final String target;
+    private final String network;
+    private final String channel;
     private final String message;
 
-    public MinecraftMessageEvent(String trg, String msg) {
-        target = trg;
+    public MinecraftMessageEvent(String net, String chn, String msg) {
+        network = net;
+        channel = chn;
         message = msg;
     }
 
     /**
-     * The name of the target for this message on IRC, channel or player
-     * @return The name of the target
+     * The name of the network that this message is being sent to
+     * @return The name of the network
      */
-    public String getTarget() {
-        return target;
+    public String getNetwork() {
+        return network;
+    }
+
+    /**
+     * The name of the channel this message is being sent to
+     * @return The channel name
+     */
+    public String getChannel() {
+        return channel;
     }
 
     /**

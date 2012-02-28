@@ -7,19 +7,7 @@ website: http://dev.bukkit.org/server-mods/chatsuite/
 
 commands:
   chatsuite:
-    aliases:
-      - csh
-      - csw
-      - csc
-      - cscj
-      - cscl
-      - cscs
-      - cscc
-      - csci
-      - csl
-      - csd
-      - csv
-      - csn
+    aliases: [chat]
     description: ChatSuite's base (and fallback) command.
     usage: |
       /<command> channel ...
@@ -36,31 +24,31 @@ commands:
       /<command> invite [channel] [player]  - Invite the specified user to the channel.
       /<command> create [channel]           - Create the specified channel.
       /<command> set [channel] [option] ... - Sets the specified option for the given channel.
-  message:
-    aliases: [chm, msg]
+  msg: # done
+    aliases: [chm, m]
     description: Sends a message to the specified channel.
     usage: /<command> [channel] [message]
-  join:
+  join: # done
     aliases: [chj, j]
     description: Joins the specified channel.
     usage: /<command> [channel]
-  part:
+  part: # done
     aliases: [chp, p]
     description: Leaves the specified channel.
     usage: /<command> [channel]
-  boot:
+  boot: # done
     aliases: [chb, b]
     description: Kicks the specified player from the given channel.
     usage: /<command> [channel] [player]
-  create:
+  create: # done
     aliases: [chc, c]
     description: Creates the specified channel, as long as it doesn't already exist.
     usage: /<command> [channel]
-  invite:
+  invite: # done
     aliases: [chi, inv]
     description: Invites a player to the channel.
     usage: /<command> [channel] [player]
-  whisper:
+  whisper: # done
     aliases: [w]
     description: Sends a message to the specified player.
     usage: |

@@ -78,6 +78,17 @@ public class ChatPlayer implements Target {
         if (target == null) {
             target = manager.getPlugin().getChannelManager().getGlobalChannel();
         }
+        group = getGroup();
+        manager.getPlugin().debug("Player " + name + " set to group '" + group + "'");
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public String getGroup() {
+        String group = null;
         int weight = 0;
         for (String key : manager.getPlugin().getGroups()) {
             int i = manager.getPlugin().getGroupNode(key).getInt("weight");
@@ -90,12 +101,7 @@ public class ChatPlayer implements Target {
         if (group == null) {
             group = player.isOp() ? manager.getPlugin().getOpGroup() : manager.getPlugin().getDefaultGroup();
         }
-        manager.getPlugin().debug("Player " + name + " set to group '" + group + "' (Weight: " + weight + ")");
-    }
-
-    @Override
-    public String getName() {
-        return name;
+        return group;
     }
 
     @Override
@@ -221,7 +227,7 @@ public class ChatPlayer implements Target {
 
     public void whisperTo(Target to, String message) {
         reply = to;
-        String format = getFormattedWhisperTo();
+        String format = getFormattedWhisperTo(to);
         format = format.replaceAll("(%message|%m)", message);
         player.sendMessage(format);
         if (to instanceof ChatPlayer && ((ChatPlayer)to).afk) {
@@ -231,13 +237,19 @@ public class ChatPlayer implements Target {
 
     public void whisperFrom(Target from, String message) {
         reply = from;
-        String format = getFormattedWhisperFrom();
+        String format = getFormattedWhisperFrom(from);
         format = format.replaceAll("(%message|%m)", message);
         player.sendMessage(format);
     }
 
-    public String getFormattedWhisperTo() {
-        String format = manager.getPlugin().getConfig().getString("groups." + group + ".format.to");
+    public void reply(String message) {
+        if (reply == null) { return; }
+        whisperTo(reply, message);
+        ((ChatPlayer)reply).whisperFrom(this, message);
+    }
+
+    public String getFormattedWhisperTo(Target target) {
+        String format = manager.getPlugin().getConfig().getString("groups." + ((ChatPlayer)target).getGroup() + ".format.to");
         if (format == null) {
             format = manager.getPlugin().getConfig().getString("format.to");
             if (format == null) {
@@ -249,8 +261,8 @@ public class ChatPlayer implements Target {
         return format;
     }
 
-    public String getFormattedWhisperFrom() {
-        String format = manager.getPlugin().getConfig().getString("groups." + group + ".format.from");
+    public String getFormattedWhisperFrom(Target target) {
+        String format = manager.getPlugin().getConfig().getString("groups." + ((ChatPlayer)target).getGroup() + ".format.from");
         if (format == null) {
             format = manager.getPlugin().getConfig().getString("format.from");
             if (format == null) {

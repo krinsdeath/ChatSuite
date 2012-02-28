@@ -1,11 +1,16 @@
-server: irc.esper.net
-port: 6667
 nickname: ChatSuite
 realname: ChatSuite
 ident: ChatSuite
-channel: '#chatsuite'
+default: esper
+
+networks:
+  esper:
+    host: irc.esper.net
+    port: 6667
+    channel: '#chatsuite'
 
 messages:
+  tag: '&C[IRC]&F'
   startup: 'ChatSuite IRC Bot Initialized.'
   irc:
     join: '[nick] is now on IRC.'

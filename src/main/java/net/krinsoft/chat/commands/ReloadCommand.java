@@ -1,9 +1,10 @@
 package net.krinsoft.chat.commands;
 
-import java.util.List;
 import net.krinsoft.chat.ChatCore;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -13,12 +14,13 @@ public class ReloadCommand extends ChatSuiteCommand {
 
     public ReloadCommand(ChatCore instance) {
         super(instance);
-        plugin = instance;
         setName("ChatSuite: Reload");
         setCommandUsage("/chatsuite reload");
         setArgRange(0, 0);
         addKey("chatsuite reload");
         addKey("chatsuite -r");
+        addKey("chat reload");
+        addKey("chat -r");
         setPermission("chatsuite.reload", "Allows this user to reload ChatSuite.", PermissionDefault.OP);
     }
 

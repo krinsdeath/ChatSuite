@@ -2,6 +2,9 @@ package net.krinsoft.chat.targets;
 
 import net.krinsoft.chat.ChannelManager;
 import net.krinsoft.chat.api.Target;
+import net.krinsoft.chat.events.ChannelBootEvent;
+import net.krinsoft.chat.events.ChannelJoinEvent;
+import net.krinsoft.chat.events.ChannelPartEvent;
 import net.krinsoft.chat.events.MinecraftMessageEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -74,6 +77,9 @@ public class Channel implements Target {
     private List<String> admins     = new ArrayList<String>();
     private List<String> members    = new ArrayList<String>();
 
+    private String IRC_CHANNEL;
+    private String IRC_NETWORK;
+
     /**
      * Creates a new channel with the specified variables as options
      * @param instance The ChannelManager instance, so we can fetch channel options
@@ -95,7 +101,11 @@ public class Channel implements Target {
             if (color == null) {
                 color = TextColor.WHITE;
             }
-            is_irc      = manager.getConfig().getBoolean(           "channels." + name + ".irc");
+            is_irc      = manager.getConfig().getBoolean(           "channels." + name + ".irc.enabled");
+            if (is_irc) {
+                IRC_CHANNEL = manager.getConfig().getString(        "channels." + name + ".irc.channel");
+                IRC_NETWORK = manager.getConfig().getString(        "channels." + name + ".irc.network");
+            }
             permanent   = true;
         }
     }
@@ -140,7 +150,9 @@ public class Channel implements Target {
             manager.getConfig().set("channels." + name + ".admins", admins);
             manager.getConfig().set("channels." + name + ".members", members);
             manager.getConfig().set("channels." + name + ".color", color.getName());
-            manager.getConfig().set("channels." + name + ".irc", is_irc);
+            manager.getConfig().set("channels." + name + ".irc.enabled", is_irc);
+            manager.getConfig().set("channels." + name + ".irc.channel", IRC_CHANNEL);
+            manager.getConfig().set("channels." + name + ".irc.network", IRC_NETWORK);
         }
     }
 
@@ -175,6 +187,10 @@ public class Channel implements Target {
             occupants.add(player);
             player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + name);
             manager.log(name, player.getName() + " joined the channel.");
+            if (validIRC()) {
+                ChannelJoinEvent event = new ChannelJoinEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
+                manager.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
         } else {
             player.sendMessage(ChatColor.RED + "[ChatSuite] Failed to join: " + name);
             manager.log(name, player.getName() + " was denied entry.");
@@ -189,6 +205,10 @@ public class Channel implements Target {
         occupants.remove(player);
         player.sendMessage(ChatColor.GRAY + "[ChatSuite] You have left: " + name);
         manager.log(name, player.getName() + " left the channel.");
+        if (validIRC()) {
+            ChannelPartEvent event = new ChannelPartEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
+            manager.getPlugin().getServer().getPluginManager().callEvent(event);
+        }
     }
 
     /**
@@ -197,11 +217,19 @@ public class Channel implements Target {
      * @param player The player to remove from the channel
      */
     public void boot(Player sender, Player player) {
+        if (sender.equals(player)) {
+            sender.sendMessage(ChatColor.RED + "[ChatSuite] Stop kicking yourself.");
+            return;
+        }
         if ((isAdmin(sender) && !isAdmin(player)) || (isOwner(sender) && !isOwner(player)) || sender.hasPermission("chatsuite.bypass.boot")) {
             occupants.remove(player);
             members.remove(player.getName());
             player.sendMessage(ChatColor.RED + "[ChatSuite] You have been kicked: " + name);
             manager.log(name, player.getName() + " was kicked from the channel.");
+            if (validIRC()) {
+                ChannelBootEvent event = new ChannelBootEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
+                manager.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
         }
     }
 
@@ -298,9 +326,13 @@ public class Channel implements Target {
         }
     }
 
+    private boolean validIRC() {
+        return is_irc && IRC_NETWORK != null && IRC_CHANNEL != null;
+    }
+
     public void sendToIRC(String message) {
-        if (is_irc) {
-            MinecraftMessageEvent event = new MinecraftMessageEvent(manager.getPlugin().getIRCBot().getChannel(), message);
+        if (validIRC()) {
+            MinecraftMessageEvent event = new MinecraftMessageEvent(IRC_NETWORK, IRC_CHANNEL, message);
             manager.getPlugin().getServer().getPluginManager().callEvent(event);
         }
     }

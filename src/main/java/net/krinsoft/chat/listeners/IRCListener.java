@@ -35,18 +35,18 @@ public class IRCListener implements Listener {
 
     @EventHandler
     void mcMessage(MinecraftMessageEvent event) {
-        plugin.getIRCBot().msg(event.getMessage());
-        plugin.log(event.getMessage());
+        plugin.getIRCBot().msg(event.getNetwork(), event.getChannel(), event.getMessage());
+        plugin.log("[" + event.getNetwork() + "]->" + event.getChannel() + ": " + event.getMessage());
     }
 
     @EventHandler
     void mcJoin(MinecraftJoinEvent event) {
-        plugin.getIRCBot().join(event.getNickname());
+        plugin.getIRCBot().join(null, null, event.getNickname());
     }
 
     @EventHandler
     void mcQuit(MinecraftQuitEvent event) {
-        plugin.getIRCBot().quit(event.getNickname());
+        plugin.getIRCBot().quit(null, null, event.getNickname());
     }
 
 }

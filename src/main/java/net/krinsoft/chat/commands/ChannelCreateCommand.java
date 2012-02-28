@@ -2,6 +2,7 @@ package net.krinsoft.chat.commands;
 
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.Channel;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -16,9 +17,10 @@ public class ChannelCreateCommand extends ChannelCommand {
 
     public ChannelCreateCommand(ChatCore instance) {
         super(instance);
-        plugin = instance;
         setName("ChatSuite: Channel Create");
-        setCommandUsage("/ch create [channel]");
+        setCommandUsage("/create [channel]");
+        setPageHeader(0, "Channel Commands", "/create   ");
+        addToPage(0, "test      " + ChatColor.WHITE + "// Create a channel called 'test'");
         setArgRange(1, 1);
         addKey("chatsuite channel create");
         addKey("channel create");

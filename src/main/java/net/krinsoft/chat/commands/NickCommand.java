@@ -1,11 +1,12 @@
 package net.krinsoft.chat.commands;
 
-import java.util.List;
 import net.krinsoft.chat.ChatCore;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -18,7 +19,8 @@ public class NickCommand extends ChatSuiteCommand {
         setName("ChatSuite: Nick");
         setCommandUsage("nick [player] [newnick]");
         setArgRange(0, 2);
-        addKey("chatsuite nickname");
+        addKey("chatsuite nick");
+        addKey("chat nick");
         addKey("nickname");
         addKey("nick");
         setPermission("chatsuite.nick", "Allows this user to change their display name.", PermissionDefault.OP);

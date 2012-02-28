@@ -4,7 +4,7 @@
     <groupId>net.krinsoft</groupId>
     <artifactId>ChatSuite</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.0</version>
+    <version>2.0</version>
     <name>ChatSuite</name>
     <description>A powerful, configurable, and advanced Chat Manager for Bukkit and Super Permissions</description>
     <properties>

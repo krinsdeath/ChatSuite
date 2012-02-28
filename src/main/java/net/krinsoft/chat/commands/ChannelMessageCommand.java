@@ -3,6 +3,7 @@ package net.krinsoft.chat.commands;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.api.Target;
 import net.krinsoft.chat.targets.Channel;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -17,9 +18,10 @@ public class ChannelMessageCommand extends ChatSuiteCommand {
 
     public ChannelMessageCommand(ChatCore instance) {
         super(instance);
-        plugin = instance;
         setName("ChatSuite: Channel Message");
         setCommandUsage("/msg [channel] [message]");
+        setPageHeader(0, "Channel Commands", "/msg      ");
+        addToPage(0, "admin     " + ChatColor.GOLD + "sup guys, spammer in global");
         setArgRange(2, 20);
         addKey("chatsuite channel message");
         addKey("channel message");

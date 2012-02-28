@@ -2,6 +2,7 @@ package net.krinsoft.chat.commands;
 
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.Channel;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -16,9 +17,10 @@ public class ChannelPartCommand extends ChannelCommand {
 
     public ChannelPartCommand(ChatCore instance) {
         super(instance);
-        plugin = instance;
         setName("ChatSuite: Channel Part");
         setCommandUsage("/part [channel]");
+        setPageHeader(0, "Channel Commands", "/part     ");
+        addToPage(0, "admin     " + ChatColor.WHITE + "// Leaves the 'admin' channel.");
         setArgRange(1, 1);
         addKey("chatsuite channel part");
         addKey("channel part");

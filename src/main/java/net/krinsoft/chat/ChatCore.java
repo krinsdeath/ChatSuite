@@ -17,6 +17,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -89,7 +90,7 @@ public class ChatCore extends JavaPlugin {
         if (allow_irc) {
             try {
                 irc_bot = new IRCBot(this);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 warn("An error occurred while initializing the IRC Connection.");
                 e.printStackTrace();
                 irc_bot = null;
@@ -129,6 +130,7 @@ public class ChatCore extends JavaPlugin {
             commandHandler.registerCommand(new ChannelInviteCommand(this));
             commandHandler.registerCommand(new ChannelListCommand(this));
         }
+        commandHandler.registerCommand(new BaseCommand(this));
         commandHandler.registerCommand(new DebugCommand(this));
         commandHandler.registerCommand(new NickCommand(this));
         commandHandler.registerCommand(new ReloadCommand(this));

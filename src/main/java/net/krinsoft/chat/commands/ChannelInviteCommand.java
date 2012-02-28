@@ -2,6 +2,7 @@ package net.krinsoft.chat.commands;
 
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.Channel;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -16,9 +17,10 @@ public class ChannelInviteCommand extends ChatSuiteCommand {
 
     public ChannelInviteCommand(ChatCore instance) {
         super(instance);
-        plugin = instance;
         setName("ChatSuite: Channel Invite");
         setCommandUsage("/invite [channel] [player]");
+        setPageHeader(0, "Channel Commands", "/invite   ");
+        addToPage(0, "admin     " + ChatColor.GOLD + "Njodi     " + ChatColor.WHITE + "// Invite 'Njodi' to the 'admin' channel.");
         setArgRange(2, 2);
         addKey("chatsuite channel invite");
         addKey("channel invite");

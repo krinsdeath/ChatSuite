@@ -12,7 +12,6 @@ public abstract class ChannelCommand extends ChatSuiteCommand {
 
     public ChannelCommand(ChatCore instance) {
         super(instance);
-        plugin  = instance;
         manager = plugin.getChannelManager();
     }
 

@@ -16,11 +16,11 @@ public class AfkCommand extends ChatSuiteCommand {
 
     public AfkCommand(ChatCore instance) {
         super(instance);
-        plugin = instance;
         setName("ChatSuite: AFK");
         setCommandUsage("/afk [message]");
         setArgRange(0, 16);
         addKey("chatsuite afk");
+        addKey("chat afk");
         addKey("afk");
         setPermission("chatsuite.afk", "Allows you to set your AFK status.", PermissionDefault.TRUE);
     }

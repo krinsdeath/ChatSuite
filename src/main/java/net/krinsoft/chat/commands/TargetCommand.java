@@ -2,6 +2,7 @@ package net.krinsoft.chat.commands;
 
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.api.Target;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -15,11 +16,11 @@ public class TargetCommand extends ChatSuiteCommand {
 
     public TargetCommand(ChatCore instance) {
         super(instance);
-        plugin = instance;
         setName("ChatSuite: Target");
         setCommandUsage("/target [c|p]:[target]");
-        addCommandExample("/target c:world");
-        addCommandExample("/target p:Njodi");
+        setPageHeader(0, "Target Commands", "/target");
+        addToPage(0, "c:world   " + ChatColor.WHITE + "// Sets your current target to the channel 'world'");
+        addToPage(0, "p:Njodi   " + ChatColor.WHITE + "// Sets your current target to the player 'Njodi'");
         setArgRange(1, 1);
         addKey("chatsuite target");
         addKey("target");
@@ -33,15 +34,22 @@ public class TargetCommand extends ChatSuiteCommand {
         Player player = plugin.getServer().getPlayer(sender.getName());
         Target target;
         try {
-            if (args.get(0).startsWith("c:")) {
-                target = plugin.getChannelManager().getChannel(args.get(0).split(":")[1]);
-            } else {
-                Player t = plugin.getServer().getPlayer(args.get(0).split(":")[1]);
-                if (t == null) {
-                    error(player, "That player doesn't exist.");
-                    return;
-                }
+            target = plugin.getChannelManager().getChannel(args.get(0));
+            Player t = plugin.getServer().getPlayer(args.get(0));
+            if (target == null && t != null) {
                 target = plugin.getPlayerManager().getPlayer(t);
+            }
+            if (target == null) {
+                if (args.get(0).startsWith("c:")) {
+                    target = plugin.getChannelManager().getChannel(args.get(0).split(":")[1]);
+                } else if (args.get(0).startsWith("p:")) {
+                    t = plugin.getServer().getPlayer(args.get(0).split(":")[1]);
+                    if (t == null) {
+                        error(player, "That player doesn't exist.");
+                        return;
+                    }
+                    target = plugin.getPlayerManager().getPlayer(t);
+                }
             }
         } catch (Exception e) {
             error(player, "Invalid parameter(s).");

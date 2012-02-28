@@ -2,6 +2,7 @@ package net.krinsoft.chat.commands;
 
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.Channel;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -16,10 +17,12 @@ public class ChannelListCommand extends ChannelCommand {
 
     public ChannelListCommand(ChatCore instance) {
         super(instance);
-        plugin = instance;
         setName("ChatSuite: Channel List");
-        setCommandUsage("/ch list");
-        setArgRange(0, 0);
+        setCommandUsage("/ch list [-all]");
+        setPageHeader(0, "Channel Commands", "/ch list  ");
+        addToPage(0, "          " + ChatColor.WHITE + "// List your current channels.");
+        addToPage(0, "-all      " + ChatColor.WHITE + "// List all channels.");
+        setArgRange(0, 1);
         addKey("chatsuite channel list");
         addKey("channel list");
         addKey("ch list");
@@ -31,6 +34,9 @@ public class ChannelListCommand extends ChannelCommand {
         if (!validateSender(sender)) { return; }
         Player player = plugin.getServer().getPlayer(sender.getName());
         List<Channel> channels = plugin.getChannelManager().getPlayerChannelList(player);
+        if (args.size() > 0 && args.get(0).startsWith("-all") && sender.hasPermission("chatsuite.list.all")) {
+            channels = plugin.getChannelManager().getChannels();
+        }
         int i = 1;
         message(player, "=== Channel List ===");
         for (Channel chan : channels) {

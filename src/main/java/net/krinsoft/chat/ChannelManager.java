@@ -33,6 +33,7 @@ public class ChannelManager implements Manager {
         channels.clear();
     }
 
+    @Override
     public FileConfiguration getConfig() {
         if (configuration == null) {
             configuration = YamlConfiguration.loadConfiguration(config);
@@ -41,6 +42,7 @@ public class ChannelManager implements Manager {
         return configuration;
     }
 
+    @Override
     public void saveConfig() {
         try {
             getConfig().save(config);
@@ -49,6 +51,7 @@ public class ChannelManager implements Manager {
         }
     }
 
+    @Override
     public ChatCore getPlugin() {
         return plugin;
     }
@@ -157,6 +160,14 @@ public class ChannelManager implements Manager {
         }
         channels.put(channel.toLowerCase(), chan);
         return channels.get(channel.toLowerCase());
+    }
+
+    public List<Channel> getChannels() {
+        List<Channel> chans = new ArrayList<Channel>();
+        for (Channel chan : channels.values()) {
+            chans.add(chan);
+        }
+        return chans;
     }
 
     public List<Channel> getPlayerChannelList(Player player) {

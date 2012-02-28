@@ -1,10 +1,11 @@
 package net.krinsoft.chat.commands;
 
-import java.util.List;
 import net.krinsoft.chat.ChatCore;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  *
@@ -14,13 +15,14 @@ public class DebugCommand extends ChatSuiteCommand {
 
     public DebugCommand(ChatCore instance) {
         super(instance);
-        plugin = instance;
         setName("ChatSuite: Debug");
         setCommandUsage("/chatsuite debug [true|false]");
+        setPageHeader(0, "Debug Command", "chat debug");
+        addToPage(0, "true      " + ChatColor.WHITE + "// Turns debug mode on.");
+        addToPage(0, "false     " + ChatColor.WHITE + "// Turns debug mode off.");
         setArgRange(0, 1);
         addKey("chatsuite debug");
-        addKey("c debug");
-        addKey("csd");
+        addKey("chat debug");
         setPermission("chatsuite.debug", "Toggles debug messages on or off.", PermissionDefault.OP);
     }
 
