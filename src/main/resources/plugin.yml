@@ -13,6 +13,14 @@ commands:
       /<command> channel ...
       /<command> group ...
       /<command> user ...
+  cgroup:
+    aliases: [cg]
+    description: ChatSuite's base group command.
+    usage: /<command> [group] [option] [value]
+  cuser:
+    aliases: [cu]
+    description: ChatSuite's base user command.
+    usage: /<command> [user] [option] [value]
   channel:
     aliases: [ch]
     description: ChatSuite's root channel command, for basic and advanced channel administration.
@@ -85,3 +93,12 @@ commands:
       /<command> disconnect     - Shuts the IRC bot off
       /<command> nick [nick]    - Changes the IRC bot's nickname
       /<command> set [option]   - Changes various settings of the IRC bot
+
+permissions:
+  chatsuite.bypass.*:
+    description: Allows bypassing admin and owner rights on channels.
+    children:
+      chatsuite.bypass.admin: true
+      chatsuite.bypass.invite: true
+      chatsuite.bypass.join: true
+      chatsuite.bypass.boot: true

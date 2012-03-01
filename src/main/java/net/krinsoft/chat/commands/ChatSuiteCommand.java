@@ -38,12 +38,12 @@ public abstract class ChatSuiteCommand extends Command {
         return true;
     }
 
-    public void message(Player player, String message) {
-        player.sendMessage(ChatColor.GREEN + "[ChatSuite] " + message);
+    public void message(CommandSender sender, String message) {
+        sender.sendMessage(ChatColor.GREEN + "[ChatSuite] " + message);
     }
 
-    public void error(Player player, String message) {
-        player.sendMessage(ChatColor.RED + "[ChatSuite] " + message);
+    public void error(CommandSender sender, String message) {
+        sender.sendMessage(ChatColor.RED + "[ChatSuite] " + message);
     }
 
     @Override

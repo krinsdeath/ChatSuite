@@ -13,7 +13,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -27,19 +26,9 @@ import java.util.Set;
  */
 public class ChatCore extends JavaPlugin {
 
-    public enum Info {
-        AUTHORS,
-        NAME,
-        FULLNAME,
-        VERSION
-    }
-
     // listeners
     private PlayerListener pListener;
     private IRCListener ircListener;
-
-    // plugin info and managers
-    private PluginDescriptionFile pdf;
 
     private ChannelManager channelManager;
     private WorldManager worldManager;
@@ -53,10 +42,9 @@ public class ChatCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        pdf = getDescription();
         initConfiguration();
         initEvents();
-        log(info() + " enabled.");
+        log("v" + getDescription().getVersion() + " enabled.");
     }
 
     @Override
@@ -68,6 +56,7 @@ public class ChatCore extends JavaPlugin {
         channelManager.clean();
         worldManager.clean();
         irc_bot.clean();
+        log("v" + getDescription().getVersion() + " disabled.");
     }
 
     @Override
@@ -132,6 +121,7 @@ public class ChatCore extends JavaPlugin {
         }
         commandHandler.registerCommand(new BaseCommand(this));
         commandHandler.registerCommand(new DebugCommand(this));
+        commandHandler.registerCommand(new GroupOptionCommand(this));
         commandHandler.registerCommand(new NickCommand(this));
         commandHandler.registerCommand(new ReloadCommand(this));
         commandHandler.registerCommand(new TargetCommand(this));
@@ -151,20 +141,6 @@ public class ChatCore extends JavaPlugin {
 
     public void warn(String message) {
         getLogger().warning(message);
-    }
-
-    public String info() {
-        return info(Info.FULLNAME) + " by " + info(Info.AUTHORS);
-    }
-
-    public String info(Info i) {
-        switch (i) {
-            case AUTHORS: return pdf.getAuthors().toString().replaceAll("[\\[\\]]", "");
-            case NAME: return pdf.getName();
-            case FULLNAME: return pdf.getFullName();
-            case VERSION: return pdf.getVersion();
-            default: return pdf.getFullName();
-        }
     }
 
     // WORLDS

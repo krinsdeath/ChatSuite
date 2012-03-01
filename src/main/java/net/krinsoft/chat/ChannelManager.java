@@ -70,6 +70,7 @@ public class ChannelManager implements Manager {
         for (String channel : channels) {
             createChannel(null, channel);
         }
+        plugin.debug("Default Channel: " + getDefaultChannel());
     }
 
     public void log(String channel, String message) {

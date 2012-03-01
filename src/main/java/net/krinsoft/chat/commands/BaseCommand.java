@@ -18,7 +18,6 @@ public class BaseCommand extends ChatSuiteCommand {
         setName("ChatSuite: Main");
         setCommandUsage("/chat");
         setArgRange(0, 1);
-        // headers!
 
         // default page
         setPageHeader(0, "Explanation",      "/chat ");
@@ -33,41 +32,43 @@ public class BaseCommand extends ChatSuiteCommand {
         // ---
         // group editing commands   / page 2
         setPageHeader(2, "Group Commands",   "/chat " + ChatColor.GOLD + "group     ");
-        addToPage(2,              ChatColor.RED + "[group]   " + ChatColor.GOLD + "weight    " + ChatColor.YELLOW + "[int]     ");
-        addToPage(2,              ChatColor.RED + "[group]   " + ChatColor.GOLD + "prefix    " + ChatColor.YELLOW + "[string]  ");
-        addToPage(2,              ChatColor.RED + "[group]   " + ChatColor.GOLD + "suffix    " + ChatColor.YELLOW + "[string]  ");
-        addToPage(2,              ChatColor.RED + "[group]   " + ChatColor.GOLD + "name      " + ChatColor.YELLOW + "[string]  ");
+        addToPage(2,                ChatColor.RED + "[group]   " + ChatColor.GOLD + "weight    " + ChatColor.YELLOW + "[int]     ");
+        addToPage(2,                ChatColor.RED + "[group]   " + ChatColor.GOLD + "prefix    " + ChatColor.YELLOW + "[string]  ");
+        addToPage(2,                ChatColor.RED + "[group]   " + ChatColor.GOLD + "suffix    " + ChatColor.YELLOW + "[string]  ");
+        addToPage(2,                ChatColor.RED + "[group]   " + ChatColor.GOLD + "name      " + ChatColor.YELLOW + "[string]  ");
         // ---
         // user editing commands    / page 3
         setPageHeader(3, "User Commands",    "/chat " + ChatColor.GOLD + "user      ");
-        addToPage(3,              ChatColor.RED + "[user]    " + ChatColor.GOLD + "nick      " + ChatColor.YELLOW + "[string]  ");
-        addToPage(3,              ChatColor.RED + "[user]    " + ChatColor.GOLD + "lang      " + ChatColor.YELLOW + "[string]  ");
-        addToPage(3,              ChatColor.RED + "[user]    " + ChatColor.GOLD + "prefix    " + ChatColor.YELLOW + "[string]  " + ChatColor.GRAY + "// overrides group prefix");
-        addToPage(3,              ChatColor.RED + "[user]    " + ChatColor.GOLD + "suffix    " + ChatColor.YELLOW + "[string]  " + ChatColor.GRAY + "// overrides group suffix");
+        addToPage(3,                ChatColor.RED + "[user]    " + ChatColor.GOLD + "nick      " + ChatColor.YELLOW + "[string]  ");
+        addToPage(3,                ChatColor.RED + "[user]    " + ChatColor.GOLD + "lang      " + ChatColor.YELLOW + "[string]  ");
+        addToPage(3,                ChatColor.RED + "[user]    " + ChatColor.GOLD + "prefix    " + ChatColor.YELLOW + "[string]  " + ChatColor.GRAY + "// overrides group prefix");
+        addToPage(3,                ChatColor.RED + "[user]    " + ChatColor.GOLD + "suffix    " + ChatColor.YELLOW + "[string]  " + ChatColor.GRAY + "// overrides group suffix");
         // ---
         // channel commands         / page 4
-        setPageHeader(4, "Channel Commands", "/ch   ");
+        setPageHeader(4, "Channel Commands 1", "/ch   ");
         addToPage(4, "create    " + ChatColor.RED + "[channel] ");
-        addToPage(4, "join      " + ChatColor.RED + "[channel] ");
-        addToPage(4, "part      " + ChatColor.RED + "[channel] ");
         addToPage(4, "invite    " + ChatColor.RED + "[channel] " + ChatColor.GOLD + "[user]    ");
-        addToPage(4, "boot      " + ChatColor.RED + "[channel] " + ChatColor.GOLD + "[user]    ");
-        addToPage(4, "msg       " + ChatColor.RED + "[channel] " + ChatColor.GOLD + "[string]  ");
+        addToPage(4, "list      " + ChatColor.RED + "[-all]    ");
+        setPageHeader(5, "Channel Commands 2", "/ch   ");
+        addToPage(5, "join      " + ChatColor.RED + "[channel] ");
+        addToPage(5, "part      " + ChatColor.RED + "[channel] ");
+        addToPage(5, "boot      " + ChatColor.RED + "[channel] " + ChatColor.GOLD + "[user]    ");
+        addToPage(5, "msg       " + ChatColor.RED + "[channel] " + ChatColor.GOLD + "[string]  ");
         // ---
         // irc commands 1           / page 5
-        setPageHeader(5, "IRC Commands 1",   "/irc  ");
-        addToPage(5, "list      ");
-        addToPage(5, "create    " + ChatColor.RED + "[network] " + ChatColor.GOLD + "[host]    [port]    [channel]");
-        addToPage(5, "connect   " + ChatColor.RED + "[network] ");
-        addToPage(5, "quit      " + ChatColor.RED + "[network] ");
-        addToPage(5, "save      ");
+        setPageHeader(6, "IRC Commands 1",   "/irc  ");
+        addToPage(6, "list      ");
+        addToPage(6, "create    " + ChatColor.RED + "[network] " + ChatColor.GOLD + "[host]    [port]    [channel]");
+        addToPage(6, "connect   " + ChatColor.RED + "[network] ");
+        addToPage(6, "quit      " + ChatColor.RED + "[network] ");
+        addToPage(6, "save      ");
         // ---
         // irc commands 2           / page 6
-        setPageHeader(6, "IRC Commands 2",   "/irc  ");
-        addToPage(6, "set       " + ChatColor.RED + "[network] " + ChatColor.GOLD + "host      " + ChatColor.YELLOW + "[string]");
-        addToPage(6, "set       " + ChatColor.RED + "[network] " + ChatColor.GOLD + "port      " + ChatColor.YELLOW + "[int]");
-        addToPage(6, "set       " + ChatColor.RED + "[network] " + ChatColor.GOLD + "nick      " + ChatColor.YELLOW + "[string]");
-        addToPage(6, "set       " + ChatColor.RED + "[network] " + ChatColor.GOLD + "channel   " + ChatColor.YELLOW + "[string]");
+        setPageHeader(7, "IRC Commands 2",   "/irc  ");
+        addToPage(7, "set       " + ChatColor.RED + "[network] " + ChatColor.GOLD + "host      " + ChatColor.YELLOW + "[string]");
+        addToPage(7, "set       " + ChatColor.RED + "[network] " + ChatColor.GOLD + "port      " + ChatColor.YELLOW + "[int]");
+        addToPage(7, "set       " + ChatColor.RED + "[network] " + ChatColor.GOLD + "nick      " + ChatColor.YELLOW + "[string]");
+        addToPage(7, "set       " + ChatColor.RED + "[network] " + ChatColor.GOLD + "channel   " + ChatColor.YELLOW + "[string]");
         addKey("chatsuite");
         addKey("chat");
         setPermission("chatsuite.help", "Basic ChatSuite help!", PermissionDefault.TRUE);
