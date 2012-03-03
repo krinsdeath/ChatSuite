@@ -147,11 +147,11 @@ public class ChannelManager implements Manager {
     }
 
     public Channel getGlobalChannel() {
-        return channels.get(getDefaultChannel());
+        return getChannel(getDefaultChannel());
     }
 
     public String getDefaultChannel() {
-        return getConfig().getString("default");
+        return getConfig().getString("default", "Global");
     }
 
     public Channel createChannel(Player player, String channel) {

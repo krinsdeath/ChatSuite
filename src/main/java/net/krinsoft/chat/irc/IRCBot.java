@@ -8,7 +8,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -37,6 +39,8 @@ public class IRCBot implements Manager {
 
     private Map<String, Connection> connections             = new HashMap<String, Connection>();
 
+    private List<String>            online                  = new ArrayList<String>();
+
     public IRCBot(ChatCore instance) throws IOException {
         plugin = instance;
 
@@ -46,6 +50,11 @@ public class IRCBot implements Manager {
         NICKNAME                = getConfig().getString("nickname");
         IDENTITY                = getConfig().getString("ident");
         REALNAME                = getConfig().getString("realname");
+        boolean DEV             = getConfig().getBoolean("developer.run");
+        if ((NICKNAME.equals("ChatSuite") || IDENTITY.equals("ChatSuite") || (REALNAME.equals("ChatSuite"))) && !DEV) {
+            throw new InvalidIRCBotException("Please customize your IRC settings in 'irc.yml'.");
+        }
+
         DEFAULT_NETWORK         = getConfig().getString("default");
 
         // messages
@@ -100,7 +109,7 @@ public class IRCBot implements Manager {
             String host     = networks.getString(   network + ".host");
             int port        = networks.getInt(      network + ".port");
             String channel  = networks.getString(   network + ".channel");
-            Connection conn = new Connection(this, host, port, channel);
+            Connection conn = new Connection(this, network, host, port, channel);
             connections.put(network, conn);
         }
     }
@@ -125,5 +134,17 @@ public class IRCBot implements Manager {
 
     public void quit(String network, String channel, String nickname) {
         msg(network, channel, NICK.matcher(PLAYER_QUIT_MINECRAFT).replaceAll(nickname));
+    }
+
+    public boolean isOnline(String nickname) {
+        return online.contains(nickname);
+    }
+
+    public void setOnline(String nickname, boolean val) {
+        if (val) {
+            online.add(nickname);
+        } else {
+            online.remove(nickname);
+        }
     }
 }

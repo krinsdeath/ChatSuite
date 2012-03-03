@@ -3,6 +3,7 @@ package net.krinsoft.chat;
 import com.pneumaticraft.commandhandler.CommandHandler;
 import net.krinsoft.chat.commands.*;
 import net.krinsoft.chat.irc.IRCBot;
+import net.krinsoft.chat.irc.InvalidIRCBotException;
 import net.krinsoft.chat.listeners.IRCListener;
 import net.krinsoft.chat.listeners.PlayerListener;
 import org.bukkit.ChatColor;
@@ -55,7 +56,7 @@ public class ChatCore extends JavaPlugin {
         channelManager.saveConfig();
         channelManager.clean();
         worldManager.clean();
-        irc_bot.clean();
+        if (irc_bot != null) { irc_bot.clean(); }
         log("v" + getDescription().getVersion() + " disabled.");
     }
 
@@ -209,9 +210,12 @@ public class ChatCore extends JavaPlugin {
                     irc_bot.clean();
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             warn("An error occurred while initializing the IRC Bot.");
             e.printStackTrace();
+            irc_bot = null;
+        } catch (InvalidIRCBotException e) {
+            warn(e.getLocalizedMessage());
             irc_bot = null;
         }
     }

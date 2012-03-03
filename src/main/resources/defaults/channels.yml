@@ -2,7 +2,7 @@ default: global
 
 channels:
   global:
-    private: false
+    public: true
     irc: true
     owner: ''
     admins: []

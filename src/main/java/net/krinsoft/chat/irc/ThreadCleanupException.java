@@ -6,11 +6,6 @@ package net.krinsoft.chat.irc;
 public class ThreadCleanupException extends RuntimeException {
     private String                  message;
 
-    public ThreadCleanupException() {
-        super();
-        this.message    = "Thread Cleaned";
-    }
-
     public ThreadCleanupException(String message) {
         super(message);
         this.message    = message;

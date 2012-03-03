@@ -1,6 +1,8 @@
 package net.krinsoft.chat.irc;
 
+import net.krinsoft.chat.events.IRCJoinEvent;
 import net.krinsoft.chat.events.IRCMessageEvent;
+import net.krinsoft.chat.events.IRCQuitEvent;
 
 import java.io.*;
 import java.net.Socket;
@@ -48,7 +50,12 @@ public class Connection {
     private volatile IRCWriter      writer;
 
     /**
-     * This connections hostname
+     * The network name for this connection
+     */
+    private String                  network;
+
+    /**
+     * This connection's hostname
      */
     private String                  hostname;
 
@@ -95,24 +102,27 @@ public class Connection {
                         writeLine("PONG " + line.substring(5));
                         continue;
                     }
-                    String nick, message, target = null, chan;
+                    String nick, message, target = null;
                     Reply reply = Reply.get(line.split(" ")[1]);
                     if (reply == null) { continue; }
                     switch (reply) {
                         case RPL_MYINFO:
                             writeLine("JOIN " + channel);
+                            auth();
                             chanMsg(channel, manager.STARTUP);
                             break;
                         case JOIN:
                             nick = line.substring(1).split("!")[0];
-                            if (nick.equalsIgnoreCase(manager.NICKNAME)) { break; }
-                            chan = line.split(" ")[2];
-                            chanMsg(chan, NICK.matcher(manager.PLAYER_JOIN_IRC).replaceAll(nick));
+                            if (nick.equalsIgnoreCase(manager.NICKNAME) || manager.isOnline(nick)) { break; }
+                            manager.setOnline(nick, true);
+                            IRCJoinEvent join = new IRCJoinEvent(NICK.matcher(manager.PLAYER_JOIN_IRC).replaceAll(nick));
+                            manager.getPlugin().getServer().getPluginManager().callEvent(join);
                             break;
                         case PART:
                             nick = line.substring(1).split("!")[0];
-                            chan = line.split(" ")[2];
-                            chanMsg(chan, NICK.matcher(manager.PLAYER_QUIT_IRC).replaceAll(nick));
+                            manager.setOnline(nick, false);
+                            IRCQuitEvent quit = new IRCQuitEvent(NICK.matcher(manager.PLAYER_QUIT_IRC).replaceAll(nick));
+                            manager.getPlugin().getServer().getPluginManager().callEvent(quit);
                             break;
                         case PRIVMSG:
                             nick = line.substring(1).split("!")[0];
@@ -125,8 +135,8 @@ public class Connection {
                                 message = message.substring(message.indexOf(" ", message.indexOf(target)));
                             }
                             if (target != null) {
-                                IRCMessageEvent event = new IRCMessageEvent(nick, manager.IRC_TAG, message);
-                                manager.getPlugin().getServer().getPluginManager().callEvent(event);
+                                IRCMessageEvent msg = new IRCMessageEvent(nick, manager.IRC_TAG, message);
+                                manager.getPlugin().getServer().getPluginManager().callEvent(msg);
                             }
                             break;
                         default:
@@ -185,12 +195,13 @@ public class Connection {
         }
     }
 
-    public Connection(IRCBot bot, String host, int p, String chan) throws IOException {
+    public Connection(IRCBot bot, String net, String host, int p, String chan) throws IOException {
         manager     = bot;
         connection  = new Socket(host, p);
         bReader     = new BufferedReader(new InputStreamReader( connection.getInputStream()));
         bWriter     = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
 
+        network     = net;
         hostname    = host;
         port        = p;
         channel     = chan;
@@ -236,6 +247,12 @@ public class Connection {
     public void chanMsg(String chan, String message) {
         if (chan == null) { chan = channel; }
         writeLine("PRIVMSG " + chan + " :" + message);
+    }
+
+    private void auth() {
+        for (String auth : manager.getConfig().getString("networks." + network + ".auth").split("\n")) {
+            writeLine(auth);
+        }
     }
 
 }
