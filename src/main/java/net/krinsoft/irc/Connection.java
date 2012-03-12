@@ -1,8 +1,8 @@
-package net.krinsoft.chat.irc;
+package net.krinsoft.irc;
 
-import net.krinsoft.chat.events.IRCJoinEvent;
-import net.krinsoft.chat.events.IRCMessageEvent;
-import net.krinsoft.chat.events.IRCQuitEvent;
+import net.krinsoft.irc.events.IRCJoinEvent;
+import net.krinsoft.irc.events.IRCMessageEvent;
+import net.krinsoft.irc.events.IRCQuitEvent;
 
 import java.io.*;
 import java.net.Socket;

@@ -1,4 +1,4 @@
-package net.krinsoft.chat.events;
+package net.krinsoft.irc.events;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

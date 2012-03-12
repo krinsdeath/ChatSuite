@@ -2,8 +2,8 @@ package net.krinsoft.chat;
 
 import com.pneumaticraft.commandhandler.CommandHandler;
 import net.krinsoft.chat.commands.*;
-import net.krinsoft.chat.irc.IRCBot;
-import net.krinsoft.chat.irc.InvalidIRCBotException;
+import net.krinsoft.irc.IRCBot;
+import net.krinsoft.irc.InvalidIRCBotException;
 import net.krinsoft.chat.listeners.IRCListener;
 import net.krinsoft.chat.listeners.PlayerListener;
 import org.bukkit.ChatColor;
@@ -77,15 +77,7 @@ public class ChatCore extends JavaPlugin {
         channelManager = new ChannelManager(this);
         worldManager = new WorldManager(this);
         playerManager = new PlayerManager(this);
-        if (allow_irc) {
-            try {
-                irc_bot = new IRCBot(this);
-            } catch (IOException e) {
-                warn("An error occurred while initializing the IRC Connection.");
-                e.printStackTrace();
-                irc_bot = null;
-            }
-        }
+        connectIRCBot(allow_irc);
     }
 
     private void initEvents() {
@@ -205,6 +197,7 @@ public class ChatCore extends JavaPlugin {
             allow_irc = val;
             if (allow_irc) {
                 irc_bot = new IRCBot(this);
+                channelManager.connect();
             } else {
                 if (irc_bot != null) {
                     irc_bot.clean();

@@ -79,6 +79,7 @@ public class Channel implements Target {
 
     private String IRC_CHANNEL;
     private String IRC_NETWORK;
+    private String IRC_KEY;
 
     /**
      * Creates a new channel with the specified variables as options
@@ -104,7 +105,9 @@ public class Channel implements Target {
             is_irc      = manager.getConfig().getBoolean(           "channels." + name + ".irc.enabled");
             if (is_irc) {
                 IRC_CHANNEL = manager.getConfig().getString(        "channels." + name + ".irc.channel");
+                IRC_KEY     = manager.getConfig().getString(        "channels." + name + ".irc.key");
                 IRC_NETWORK = manager.getConfig().getString(        "channels." + name + ".irc.network");
+                connect();
             }
             permanent   = true;
         }
@@ -334,6 +337,15 @@ public class Channel implements Target {
         if (validIRC()) {
             MinecraftMessageEvent event = new MinecraftMessageEvent(IRC_NETWORK, IRC_CHANNEL, message);
             manager.getPlugin().getServer().getPluginManager().callEvent(event);
+        }
+    }
+
+    public void connect() {
+        if (is_irc && manager.getPlugin().getIRCBot() != null) {
+            if (!manager.getPlugin().getIRCBot().connect(IRC_NETWORK, IRC_CHANNEL, IRC_KEY)) {
+                manager.log(name, "Connection to IRC failed.");
+                is_irc = false;
+            }
         }
     }
 

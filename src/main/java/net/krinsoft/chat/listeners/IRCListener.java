@@ -2,6 +2,9 @@ package net.krinsoft.chat.listeners;
 
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.events.*;
+import net.krinsoft.irc.events.IRCJoinEvent;
+import net.krinsoft.irc.events.IRCMessageEvent;
+import net.krinsoft.irc.events.IRCQuitEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,7 +35,7 @@ public class IRCListener implements Listener {
 
     @EventHandler
     void ircJoin(IRCJoinEvent event) {
-        String format = plugin.getConfig().getString("format.message", "[%t] &d* %m");
+        String format = "[%t] &d* %m";
         String target = plugin.getChannelManager().getGlobalChannel().getName();
         format = format.replaceAll("%t", plugin.getChannelManager().getGlobalChannel().getColoredName());
         format = format.replaceAll("%m", event.getMessage());
@@ -43,7 +46,7 @@ public class IRCListener implements Listener {
 
     @EventHandler
     void ircQuit(IRCQuitEvent event) {
-        String format = plugin.getConfig().getString("format.message", "[%t] * %m");
+        String format = "[%t] &c* %m";
         String target = plugin.getChannelManager().getGlobalChannel().getName();
         format = format.replaceAll("%t", plugin.getChannelManager().getGlobalChannel().getColoredName());
         format = format.replaceAll("%m", event.getMessage());

@@ -1,4 +1,4 @@
-package net.krinsoft.chat.events;
+package net.krinsoft.irc.events;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 /**
  * @author krinsdeath
  */
-public class IRCJoinEvent extends Event {
+public class IRCQuitEvent extends Event {
 
     @Override
     public HandlerList getHandlers() { return HANDLERS; }
@@ -15,7 +15,7 @@ public class IRCJoinEvent extends Event {
 
     private final String message;
 
-    public IRCJoinEvent(String msg) {
+    public IRCQuitEvent(String msg) {
         message = msg;
     }
 

@@ -1,4 +1,4 @@
-package net.krinsoft.chat.irc;
+package net.krinsoft.irc;
 
 /**
  * @author krinsdeath

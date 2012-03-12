@@ -181,4 +181,10 @@ public class ChannelManager implements Manager {
         return list;
     }
 
+    public void connect() {
+        for (Channel chan : channels.values()) {
+            chan.connect();
+        }
+    }
+
 }

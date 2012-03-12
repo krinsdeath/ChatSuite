@@ -1,4 +1,4 @@
-package net.krinsoft.chat.irc;
+package net.krinsoft.irc;
 
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.api.Manager;
@@ -128,10 +128,39 @@ public class IRCBot implements Manager {
         conn.chanMsg(chan, message);
     }
 
+    /**
+     * Creates a connection to the specified IRC network, and joins the given channel
+     * @param network The network connection to connect to
+     * @param channel The channel to connect to
+     * @param key A channel key, if applicable (for private IRC channels)
+     * @return true if the command succeeds, false otherwise
+     */
+    public boolean connect(String network, String channel, String key) {
+        if (connections.get(network) != null) {
+            Connection conn = connections.get(network);
+            conn.writeLine("JOIN " + channel + " " + key);
+            return true;
+        } else {
+        }
+        return false;
+    }
+
+    /**
+     * Announces that a player has joined the minecraft server
+     * @param network The IRC Network to send the message to
+     * @param channel The IRC Channel to send the message to
+     * @param nickname The nickname of the player joining the minecraft server
+     */
     public void join(String network, String channel, String nickname) {
         msg(network, channel, NICK.matcher(PLAYER_JOIN_MINECRAFT).replaceAll(nickname));
     }
 
+    /**
+     * Announces that a player has quit minecraft
+     * @param network The IRC Network to send the message to
+     * @param channel The IRC Channel to send the message to
+     * @param nickname The nickname of the quitting player
+     */
     public void quit(String network, String channel, String nickname) {
         msg(network, channel, NICK.matcher(PLAYER_QUIT_MINECRAFT).replaceAll(nickname));
     }
