@@ -70,6 +70,11 @@ public class Connection {
     private String                  channel;
 
     /**
+     * This connection's channel key (optional)
+     */
+    private String                  key;
+
+    /**
      * A list of lines to be written to this connection's socket
      */
     private List<String>            lines           = new ArrayList<String>();
@@ -107,7 +112,7 @@ public class Connection {
                     if (reply == null) { continue; }
                     switch (reply) {
                         case RPL_MYINFO:
-                            writeLine("JOIN " + channel);
+                            writeLine("JOIN " + channel + " " + key);
                             auth();
                             chanMsg(channel, manager.STARTUP);
                             break;
@@ -178,7 +183,7 @@ public class Connection {
 
         public void writeIRC() {
             try {
-                for (String line : lines) {
+                for (String line : new ArrayList<String>(lines)) {
                     bWriter.write(line);
                 }
                 lines.clear();
@@ -205,6 +210,7 @@ public class Connection {
         hostname    = host;
         port        = p;
         channel     = chan;
+        key         = "";
 
         reader      = new IRCReader(this, "IRCReader: " + host);
         writer      = new IRCWriter(this, "IRCWriter: " + host);
@@ -214,6 +220,19 @@ public class Connection {
 
         writer.start();
         reader.start();
+    }
+
+    public Connection(IRCBot bot, String net, String host, int port, String channel, String k) throws IOException {
+        this(bot, net, host, port, channel);
+        key         = k;
+    }
+
+    public String getName() {
+        return network;
+    }
+
+    public String getInfo() {
+        return hostname + ":" + port;
     }
 
     public void stop() {

@@ -9,7 +9,7 @@
     <description>A powerful, configurable, and advanced Chat Manager for Bukkit and Super Permissions</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.number>DEV</project.build.number>
+        <project.build.number>DEV-R1</project.build.number>
     </properties>
     <repositories>
         <!-- Multiverse Repository -->

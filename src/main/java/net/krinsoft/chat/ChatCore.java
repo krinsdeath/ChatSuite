@@ -112,6 +112,13 @@ public class ChatCore extends JavaPlugin {
             commandHandler.registerCommand(new ChannelInviteCommand(this));
             commandHandler.registerCommand(new ChannelListCommand(this));
         }
+        if (allow_irc) {
+            commandHandler.registerCommand(new IRCCommand(this));
+            commandHandler.registerCommand(new IRCConnectCommand(this));
+            commandHandler.registerCommand(new IRCCreateCommand(this));
+            commandHandler.registerCommand(new IRCListCommand(this));
+            commandHandler.registerCommand(new IRCQuitCommand(this));
+        }
         commandHandler.registerCommand(new BaseCommand(this));
         commandHandler.registerCommand(new DebugCommand(this));
         commandHandler.registerCommand(new GroupOptionCommand(this));

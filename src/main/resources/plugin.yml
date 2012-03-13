@@ -90,9 +90,9 @@ commands:
     description: Allows changing various settings for the IRC Bot.
     usage: |
       /<command> connect        - Connects the IRC bot
-      /<command> disconnect     - Shuts the IRC bot off
-      /<command> nick [nick]    - Changes the IRC bot's nickname
-      /<command> set [option]   - Changes various settings of the IRC bot
+      /<command> quit           - Shuts the IRC bot off
+      /<command> nick [nick]    - Changes the bot's nickname
+      /<command> set [option].. - Changes various settings of the IRC bot
 
 permissions:
   chatsuite.bypass.*:
