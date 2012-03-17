@@ -1,9 +1,14 @@
-default: global
+default: Global
+world_channels: true
 
 channels:
-  global:
+  Global:
     public: true
-    irc: true
+    irc:
+      enabled: false
+      channel: '#chatsuite'
+      key: ''
+      network: esper
     owner: ''
     admins: []
     members: []

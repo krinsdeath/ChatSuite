@@ -8,6 +8,7 @@ networks:
     host: irc.esper.net
     port: 6667
     channel: '#chatsuite'
+    auth: ''
 
 messages:
   tag: '&C[IRC]&F'

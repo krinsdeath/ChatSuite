@@ -69,7 +69,6 @@ public class PlayerListener implements Listener {
         Target target = player.getTarget();
         if (target == null) { return; } // target object was null
         String format = player.getFormattedMessage();
-        format = format.replaceAll("%([a-zA-Z])", "[$1]");
         plugin.debug("Player: " + player.getName() + " / Target: " + target.getName());
         Set<Player> players = new HashSet<Player>();
         if (target instanceof Channel) {

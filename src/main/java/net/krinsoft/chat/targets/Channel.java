@@ -80,6 +80,7 @@ public class Channel implements Target {
     private String IRC_CHANNEL;
     private String IRC_NETWORK;
     private String IRC_KEY;
+    private boolean connected;
 
     /**
      * Creates a new channel with the specified variables as options
@@ -187,6 +188,11 @@ public class Channel implements Target {
      */
     public void join(Player player) {
         if (isAllowed(player)) {
+            if (occupants.contains(player)) {
+                player.sendMessage(ChatColor.RED + "[ChatSuite] You are already on this channel!");
+                manager.log(name, player.getName() + " was already on " + name + ".");
+                return;
+            }
             occupants.add(player);
             player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + name);
             manager.log(name, player.getName() + " joined the channel.");
@@ -329,8 +335,8 @@ public class Channel implements Target {
         }
     }
 
-    private boolean validIRC() {
-        return is_irc && IRC_NETWORK != null && IRC_CHANNEL != null;
+    public boolean validIRC() {
+        return is_irc && IRC_NETWORK != null && IRC_CHANNEL != null && connect();
     }
 
     public void sendToIRC(String message) {
@@ -340,13 +346,19 @@ public class Channel implements Target {
         }
     }
 
-    public void connect() {
+    public boolean connect() {
+        if (connected) { return true; }
         if (is_irc && manager.getPlugin().getIRCBot() != null) {
             if (!manager.getPlugin().getIRCBot().connect(IRC_NETWORK, IRC_CHANNEL, IRC_KEY)) {
                 manager.log(name, "Connection to IRC failed.");
+                connected = false;
                 is_irc = false;
+                return false;
             }
+            connected = true;
+            return true;
         }
+        return false;
     }
 
 }

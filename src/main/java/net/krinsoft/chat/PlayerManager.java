@@ -96,7 +96,6 @@ public class PlayerManager implements Manager {
             return;
         }
         players.put(player.getName(), new ChatPlayer(this, player));
-        plugin.getChannelManager().createChannel(player, player.getWorld().getName());
         plugin.getChannelManager().getGlobalChannel().join(player);
         plugin.debug("Player '" + player.getName() + "' registered");
     }

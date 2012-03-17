@@ -19,6 +19,8 @@ public class ChannelManager implements Manager {
     private ChatCore plugin;
     private HashMap<String, Channel> channels = new HashMap<String, Channel>();
 
+    private boolean world_channels;
+
     private FileConfiguration configuration;
     private File config;
 
@@ -63,6 +65,7 @@ public class ChannelManager implements Manager {
             getConfig().options().copyDefaults(true);
             saveConfig();
         }
+        world_channels = getConfig().getBoolean("world_channels");
     }
 
     public void registerChannels() {
@@ -122,6 +125,7 @@ public class ChannelManager implements Manager {
     }
 
     public void playerWorldChange(Player p, String from, String to) {
+        if (!world_channels) { return; }
         if (plugin.getPlayerManager().isPlayerRegistered(p)) {
             ChatPlayer player = plugin.getPlayerManager().getPlayer(p);
             removePlayerFromChannel(p, from);

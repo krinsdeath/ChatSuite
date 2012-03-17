@@ -105,12 +105,13 @@ public class ChatCore extends JavaPlugin {
             commandHandler.registerCommand(new WhisperCommand(this));
         }
         if (allow_channels) {
-            commandHandler.registerCommand(new ChannelMessageCommand(this));
             commandHandler.registerCommand(new ChannelCreateCommand(this));
-            commandHandler.registerCommand(new ChannelJoinCommand(this));
-            commandHandler.registerCommand(new ChannelPartCommand(this));
+            commandHandler.registerCommand(new ChannelInfoCommand(this));
             commandHandler.registerCommand(new ChannelInviteCommand(this));
+            commandHandler.registerCommand(new ChannelJoinCommand(this));
             commandHandler.registerCommand(new ChannelListCommand(this));
+            commandHandler.registerCommand(new ChannelMessageCommand(this));
+            commandHandler.registerCommand(new ChannelPartCommand(this));
         }
         if (allow_irc) {
             commandHandler.registerCommand(new IRCCommand(this));
