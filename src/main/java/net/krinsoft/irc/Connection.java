@@ -150,7 +150,7 @@ public class Connection {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                master.stop();
+                throw new ThreadCleanupException("Thread cleaned due to errors: use '/chat irc quit " + network + "'");
             }
         }
 
@@ -190,7 +190,7 @@ public class Connection {
                 bWriter.flush();
             } catch (IOException e) {
                 e.printStackTrace();
-                master.stop();
+                throw new ThreadCleanupException("Thread cleaned due to errors: use '/chat irc quit " + network + "'");
             }
         }
 

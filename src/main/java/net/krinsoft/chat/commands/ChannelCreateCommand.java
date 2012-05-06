@@ -38,7 +38,7 @@ public class ChannelCreateCommand extends ChannelCommand {
         Channel channel = manager.getChannel(args.get(0));
         if (channel == null) {
             // channel is free to create
-            manager.createChannel(player, args.get(0));
+            channel = manager.createChannel(player, args.get(0));
             plugin.getPlayerManager().getPlayer(player).setTarget(channel);
         }
     }

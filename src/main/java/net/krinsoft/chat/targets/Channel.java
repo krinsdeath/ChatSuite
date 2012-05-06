@@ -92,6 +92,9 @@ public class Channel implements Target {
         manager   = instance;
         name      = channel;
         owner     = (player != null ? player.getName() : "");
+        if (player != null) {
+            player.sendMessage(ChatColor.GOLD + "Creating channel " + name + "...");
+        }
         if (manager.getConfig().getConfigurationSection("channels." + name) != null) {
             // we found a permanent channel! Let's set it up.
             manager.log(name, "Detected Permanent channel!");
@@ -148,7 +151,6 @@ public class Channel implements Target {
 
     public void persist() {
         if (permanent) {
-            manager.getConfig().set("channels." + name + ".color", "WHITE");
             manager.getConfig().set("channels." + name + ".public", is_public);
             manager.getConfig().set("channels." + name + ".owner", owner);
             manager.getConfig().set("channels." + name + ".admins", admins);
@@ -268,7 +270,8 @@ public class Channel implements Target {
     public void addAdmin(Player owner, Player player) {
         if (isOwner(player) || owner.hasPermission("chatsuite.bypass.admin")) {
             admins.add(player.getName());
-            player.sendMessage(ChatColor.GREEN + "[ChatSuite] You are now an admin: " + name);
+            owner.sendMessage(ChatColor.GREEN + "[ChatSuite] " + player.getName() + " is now an admin on '" + name + "'");
+            player.sendMessage(ChatColor.GREEN + "[ChatSuite] You are now an admin on '" + name + "'");
         }
     }
 

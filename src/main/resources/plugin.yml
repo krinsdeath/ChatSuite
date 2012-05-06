@@ -56,6 +56,12 @@ commands:
     aliases: [chi, inv]
     description: Invites a player to the channel.
     usage: /<command> [channel] [player]
+  admin:
+    aliases: [adm, cha]
+    description: Adds a user as an admin for a channel.
+    usage: |
+      /<command> [channel] add [player]
+      /<command> [channel] remove [player]
   whisper: # done
     aliases: [w]
     description: Sends a message to the specified player.

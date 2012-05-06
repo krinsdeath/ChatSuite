@@ -189,7 +189,7 @@ public class ChatPlayer implements Target {
 
     private String parseSelf(String format) {
         format = SELF.matcher(format).replaceAll(getName());
-        format = SELF_DISPLAY.matcher(format).replaceAll(manager.getPlugin().getServer().getPlayer(getName()).getDisplayName());
+        format = SELF_DISPLAY.matcher(format).replaceAll(getPlayer().getDisplayName());
         return format;
     }
 
