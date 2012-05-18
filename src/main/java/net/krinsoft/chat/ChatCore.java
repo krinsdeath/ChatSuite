@@ -254,7 +254,7 @@ public class ChatCore extends JavaPlugin {
         setAllowWhispers(getConfig().getBoolean("plugin.allow_whispers"));
         setAllowAfk(getConfig().getBoolean("plugin.allow_afk"));
         setAllowIRC(getConfig().getBoolean("plugin.allow_irc"));
-        OP_FALLBACK = getConfig().getBoolean("plugin.op_fallback");
+        OP_FALLBACK = getConfig().getBoolean("plugin.op_fallback", false);
     }
 
     public FileConfiguration getConfig() {
@@ -302,8 +302,10 @@ public class ChatCore extends JavaPlugin {
         }
         debug("DEFAULT GROUP: " + DEFAULT_GROUP);
         getServer().getPluginManager().getPermission("chatsuite.groups." + DEFAULT_GROUP).setDefault(PermissionDefault.TRUE);
-        debug("OP GROUP: " + OP_GROUP);
-        getServer().getPluginManager().getPermission("chatsuite.groups." + (OP_FALLBACK ? OP_GROUP : DEFAULT_GROUP)).setDefault(PermissionDefault.OP);
+        if (OP_FALLBACK) {
+            debug("OP GROUP: " + OP_GROUP);
+            getServer().getPluginManager().getPermission("chatsuite.groups." + OP_GROUP).setDefault(PermissionDefault.OP);
+        }
     }
 
     public String getDefaultGroup() {
