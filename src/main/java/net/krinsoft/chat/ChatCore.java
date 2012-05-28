@@ -241,11 +241,7 @@ public class ChatCore extends JavaPlugin {
             getConfig().options().copyDefaults(true);
             getConfig().options().header(
                     "Any group can have a format section, which overrides the 'global' format.\n" +
-                            "Variables, denoted by the use of a % (percent sign)\n" +
-                            "placeholder\n" +
-                            "placeholder\n" +
-                            "placeholder\n" +
-                            "placeholder\n"
+                            "Variables, denoted by the use of a % (percent sign)\n"
             );
             saveConfig();
         }
@@ -274,6 +270,13 @@ public class ChatCore extends JavaPlugin {
     }
 
     public ConfigurationSection getGroupNode(String key) {
+        ConfigurationSection group = getConfig().getConfigurationSection("groups." + key);
+        if (group == null) {
+            getConfig().set("groups." + key + ".prefix", "[" + key + "]");
+            getConfig().set("groups." + key + ".group", "");
+            getConfig().set("groups." + key + ".suffix", "");
+            getConfig().set("groups." + key + ".weight", 0);
+        }
         return getConfig().getConfigurationSection("groups." + key);
     }
 
@@ -296,6 +299,8 @@ public class ChatCore extends JavaPlugin {
             }
             debug("Registering group node: 'chatsuite.groups." + key + "' with weight '" + weight + "'");
             Permission perm = new Permission("chatsuite.groups." + key);
+            perm.setDescription("The attached player belongs to the ChatSuite group: " + key);
+            perm.setDefault(PermissionDefault.FALSE);
             if (getServer().getPluginManager().getPermission("chatsuite.groups." + key) == null) {
                 getServer().getPluginManager().addPermission(perm);
             }

@@ -58,10 +58,6 @@ public class GroupOptionCommand extends ChatSuiteCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         ConfigurationSection group = plugin.getGroupNode(args.get(0));
-        if (group == null) {
-            error(sender, "Invalid group.");
-            return;
-        }
         GroupOption option = GroupOption.fromName(args.get(1));
         if (option == null) {
             error(sender, "Invalid option.");

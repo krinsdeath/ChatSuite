@@ -75,18 +75,23 @@ public class PlayerManager implements Manager {
 
     /**
      * Gets the ChatPlayer instance for the player specified
-     * @param p
-     * the player to fetch
-     * @return
-     * the player's ChatPlayer instance, or null
+     * @param p The player we're fetching.
+     * @return The player's ChatPlayer instance if it already exists, or creates a new instance for them
      */
     public ChatPlayer getPlayer(Player p) {
-        if (players.get(p.getName()) == null) {
+        if (!isPlayerRegistered(p)) {
             registerPlayer(p);
         }
-        return players.get(p.getName());
+        ChatPlayer player = players.get(p.getName());
+        player.getGroup();
+        return player;
     }
 
+    /**
+     * Checks whether the specified player is registered with ChatSuite or not
+     * @param p The player we're checking
+     * @return true if the player is registered in ChatSuite, otherwise false
+     */
     public boolean isPlayerRegistered(Player p) {
         return (players.get(p.getName()) != null);
     }

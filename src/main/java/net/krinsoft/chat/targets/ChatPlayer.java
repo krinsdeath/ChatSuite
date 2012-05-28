@@ -48,7 +48,6 @@ public class ChatPlayer implements Target {
 
     // general stuff
     private PlayerManager manager;
-    private Player player;
     private String name;
     private String world; // the player's current world
     private String group; // the player's group
@@ -61,9 +60,8 @@ public class ChatPlayer implements Target {
 
     public ChatPlayer(PlayerManager man, Player p) {
         manager = man;
-        player = p;
-        name = player.getName();
-        world = player.getWorld().getName();
+        name = p.getName();
+        world = p.getWorld().getName();
         auto_join = manager.getConfig().getStringList(name + ".auto_join");
         if (manager.getConfig().get(name) != null) {
             String t = manager.getConfig().getString(getName() + ".target");
@@ -78,7 +76,7 @@ public class ChatPlayer implements Target {
         if (target == null) {
             target = manager.getPlugin().getChannelManager().getGlobalChannel();
         }
-        group = getGroup();
+        getGroup();
         manager.getPlugin().debug("Player " + name + " set to group '" + group + "'");
     }
 
@@ -88,19 +86,21 @@ public class ChatPlayer implements Target {
     }
 
     public String getGroup() {
-        String group = null;
+        Player p = getPlayer();
+        if (p == null) { return manager.getPlugin().getDefaultGroup(); }
         int weight = 0;
         for (String key : manager.getPlugin().getGroups()) {
             int i = manager.getPlugin().getGroupNode(key).getInt("weight");
             manager.getPlugin().debug(name + ": Checking " + key + "... (" + i + ")");
-            if ((player.hasPermission("chatsuite.groups." + key) || player.hasPermission("group." + key)) && i > weight) {
+            if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
                 weight = i;
                 group = key;
             }
         }
         if (group == null) {
-            group = player.isOp() ? manager.getPlugin().getOpGroup() : manager.getPlugin().getDefaultGroup();
+            group = p.isOp() ? manager.getPlugin().getOpGroup() : manager.getPlugin().getDefaultGroup();
         }
+        manager.getPlugin().debug(name + ": Set to '" + group + "'.");
         return group;
     }
 
@@ -112,7 +112,7 @@ public class ChatPlayer implements Target {
     }
 
     public Player getPlayer() {
-        return player;
+        return manager.getPlugin().getServer().getPlayer(name);
     }
 
     public Target getTarget() {
@@ -121,7 +121,8 @@ public class ChatPlayer implements Target {
 
     public void setTarget(Target t) {
         target = t;
-        player.sendMessage("[ChatSuite] Your target is now: " + target.getName());
+        Player p = getPlayer();
+        if (p != null) { p.sendMessage("[ChatSuite] Your target is now: " + target.getName()); }
     }
 
     public void setWorld(String w) {
@@ -200,7 +201,7 @@ public class ChatPlayer implements Target {
             } else {
                 format = TARGET.matcher(format).replaceAll(target.getName());
             }
-            Player p = manager.getPlugin().getServer().getPlayer(target.getName());
+            Player p = getPlayer();
             if (p != null) {
                 format = TARGET_DISPLAY.matcher(format).replaceAll(p.getDisplayName());
             }
@@ -222,16 +223,17 @@ public class ChatPlayer implements Target {
     ///////////////////////
 
     public void sendMessage(String message) {
-        player.sendMessage(message);
+        Player p = getPlayer();
+        if (p != null) { p.sendMessage(message); }
     }
 
     public void whisperTo(Target to, String message) {
         reply = to;
         String format = getFormattedWhisperTo(to);
         format = format.replaceAll("(%message|%m)", message);
-        player.sendMessage(format);
+        sendMessage(format);
         if (to instanceof ChatPlayer && ((ChatPlayer)to).afk) {
-            player.sendMessage(to.getName() + " is afk: " + ((ChatPlayer)to).afk_message);
+            sendMessage(to.getName() + " is afk: " + ((ChatPlayer)to).afk_message);
         }
     }
 
@@ -239,7 +241,7 @@ public class ChatPlayer implements Target {
         reply = from;
         String format = getFormattedWhisperFrom(from);
         format = format.replaceAll("(%message|%m)", message);
-        player.sendMessage(format);
+        sendMessage(format);
     }
 
     public void reply(String message) {
