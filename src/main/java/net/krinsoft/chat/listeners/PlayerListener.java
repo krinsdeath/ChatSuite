@@ -92,8 +92,9 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     void playerChatMonitor(PlayerChatEvent event) {
         if (event.isCancelled()) { return; }
+        if (plugin.getIRCBot() == null) { return; }
         String message = event.getFormat();
-        message = message.replaceAll("%2\\$s", event.getMessage());
+        message = message.replaceAll("%2\\$s", event.getMessage().replaceAll("\\$", "\\\\$"));
         message = ChatColor.stripColor(message);
         ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer());
         if (player.getTarget() instanceof Channel) {
