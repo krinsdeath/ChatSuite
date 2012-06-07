@@ -67,11 +67,7 @@ public class ChatPlayer implements Target {
         if (manager.getConfig().get(name) != null) {
             String t = manager.getConfig().getString(getName() + ".target");
             if (t != null) {
-                if (t.startsWith("p:")) {
-                    target = manager.getPlayer(t.split(":")[1]);
-                } else if (t.startsWith("c:")) {
-                    target = manager.getPlugin().getChannelManager().getChannel(t.split(":")[1]);
-                }
+                target = manager.getPlugin().getTarget(t);
             }
         }
         if (target == null) {

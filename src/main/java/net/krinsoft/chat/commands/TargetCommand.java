@@ -41,6 +41,10 @@ public class TargetCommand extends ChatSuiteCommand {
         try {
             target = plugin.getChannelManager().getChannel(args.get(0));
             Player t = plugin.getServer().getPlayer(args.get(0));
+            if (t != null && t.getName().equals(player.getName())) {
+                error(sender, "You can't set yourself as your target.");
+                return;
+            }
             if (target == null && t != null) {
                 target = plugin.getPlayerManager().getPlayer(t.getName());
             }

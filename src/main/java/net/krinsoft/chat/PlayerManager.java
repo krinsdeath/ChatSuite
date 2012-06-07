@@ -1,6 +1,7 @@
 package net.krinsoft.chat;
 
 import net.krinsoft.chat.api.Manager;
+import net.krinsoft.chat.targets.Channel;
 import net.krinsoft.chat.targets.ChatPlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -104,9 +105,12 @@ public class PlayerManager implements Manager {
         players.put(player, cplayer);
         plugin.getChannelManager().getGlobalChannel().join(plugin.getServer().getPlayer(player));
         for (String channel : cplayer.getAutoJoinChannels()) {
-            plugin.getChannelManager().getChannel(channel).join(cplayer.getPlayer());
+            Channel chan = plugin.getChannelManager().getChannel(channel);
+            if (chan != null && !chan.getOccupants().contains(cplayer.getPlayer())) {
+                chan.join(cplayer.getPlayer());
+            }
         }
-
+        plugin.getTarget(getConfig().getString(cplayer.getName() + ".target", "c:" + plugin.getChannelManager().getDefaultChannel()));
         plugin.debug("Player '" + player + "' registered");
     }
 

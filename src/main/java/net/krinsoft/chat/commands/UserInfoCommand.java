@@ -36,6 +36,10 @@ public class UserInfoCommand extends UserCommand {
         }
         String target = (args.size() == 1 ? args.get(0) : sender.getName());
         ChatPlayer player = manager.getPlayer(target);
+        if (player == null) {
+            error(sender, "That player does not exist.");
+            return;
+        }
         sender.sendMessage(ChatColor.GREEN + "=== " + ChatColor.GOLD + player.getName() + ChatColor.GREEN + " ===");
         sender.sendMessage(ChatColor.GOLD + "Display Name: " + player.getPlayer().getDisplayName());
         sender.sendMessage(ChatColor.GOLD + "Group: " + ChatColor.GREEN + player.getGroup());

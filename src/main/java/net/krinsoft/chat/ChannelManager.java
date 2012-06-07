@@ -120,7 +120,7 @@ public class ChannelManager implements Manager {
                 if (chan.getOccupants().size() < 1 && !chan.isPermanent()) {
                     // channel is empty! let's get rid of it
                     chan = channels.remove(channel.toLowerCase());
-                    plugin.debug("Channel '" + channel + "' removed.");
+                    plugin.debug("Channel '" + chan.getName() + "' is empty: removing...");
                 }
             }
             return chan;
@@ -141,10 +141,13 @@ public class ChannelManager implements Manager {
     }
 
     void removePlayerFromAllChannels(Player player) {
-        Set<String> keys = new HashSet<String>(channels.keySet());
-        for (String c : keys) {
-            if (channels.get(c).contains(player)) {
-                removePlayerFromChannel(player, c);
+        for (Channel channel : channels.values()) {
+            if (channel.contains(player)) {
+                channel.part(player);
+                if (channel.getOccupants().size() == 0 && !channel.isPermanent()) {
+                    channels.remove(channel.getName().toLowerCase());
+                    plugin.debug("Channel '" + channel.getName() + "' is empty: removing...");
+                }
             }
         }
     }

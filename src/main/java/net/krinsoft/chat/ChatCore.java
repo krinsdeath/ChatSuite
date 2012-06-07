@@ -1,11 +1,12 @@
 package net.krinsoft.chat;
 
 import com.pneumaticraft.commandhandler.CommandHandler;
+import net.krinsoft.chat.api.Target;
 import net.krinsoft.chat.commands.*;
-import net.krinsoft.irc.IRCBot;
-import net.krinsoft.irc.InvalidIRCBotException;
 import net.krinsoft.chat.listeners.IRCListener;
 import net.krinsoft.chat.listeners.PlayerListener;
+import net.krinsoft.irc.IRCBot;
+import net.krinsoft.irc.InvalidIRCBotException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -323,6 +324,18 @@ public class ChatCore extends JavaPlugin {
     public String getOpGroup() {
         if (!OP_FALLBACK) { return DEFAULT_GROUP; }
         return OP_GROUP;
+    }
+
+    public Target getTarget(String t) {
+        Target target;
+        if (t.startsWith("p:")) {
+            target = playerManager.getPlayer(t.split(":")[1]);
+        } else if (t.startsWith("c:")) {
+            target = channelManager.getChannel(t.split(":")[1]);
+        } else {
+            target = channelManager.getChannel(channelManager.getDefaultChannel());
+        }
+        return target;
     }
 
 }
