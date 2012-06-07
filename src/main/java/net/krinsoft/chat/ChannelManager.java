@@ -32,6 +32,9 @@ public class ChannelManager implements Manager {
     }
 
     public void clean() {
+        for (Channel channel : channels.values()) {
+            channel.persist();
+        }
         channels.clear();
     }
 
@@ -126,8 +129,8 @@ public class ChannelManager implements Manager {
 
     public void playerWorldChange(Player p, String from, String to) {
         if (!world_channels) { return; }
-        if (plugin.getPlayerManager().isPlayerRegistered(p)) {
-            ChatPlayer player = plugin.getPlayerManager().getPlayer(p);
+        if (plugin.getPlayerManager().isPlayerRegistered(p.getName())) {
+            ChatPlayer player = plugin.getPlayerManager().getPlayer(p.getName());
             removePlayerFromChannel(p, from);
             Target target = addPlayerToChannel(p, to);
             if (player.getTarget().getName().equals(from)) {

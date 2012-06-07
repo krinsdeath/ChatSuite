@@ -21,6 +21,8 @@ public class ChannelBootCommand extends ChannelCommand {
         setPageHeader(0, "Channel Commands", "/boot     ");
         addToPage(0, "global    " + ChatColor.GOLD + "Njodi     " + ChatColor.WHITE + "// Removes 'Njodi' from the 'global' channel.");
         setArgRange(2, 2);
+        addKey("chatsuite channel boot");
+        addKey("chat channel boot");
         addKey("channel boot");
         addKey("ch boot");
         addKey("boot");

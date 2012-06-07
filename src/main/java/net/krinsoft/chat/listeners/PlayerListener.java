@@ -30,7 +30,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     void playerJoin(PlayerJoinEvent event) {
-        plugin.getPlayerManager().registerPlayer(event.getPlayer());
+        plugin.getPlayerManager().registerPlayer(event.getPlayer().getName());
         if (plugin.getIRCBot() != null) {
             MinecraftJoinEvent evt = new MinecraftJoinEvent(event.getPlayer().getName());
             plugin.getServer().getPluginManager().callEvent(evt);
@@ -64,7 +64,7 @@ public class PlayerListener implements Listener {
         if (event.getPlayer().hasPermission("chatsuite.colorize")) {
             event.setMessage(event.getMessage().replaceAll("&([0-9a-fA-F])", "\u00A7$1"));
         }
-        ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer());
+        ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
         if (player == null) { return; } // player object was null
         Target target = player.getTarget();
         if (target == null) { return; } // target object was null
@@ -75,6 +75,8 @@ public class PlayerListener implements Listener {
             for (Player occ : ((Channel)target).getOccupants()) {
                 if (occ != null) {
                     players.add(occ);
+                } else {
+                    ((Channel)target).part(occ);
                 }
             }
         } else {
@@ -96,7 +98,7 @@ public class PlayerListener implements Listener {
         String message = event.getFormat();
         message = message.replaceAll("%2\\$s", event.getMessage().replaceAll("\\$", "\\\\$"));
         message = ChatColor.stripColor(message);
-        ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer());
+        ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
         if (player.getTarget() instanceof Channel) {
             ((Channel)player.getTarget()).sendToIRC(message);
         }
@@ -104,7 +106,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     void playerChangedWorld(PlayerChangedWorldEvent event) {
-        if (!plugin.getPlayerManager().isPlayerRegistered(event.getPlayer())) {
+        if (!plugin.getPlayerManager().isPlayerRegistered(event.getPlayer().getName())) {
             return;
         }
         plugin.getChannelManager().playerWorldChange(event.getPlayer(), event.getFrom().getName(), event.getPlayer().getWorld().getName());

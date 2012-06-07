@@ -38,8 +38,8 @@ public class WhisperCommand extends ChatSuiteCommand {
         if (target == null) {
             error(player, "That player doesn't exist.");
         } else {
-            ChatPlayer whisper = plugin.getPlayerManager().getPlayer(player);
-            ChatPlayer whispee = plugin.getPlayerManager().getPlayer(target);
+            ChatPlayer whisper = plugin.getPlayerManager().getPlayer(player.getName());
+            ChatPlayer whispee = plugin.getPlayerManager().getPlayer(target.getName());
             whisper.whisperTo(whispee, message.toString()); // player sending the whisper
             whispee.whisperFrom(whisper, message.toString()); // player receiving the whisper
         }

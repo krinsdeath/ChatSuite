@@ -24,6 +24,7 @@ public class ChannelMessageCommand extends ChatSuiteCommand {
         addToPage(0, "admin     " + ChatColor.GOLD + "sup guys, spammer in global");
         setArgRange(2, 20);
         addKey("chatsuite channel message");
+        addKey("chat channel message");
         addKey("channel message");
         addKey("ch message");
         addKey("message");
@@ -42,10 +43,10 @@ public class ChannelMessageCommand extends ChatSuiteCommand {
             message.append(args.get(i)).append(" ");
         }
         if (channel != null) {
-            Target target = plugin.getPlayerManager().getPlayer(player).getTarget();
-            plugin.getPlayerManager().getPlayer(player).setTarget(channel);
+            Target target = plugin.getPlayerManager().getPlayer(player.getName()).getTarget();
+            plugin.getPlayerManager().getPlayer(player.getName()).setTarget(channel);
             player.chat(message.toString());
-            plugin.getPlayerManager().getPlayer(player).setTarget(target);
+            plugin.getPlayerManager().getPlayer(player.getName()).setTarget(target);
         } else {
             error(player, "That channel doesn't exist.");
         }

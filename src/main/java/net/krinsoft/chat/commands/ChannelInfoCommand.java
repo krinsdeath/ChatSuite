@@ -33,8 +33,16 @@ public class ChannelInfoCommand extends ChannelCommand {
             error(sender, "'" + args.get(0) + "' cannot be matched to a channel.");
             return;
         }
+        StringBuilder occs = new StringBuilder();
+        for (Player p : chan.getOccupants()) {
+            occs.append(ChatColor.AQUA).append(p.getName());
+            if (!p.getName().equals(p.getDisplayName())) {
+                occs.append(" (").append(ChatColor.GOLD).append(p.getDisplayName()).append(ChatColor.AQUA).append(")");
+            }
+            occs.append(ChatColor.WHITE).append(", ");
+        }
         sender.sendMessage(ChatColor.GOLD + "=== " + chan.getColoredName() + ChatColor.GOLD + " ===");
-        sender.sendMessage(ChatColor.GREEN + "Occupants: " + ChatColor.AQUA + chan.getOccupants().size());
+        sender.sendMessage(ChatColor.GREEN + "Occupants: " + ChatColor.AQUA + occs.toString().substring(0, occs.toString().length()-2));
         sender.sendMessage(ChatColor.GREEN + "Public:    " + ChatColor.AQUA + chan.isPublic());
         sender.sendMessage(ChatColor.GREEN + "Permanent: " + ChatColor.AQUA + chan.isPermanent());
         sender.sendMessage(ChatColor.GREEN + "IRC:       " + ChatColor.AQUA + chan.validIRC());

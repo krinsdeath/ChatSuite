@@ -2,9 +2,9 @@ package net.krinsoft.chat.commands;
 
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.Channel;
+import net.krinsoft.chat.targets.ChatPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.List;
@@ -23,6 +23,7 @@ public class ChannelJoinCommand extends ChannelCommand {
         addToPage(0, "admin     " + ChatColor.WHITE + "// Join the 'admin' channel.");
         setArgRange(1, 1);
         addKey("chatsuite channel join");
+        addKey("chat channel join");
         addKey("channel join");
         addKey("ch join");
         addKey("join");
@@ -34,13 +35,15 @@ public class ChannelJoinCommand extends ChannelCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         if (!validateSender(sender)) { return; }
-        Player player = plugin.getServer().getPlayer(sender.getName());
+        ChatPlayer player = plugin.getPlayerManager().getPlayer(sender.getName());
         Channel channel = plugin.getChannelManager().getChannel(args.get(0));
         if (channel != null) {
-            channel.join(player);
+            channel.join(player.getPlayer());
+            player.join(channel);
+            player.setTarget(channel, false);
         } else {
             // channel was null, do nothing
-            error(player, "That channel doesn't exist.");
+            error(sender, "That channel doesn't exist.");
         }
     }
 

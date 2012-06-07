@@ -4,7 +4,6 @@ import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.ChatPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class ReplyCommand extends ChatSuiteCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         if (!validateSender(sender)) { return; }
-        ChatPlayer player = plugin.getPlayerManager().getPlayer((Player) sender);
+        ChatPlayer player = plugin.getPlayerManager().getPlayer(sender.getName());
         String message = "";
         for (int i = 1; i < args.size(); i++) {
             message += args.get(i) + " ";

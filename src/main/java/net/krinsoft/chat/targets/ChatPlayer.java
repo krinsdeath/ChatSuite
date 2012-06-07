@@ -4,6 +4,7 @@ import com.herocraftonline.dev.heroes.Heroes;
 import com.herocraftonline.dev.heroes.persistence.Hero;
 import net.krinsoft.chat.PlayerManager;
 import net.krinsoft.chat.api.Target;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -66,9 +67,9 @@ public class ChatPlayer implements Target {
         if (manager.getConfig().get(name) != null) {
             String t = manager.getConfig().getString(getName() + ".target");
             if (t != null) {
-                if (t.startsWith("player:")) {
-                    target = manager.getPlayer(manager.getPlugin().getServer().getPlayer(t.split(":")[1]));
-                } else if (t.startsWith("channel:")) {
+                if (t.startsWith("p:")) {
+                    target = manager.getPlayer(t.split(":")[1]);
+                } else if (t.startsWith("c:")) {
                     target = manager.getPlugin().getChannelManager().getChannel(t.split(":")[1]);
                 }
             }
@@ -123,6 +124,36 @@ public class ChatPlayer implements Target {
         target = t;
         Player p = getPlayer();
         if (p != null) { p.sendMessage("[ChatSuite] Your target is now: " + target.getName()); }
+    }
+
+    public void setTarget(Target t, boolean val) {
+        target = t;
+    }
+
+    public void join(Channel c) {
+        if (!auto_join.contains(c.getName())) {
+            sendMessage(c.getColoredName() + " added to Auto-Join list.");
+        }
+        auto_join.add(c.getName());
+    }
+
+    public void part(Channel c) {
+        if (auto_join.contains(c.getName())) {
+            sendMessage(c.getColoredName() + " removed from Auto-Join list.");
+        }
+        auto_join.remove(c.getName());
+    }
+
+    public List<String> getAutoJoinChannels() {
+        return auto_join;
+    }
+
+    public String getAutoJoinChannelString() {
+        StringBuilder ajoin = new StringBuilder();
+        for (String ch : auto_join) {
+            ajoin.append(ChatColor.AQUA).append(ch).append(ChatColor.WHITE).append(", ");
+        }
+        return ajoin.toString().substring(0, ajoin.toString().length()-2);
     }
 
     public void setWorld(String w) {

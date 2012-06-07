@@ -24,6 +24,7 @@ public class ChannelListCommand extends ChannelCommand {
         addToPage(0, "-all      " + ChatColor.WHITE + "// List all channels.");
         setArgRange(0, 1);
         addKey("chatsuite channel list");
+        addKey("chat channel list");
         addKey("channel list");
         addKey("ch list");
         setPermission("chatsuite.list", "Allows users to list the channels they're in.", PermissionDefault.TRUE);

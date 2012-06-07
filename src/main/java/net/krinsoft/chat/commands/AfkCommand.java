@@ -3,7 +3,6 @@ package net.krinsoft.chat.commands;
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.ChatPlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class AfkCommand extends ChatSuiteCommand {
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
         if (!validateSender(sender)) { return; }
-        ChatPlayer player = plugin.getPlayerManager().getPlayer((Player) sender);
+        ChatPlayer player = plugin.getPlayerManager().getPlayer(sender.getName());
         if (player == null) { return; }
         if (args.isEmpty()) {
             player.toggleAfk("I'm away.");

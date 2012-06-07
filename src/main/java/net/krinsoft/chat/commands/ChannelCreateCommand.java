@@ -39,7 +39,9 @@ public class ChannelCreateCommand extends ChannelCommand {
         if (channel == null) {
             // channel is free to create
             channel = manager.createChannel(player, args.get(0));
-            plugin.getPlayerManager().getPlayer(player).setTarget(channel);
+            plugin.getPlayerManager().getPlayer(player.getName()).setTarget(channel);
+        } else {
+            error(sender, "That channel already exists.");
         }
     }
 

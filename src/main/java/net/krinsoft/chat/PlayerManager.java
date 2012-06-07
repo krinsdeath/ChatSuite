@@ -36,7 +36,11 @@ public class PlayerManager implements Manager {
     }
 
     public void clean() {
-        saveConfig();
+        if (persist) {
+            for (ChatPlayer player : players.values()) {
+                player.persist();
+            }
+        }
         players.clear();
     }
 
@@ -51,11 +55,7 @@ public class PlayerManager implements Manager {
 
     @Override
     public void saveConfig() {
-        if (!persist) { return; }
         try {
-            for (ChatPlayer p : players.values()) {
-                p.persist();
-            }
             getConfig().save(config);
         } catch (Exception e) {
             plugin.warn("An error occurred while saving 'players.yml'");
@@ -69,7 +69,7 @@ public class PlayerManager implements Manager {
 
     private void buildPlayerList() {
         for (Player p : plugin.getServer().getOnlinePlayers()) {
-            registerPlayer(p);
+            registerPlayer(p.getName());
         }
     }
 
@@ -78,11 +78,11 @@ public class PlayerManager implements Manager {
      * @param p The player we're fetching.
      * @return The player's ChatPlayer instance if it already exists, or creates a new instance for them
      */
-    public ChatPlayer getPlayer(Player p) {
+    public ChatPlayer getPlayer(String p) {
         if (!isPlayerRegistered(p)) {
             registerPlayer(p);
         }
-        ChatPlayer player = players.get(p.getName());
+        ChatPlayer player = players.get(p);
         player.getGroup();
         return player;
     }
@@ -92,17 +92,22 @@ public class PlayerManager implements Manager {
      * @param p The player we're checking
      * @return true if the player is registered in ChatSuite, otherwise false
      */
-    public boolean isPlayerRegistered(Player p) {
-        return (players.get(p.getName()) != null);
+    public boolean isPlayerRegistered(String p) {
+        return (players.get(p) != null);
     }
 
-    public void registerPlayer(Player player) {
-        if (players.containsKey(player.getName())) {
+    public void registerPlayer(String player) {
+        if (players.containsKey(player)) {
             return;
         }
-        players.put(player.getName(), new ChatPlayer(this, player));
-        plugin.getChannelManager().getGlobalChannel().join(player);
-        plugin.debug("Player '" + player.getName() + "' registered");
+        ChatPlayer cplayer = new ChatPlayer(this, plugin.getServer().getPlayer(player));
+        players.put(player, cplayer);
+        plugin.getChannelManager().getGlobalChannel().join(plugin.getServer().getPlayer(player));
+        for (String channel : cplayer.getAutoJoinChannels()) {
+            plugin.getChannelManager().getChannel(channel).join(cplayer.getPlayer());
+        }
+
+        plugin.debug("Player '" + player + "' registered");
     }
 
     public void unregisterPlayer(Player player) {
@@ -110,6 +115,7 @@ public class PlayerManager implements Manager {
             return;
         }
         plugin.getChannelManager().removePlayerFromAllChannels(player);
+        players.get(player.getName()).persist();
         players.remove(player.getName());
         plugin.debug("Player '" + player.getName() + "' unregistered");
     }

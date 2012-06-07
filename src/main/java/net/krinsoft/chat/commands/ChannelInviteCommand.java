@@ -23,6 +23,7 @@ public class ChannelInviteCommand extends ChatSuiteCommand {
         addToPage(0, "admin     " + ChatColor.GOLD + "Njodi     " + ChatColor.WHITE + "// Invite 'Njodi' to the 'admin' channel.");
         setArgRange(2, 2);
         addKey("chatsuite channel invite");
+        addKey("chat channel invite");
         addKey("channel invite");
         addKey("ch invite");
         addKey("invite");

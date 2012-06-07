@@ -22,12 +22,12 @@ public class ChannelSetCommand extends ChannelCommand {
         OWNER("")
         ;
         Object value;
-        Option(boolean val) {
+        Option(Object val) {
             value = val;
         }
 
-        Option(String val) {
-            value = val;
+        public Object getValue() {
+            return value;
         }
     }
 
@@ -44,8 +44,10 @@ public class ChannelSetCommand extends ChannelCommand {
         addToPage(1, "staff     " + ChatColor.GOLD + "network   " + ChatColor.YELLOW + "esper");
         addToPage(1, "staff     " + ChatColor.GOLD + "channel   " + ChatColor.YELLOW + "#chatsuite");
         addToPage(1, "staff     " + ChatColor.GOLD + "enabled   " + ChatColor.YELLOW + "true");
+        addToPage(1, "staff     " + ChatColor.GOLD + "key       " + ChatColor.YELLOW + "password");
         setArgRange(1, 3);
         addKey("chatsuite channel set");
+        addKey("chat channel set");
         addKey("channel set");
         addKey("ch set");
         addKey("chs");
@@ -63,7 +65,21 @@ public class ChannelSetCommand extends ChannelCommand {
             return;
         }
         Option o = validateOption(args.get(1).toLowerCase());
-
+        Object value = null;
+        if (o.getValue() instanceof Boolean) {
+            try {
+                value = Boolean.parseBoolean(args.get(2));
+            } catch (NumberFormatException e) {
+                value = false;
+            }
+        } else if (o.getValue() instanceof String) {
+            value = args.get(2);
+        }
+        if (manager.getChannel(args.get(0)).set(o.name().toLowerCase(), value)) {
+            message(sender, "Setting saved.");
+        } else {
+            error(sender, "Setting failed.");
+        }
     }
 
     private Option validateOption(String opt) {

@@ -149,6 +149,49 @@ public class Channel implements Target {
         return true;
     }
 
+    /**
+     * Attempts to set the specified option to the given value
+     * @param option The option we're trying to set
+     * @param value The value we're trying to set
+     * @return true if the value is set successfully, otherwise false
+     */
+    public boolean set(String option, Object value) {
+        if (option.equals("public")) {
+            try {
+                is_public = Boolean.parseBoolean(value.toString());
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        } else if (option.equals("permanent")) {
+            try {
+                permanent = Boolean.parseBoolean(value.toString());
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        } else if (option.equals("owner")) {
+            owner = value.toString();
+        } else if (option.equals("color")) {
+            return setColor(value.toString());
+            /////////////////
+            // IRC OPTIONS
+        } else if (option.equals("enabled")) {
+            try {
+                is_irc = Boolean.parseBoolean(value.toString());
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        } else if (option.equals("network")) {
+            IRC_NETWORK = value.toString();
+        } else if (option.equals("channel")) {
+            IRC_CHANNEL = value.toString();
+        } else if (option.equals("key")) {
+            IRC_KEY = value.toString();
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     public void persist() {
         if (permanent) {
             manager.getConfig().set("channels." + name + ".public", is_public);

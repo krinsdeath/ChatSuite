@@ -1,4 +1,4 @@
 Njodi:
   nickname: Njodi
   locale: en
-  channels: []
+  auto_join: []

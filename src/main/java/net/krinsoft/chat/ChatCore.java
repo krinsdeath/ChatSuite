@@ -51,10 +51,10 @@ public class ChatCore extends JavaPlugin {
     @Override
     public void onDisable() {
         pListener = null;
-        playerManager.saveConfig();
         playerManager.clean();
-        channelManager.saveConfig();
+        playerManager.saveConfig();
         channelManager.clean();
+        channelManager.saveConfig();
         worldManager.clean();
         if (irc_bot != null) { irc_bot.clean(); }
         log("v" + getDescription().getVersion() + " disabled.");
@@ -103,6 +103,7 @@ public class ChatCore extends JavaPlugin {
         }
         if (allow_whispers) {
             commandHandler.registerCommand(new WhisperCommand(this));
+            commandHandler.registerCommand(new ReplyCommand(this));
         }
         if (allow_channels) {
             commandHandler.registerCommand(new ChannelAdminCommand(this));
@@ -113,6 +114,7 @@ public class ChatCore extends JavaPlugin {
             commandHandler.registerCommand(new ChannelListCommand(this));
             commandHandler.registerCommand(new ChannelMessageCommand(this));
             commandHandler.registerCommand(new ChannelPartCommand(this));
+            commandHandler.registerCommand(new ChannelSetCommand(this));
         }
         if (allow_irc) {
             commandHandler.registerCommand(new IRCCommand(this));
@@ -127,6 +129,7 @@ public class ChatCore extends JavaPlugin {
         commandHandler.registerCommand(new NickCommand(this));
         commandHandler.registerCommand(new ReloadCommand(this));
         commandHandler.registerCommand(new TargetCommand(this));
+        commandHandler.registerCommand(new UserInfoCommand(this));
         commandHandler.registerCommand(new VersionCommand(this));
     }
 

@@ -28,6 +28,7 @@ public class ChannelAdminCommand extends ChannelCommand {
         addToPage(0, "[channel] " + ChatColor.GOLD + "remove    " + ChatColor.YELLOW + "[user]");
         setArgRange(3, 3);
         addKey("chatsuite channel admin");
+        addKey("chat channel admin");
         addKey("channel admin");
         addKey("ch admin");
         addKey("admin");
