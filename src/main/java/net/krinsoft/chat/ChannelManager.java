@@ -141,7 +141,7 @@ public class ChannelManager implements Manager {
     }
 
     void removePlayerFromAllChannels(Player player) {
-        for (Channel channel : channels.values()) {
+        for (Channel channel : new HashSet<Channel>(channels.values())) {
             if (channel.contains(player)) {
                 channel.part(player);
                 if (channel.getOccupants().size() == 0 && !channel.isPermanent()) {
