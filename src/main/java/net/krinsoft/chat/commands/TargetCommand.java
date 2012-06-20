@@ -2,6 +2,7 @@ package net.krinsoft.chat.commands;
 
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.api.Target;
+import net.krinsoft.chat.targets.Channel;
 import net.krinsoft.chat.targets.ChatPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -67,6 +68,12 @@ public class TargetCommand extends ChatSuiteCommand {
         if (target == null) {
             error(player.getPlayer(), "The target couldn't be found.");
             return;
+        }
+        if (target instanceof Channel) {
+            if (!((Channel)target).getOccupants().contains(player.getPlayer())) {
+                error(player.getPlayer(), "You aren't in that channel.");
+                return;
+            }
         }
         player.setTarget(target);
     }

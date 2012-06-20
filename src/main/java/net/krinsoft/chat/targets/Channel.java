@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -65,7 +66,7 @@ enum TextColor {
 @SuppressWarnings("unused")
 public class Channel implements Target {
 
-    private List<Player> occupants  = new ArrayList<Player>();
+    private List<String> occupants  = new ArrayList<String>();
     private ChannelManager manager  = null;
     private String name             = null;
     private boolean is_public       = true;
@@ -210,7 +211,18 @@ public class Channel implements Target {
      * @return The list of players on this channel
      */
     public List<Player> getOccupants() {
-        return new ArrayList<Player>(occupants);
+        List<Player> players = new ArrayList<Player>();
+        Iterator<String> iter = occupants.iterator();
+        while (iter.hasNext()) {
+            String p = iter.next();
+            Player ply = manager.getPlugin().getServer().getPlayer(p);
+            if (ply != null) {
+                players.add(ply);
+            } else {
+                iter.remove();
+            }
+        }
+        return players;
     }
 
     public void setPermanent(boolean val) {
@@ -233,12 +245,12 @@ public class Channel implements Target {
      */
     public void join(Player player) {
         if (isAllowed(player)) {
-            if (occupants.contains(player)) {
+            if (occupants.contains(player.getName())) {
                 player.sendMessage(ChatColor.RED + "[ChatSuite] You are already on this channel!");
                 manager.log(name, player.getName() + " was already on " + name + ".");
                 return;
             }
-            occupants.add(player);
+            occupants.add(player.getName());
             player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + name);
             manager.log(name, player.getName() + " joined the channel.");
             if (validIRC()) {
@@ -256,7 +268,7 @@ public class Channel implements Target {
      * @param player The player to remove from the list
      */
     public void part(Player player) {
-        occupants.remove(player);
+        occupants.remove(player.getName());
         player.sendMessage(ChatColor.GRAY + "[ChatSuite] You have left: " + name);
         manager.log(name, player.getName() + " left the channel.");
         if (validIRC()) {
@@ -276,7 +288,7 @@ public class Channel implements Target {
             return;
         }
         if ((isAdmin(sender) && !isAdmin(player)) || (isOwner(sender) && !isOwner(player)) || sender.hasPermission("chatsuite.bypass.boot")) {
-            occupants.remove(player);
+            occupants.remove(player.getName());
             members.remove(player.getName());
             player.sendMessage(ChatColor.RED + "[ChatSuite] You have been kicked: " + name);
             manager.log(name, player.getName() + " was kicked from the channel.");
@@ -354,7 +366,7 @@ public class Channel implements Target {
      * @return true if the list contains the player, otherwise false
      */
     public boolean contains(Player player) {
-        return occupants.contains(player);
+        return occupants.contains(player.getName());
     }
 
     /**
@@ -376,7 +388,7 @@ public class Channel implements Target {
     }
 
     public void sendMessage(String message) {
-        for (Player player : occupants) {
+        for (Player player : getOccupants()) {
             player.sendMessage(message);
         }
     }

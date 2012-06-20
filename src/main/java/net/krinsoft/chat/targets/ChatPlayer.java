@@ -88,7 +88,6 @@ public class ChatPlayer implements Target {
         int weight = 0;
         for (String key : manager.getPlugin().getGroups()) {
             int i = manager.getPlugin().getGroupNode(key).getInt("weight");
-            manager.getPlugin().debug(name + ": Checking " + key + "... (" + i + ")");
             if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
                 weight = i;
                 group = key;
@@ -97,7 +96,7 @@ public class ChatPlayer implements Target {
         if (group == null) {
             group = p.isOp() ? manager.getPlugin().getOpGroup() : manager.getPlugin().getDefaultGroup();
         }
-        manager.getPlugin().debug(name + ": Set to '" + group + "'.");
+        manager.getPlugin().debug(name + ": Determined '" + group + "'.");
         return group;
     }
 
