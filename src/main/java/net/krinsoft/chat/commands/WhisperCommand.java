@@ -42,6 +42,7 @@ public class WhisperCommand extends ChatSuiteCommand {
             ChatPlayer whispee = plugin.getPlayerManager().getPlayer(target.getName());
             whisper.whisperTo(whispee, message.toString()); // player sending the whisper
             whispee.whisperFrom(whisper, message.toString()); // player receiving the whisper
+            plugin.whisper(whisper, whispee, message.toString()); // log the message
         }
     }
 

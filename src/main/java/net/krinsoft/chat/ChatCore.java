@@ -5,6 +5,7 @@ import net.krinsoft.chat.api.Target;
 import net.krinsoft.chat.commands.*;
 import net.krinsoft.chat.listeners.IRCListener;
 import net.krinsoft.chat.listeners.PlayerListener;
+import net.krinsoft.chat.targets.ChatPlayer;
 import net.krinsoft.irc.IRCBot;
 import net.krinsoft.irc.InvalidIRCBotException;
 import org.bukkit.ChatColor;
@@ -354,4 +355,9 @@ public class ChatCore extends JavaPlugin {
         return target;
     }
 
+    public void whisper(ChatPlayer whisper, ChatPlayer whispee, String msg) {
+        if (whisper != null && whispee != null && msg != null) {
+            log("[Whisper] " + whisper.getName() + "->" + whispee.getName() + ": " + msg);
+        }
+    }
 }
