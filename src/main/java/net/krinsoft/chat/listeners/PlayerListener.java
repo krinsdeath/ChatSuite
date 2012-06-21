@@ -23,9 +23,13 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class PlayerListener implements Listener {
     private ChatCore plugin;
+    private boolean prefixOnJoin;
+    private boolean prefixOnQuit;
 
     public PlayerListener(ChatCore instance) {
         plugin = instance;
+        prefixOnJoin = plugin.getConfig().getBoolean("plugin.prefixOnJoin", false);
+        prefixOnQuit = plugin.getConfig().getBoolean("plugin.prefixOnQuit", false);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -35,11 +39,17 @@ public class PlayerListener implements Listener {
             MinecraftJoinEvent evt = new MinecraftJoinEvent(event.getPlayer().getName());
             plugin.getServer().getPluginManager().callEvent(evt);
         }
+        if (prefixOnJoin) {
+            event.setJoinMessage("[" + plugin.getPlayerManager().getPlayer(event.getPlayer().getName()).getGroup() + "] " + event.getJoinMessage());
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     void playerKick(PlayerKickEvent event) {
         if (event.isCancelled()) { return; }
+        if (prefixOnQuit) {
+            event.setLeaveMessage("[" + plugin.getPlayerManager().getPlayer(event.getPlayer().getName()).getGroup() + "] "+ event.getLeaveMessage());
+        }
         plugin.getPlayerManager().unregisterPlayer(event.getPlayer());
         if (plugin.getIRCBot() != null) {
             MinecraftQuitEvent evt = new MinecraftQuitEvent(event.getPlayer().getName());
@@ -49,6 +59,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     void playerQuit(PlayerQuitEvent event) {
+        if (prefixOnQuit) {
+            event.setQuitMessage("[" + plugin.getPlayerManager().getPlayer(event.getPlayer().getName()).getGroup() + "] " + event.getQuitMessage());
+        }
         plugin.getPlayerManager().unregisterPlayer(event.getPlayer());
         if (plugin.getIRCBot() != null) {
             MinecraftQuitEvent evt = new MinecraftQuitEvent(event.getPlayer().getName());

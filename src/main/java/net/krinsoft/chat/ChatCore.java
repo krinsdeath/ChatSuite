@@ -239,14 +239,30 @@ public class ChatCore extends JavaPlugin {
     private String OP_GROUP;
 
     private void registerConfiguration() {
+        String header = "Any group can have a format section, which overrides the 'global' format.\n" +
+                "Variables, denoted by the use of a % (percent sign), can be specified in any order you wish.\n" +
+                "%n = player name\n" +
+                "%dn = player display name\n" +
+                "%fn = player full name (includes prefix/suffix from players.yml)\n" +
+                "%t = target (player or channel)\n" +
+                "%p = prefix (from group section)\n" +
+                "%s = suffix (from group section)\n" +
+                "%g = group name\n" +
+                "%afk = afk message (if afk is allowed)\n" +
+                "%m = chat message\n" +
+                "%w = world name (or multiverse alias + color if applicable)\n" +
+                "%h = heroes class\n" +
+                "Plugins which insert or parse their own chat variables can be inserted as well, such as {FACTION}";
         config = new File(getDataFolder(), "config.yml");
         if (!config.exists()) {
             getConfig().setDefaults(YamlConfiguration.loadConfiguration(this.getClass().getResourceAsStream("/defaults/config.yml")));
             getConfig().options().copyDefaults(true);
-            getConfig().options().header(
-                    "Any group can have a format section, which overrides the 'global' format.\n" +
-                            "Variables, denoted by the use of a % (percent sign)\n"
-            );
+            getConfig().options().header(header);
+            saveConfig();
+        }
+        if (getConfig().get("plugin.prefixOnJoin") == null) {
+            getConfig().set("plugin.prefixOnJoin", false);
+            getConfig().set("plugin.prefixOnQuit", false);
             saveConfig();
         }
         setDebug(getConfig().getBoolean("plugin.debug"));
