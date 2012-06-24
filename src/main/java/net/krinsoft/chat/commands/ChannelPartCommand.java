@@ -29,7 +29,7 @@ public class ChannelPartCommand extends ChannelCommand {
         addKey("part");
         addKey("chp");
         addKey("p");
-        setPermission("chatsuite.part", "Allows this user to leave channels", PermissionDefault.TRUE);
+        setPermission("chatsuite.channel.part", "Allows this user to leave channels", PermissionDefault.TRUE);
     }
 
     @Override

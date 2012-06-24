@@ -27,7 +27,7 @@ public class ChannelListCommand extends ChannelCommand {
         addKey("chat channel list");
         addKey("channel list");
         addKey("ch list");
-        setPermission("chatsuite.list", "Allows users to list the channels they're in.", PermissionDefault.TRUE);
+        setPermission("chatsuite.channel.list", "Allows users to list the channels they're in.", PermissionDefault.TRUE);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ChannelListCommand extends ChannelCommand {
         if (!validateSender(sender)) { return; }
         Player player = plugin.getServer().getPlayer(sender.getName());
         List<Channel> channels = plugin.getChannelManager().getPlayerChannelList(player);
-        if (args.size() > 0 && args.get(0).startsWith("-all") && sender.hasPermission("chatsuite.list.all")) {
+        if (args.size() > 0 && args.get(0).startsWith("-all") && sender.hasPermission("chatsuite.channel.list.all")) {
             channels = plugin.getChannelManager().getChannels();
         }
         int i = 1;

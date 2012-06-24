@@ -1,6 +1,6 @@
 default: Global
 world_channels: true
-
+logging: true
 channels:
   Global:
     public: true

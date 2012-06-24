@@ -35,6 +35,10 @@ public class NickCommand extends ChatSuiteCommand {
         }
         Player target = plugin.getServer().getPlayer(args.get(0));
         String nick = args.get(0);
+        if (args.size() == 2 && !sender.hasPermission("chatsuite.nick.other")) {
+            sender.sendMessage("You don't have permission to change other peoples' nicknames.");
+            return;
+        }
         if (sender instanceof Player && args.size() < 2) {
             target = (Player) sender;
         } else {
@@ -46,10 +50,11 @@ public class NickCommand extends ChatSuiteCommand {
                 sender.sendMessage("The specified target must be online and a valid player.");
                 return;
             }
-        }
-        if (args.size() == 2 && plugin.getServer().getPlayer(args.get(0)) != null) {
-            target = plugin.getServer().getPlayer(args.get(0));
-            nick = args.get(1);
+            if (args.get(1).equalsIgnoreCase("--reset")) {
+                nick = target.getName();
+            } else {
+                nick = args.get(1);
+            }
         }
         target.setDisplayName(nick);
         target.sendMessage("You are now identified as " + nick);

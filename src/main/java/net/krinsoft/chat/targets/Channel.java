@@ -7,6 +7,8 @@ import net.krinsoft.chat.events.ChannelJoinEvent;
 import net.krinsoft.chat.events.ChannelPartEvent;
 import net.krinsoft.chat.events.MinecraftMessageEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -148,6 +150,15 @@ public class Channel implements Target {
         }
         manager.log(name, "Color set to: " + color.getName());
         return true;
+    }
+
+    /**
+     * Checks whether the specified sender can edit this channel's settings
+     * @param sender The entity whose access we're checking
+     * @return true if access is allowed, otherwise false
+     */
+    public boolean canEdit(CommandSender sender) {
+        return sender instanceof ConsoleCommandSender || isOwner((Player) sender) || sender.hasPermission("chatsuite.bypass.set");
     }
 
     /**

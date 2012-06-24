@@ -30,7 +30,7 @@ public class ChannelMessageCommand extends ChatSuiteCommand {
         addKey("message");
         addKey("msg");
         addKey("chm");
-        setPermission("chatsuite.message", "Allows the user to say messages to channels.", PermissionDefault.TRUE);
+        setPermission("chatsuite.channel.message", "Allows the user to say messages to channels.", PermissionDefault.TRUE);
     }
 
     @Override

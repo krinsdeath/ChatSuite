@@ -1,6 +1,7 @@
 package net.krinsoft.chat.commands;
 
 import net.krinsoft.chat.ChatCore;
+import net.krinsoft.chat.targets.Channel;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
@@ -75,7 +76,8 @@ public class ChannelSetCommand extends ChannelCommand {
         } else if (o.getValue() instanceof String) {
             value = args.get(2);
         }
-        if (manager.getChannel(args.get(0)).set(o.name().toLowerCase(), value)) {
+        Channel chan = manager.getChannel(args.get(0));
+        if (chan != null && chan.canEdit(sender) && chan.set(o.name().toLowerCase(), value)) {
             message(sender, "Setting saved.");
         } else {
             error(sender, "Setting failed.");

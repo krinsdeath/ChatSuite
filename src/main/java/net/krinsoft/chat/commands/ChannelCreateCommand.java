@@ -28,7 +28,7 @@ public class ChannelCreateCommand extends ChannelCommand {
         addKey("create");
         addKey("chc");
         addKey("c");
-        setPermission("chatsuite.create", "Allows this user to create channels.", PermissionDefault.OP);
+        setPermission("chatsuite.channel.create", "Allows this user to create channels.", PermissionDefault.OP);
     }
 
     @Override

@@ -20,6 +20,7 @@ public class ChannelManager implements Manager {
     private HashMap<String, Channel> channels = new HashMap<String, Channel>();
 
     private boolean world_channels;
+    private boolean channel_logging;
 
     private FileConfiguration configuration;
     private File config;
@@ -69,6 +70,7 @@ public class ChannelManager implements Manager {
             saveConfig();
         }
         world_channels = getConfig().getBoolean("world_channels");
+        channel_logging = getConfig().getBoolean("logging", true);
     }
 
     public void registerChannels() {
@@ -80,7 +82,9 @@ public class ChannelManager implements Manager {
     }
 
     public void log(String channel, String message) {
-        plugin.log("[" + channel + "] " + message);
+        if (channel_logging) {
+            plugin.log("[" + channel + "] " + message);
+        }
     }
 
     /**

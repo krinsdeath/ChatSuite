@@ -34,7 +34,7 @@ public class ChannelAdminCommand extends ChannelCommand {
         addKey("admin");
         addKey("adm");
         addKey("cha");
-        setPermission("chatsuite.admin", "Allows the user to add admins to their channels", PermissionDefault.TRUE);
+        setPermission("chatsuite.channel.admin", "Allows the user to add admins to their channels", PermissionDefault.TRUE);
     }
 
     @Override

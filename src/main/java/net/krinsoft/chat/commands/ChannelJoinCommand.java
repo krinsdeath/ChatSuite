@@ -29,7 +29,7 @@ public class ChannelJoinCommand extends ChannelCommand {
         addKey("join");
         addKey("chj");
         addKey("j");
-        setPermission("chatsuite.join", "Allows this user to join channels", PermissionDefault.TRUE);
+        setPermission("chatsuite.channel.join", "Allows this user to join channels", PermissionDefault.TRUE);
     }
 
     @Override

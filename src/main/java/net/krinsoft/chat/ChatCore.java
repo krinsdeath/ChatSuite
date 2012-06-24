@@ -133,6 +133,28 @@ public class ChatCore extends JavaPlugin {
         commandHandler.registerCommand(new TargetCommand(this));
         commandHandler.registerCommand(new UserInfoCommand(this));
         commandHandler.registerCommand(new VersionCommand(this));
+
+        registerDynamicPermissions();
+    }
+
+    private void registerDynamicPermissions() {
+        Permission root = getServer().getPluginManager().getPermission("chatsuite.*");
+        Permission chan = getServer().getPluginManager().getPermission("chatsuite.channel.*");
+        if (root == null) {
+            root = new Permission("chatsuite.*");
+            getServer().getPluginManager().addPermission(root);
+        }
+        if (chan == null) {
+            chan = new Permission("chatsuite.channel.*");
+            getServer().getPluginManager().addPermission(chan);
+        }
+        chan.getChildren().put("chatsuite.channel.list.all", true);
+        chan.recalculatePermissibles();
+        root.getChildren().put("chatsuite.bypass.*", true);
+        root.getChildren().put("chatsuite.channel.*", true);
+        root.getChildren().put("chatsuite.commands", true);
+        root.getChildren().put("chatsuite.commands.admin", true);
+        root.recalculatePermissibles();
     }
 
     public void debug(String message) {

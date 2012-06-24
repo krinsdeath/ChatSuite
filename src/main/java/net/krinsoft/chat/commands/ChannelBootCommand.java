@@ -28,7 +28,7 @@ public class ChannelBootCommand extends ChannelCommand {
         addKey("boot");
         addKey("chb");
         addKey("b");
-        setPermission("chatsuite.boot", "Allows the forced removal of players from channels.", PermissionDefault.TRUE);
+        setPermission("chatsuite.channel.boot", "Allows the forced removal of players from channels.", PermissionDefault.TRUE);
     }
 
     @Override

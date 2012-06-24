@@ -108,3 +108,23 @@ permissions:
       chatsuite.bypass.invite: true
       chatsuite.bypass.join: true
       chatsuite.bypass.boot: true
+      chatsuite.bypass.set: true
+  chatsuite.commands:
+    description: All of ChatSuite's basic user commands.
+    children:
+      chatsuite.nick: true
+      chatsuite.nick.other: true
+      chatsuite.whisper: true
+      chatsuite.afk: true
+      chatsuite.target: true
+      chatsuite.reply: true
+  chatsuite.commands.admin:
+    description: All of ChatSuite's administrative commands.
+    children:
+      chatsuite.reload: true
+      chatsuite.version: true
+      chatsuite.debug: true
+  chatsuite.channel.list.all:
+    description: Allows a user to list all active channels.
+  chatsuite.nick.other:
+    description: Allows a user to change another user's nickname.

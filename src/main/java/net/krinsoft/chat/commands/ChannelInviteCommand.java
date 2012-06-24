@@ -29,7 +29,7 @@ public class ChannelInviteCommand extends ChatSuiteCommand {
         addKey("invite");
         addKey("chi");
         addKey("inv");
-        setPermission("chatsuite.invite", "Allows users to invite others into their channels.", PermissionDefault.OP);
+        setPermission("chatsuite.channel.invite", "Allows users to invite others into their channels.", PermissionDefault.OP);
     }
 
     @Override

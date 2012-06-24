@@ -1,48 +1,63 @@
-plugin:
-    op_fallback: true
-    allow_afk: true
-    allow_channels: true
-    allow_irc: true
-    allow_whispers: true
-    persist_user_settings: false
-    debug: true
+# Any group can have a format section, which overrides the 'global' format.
+# Variables, denoted by the use of a % (percent sign), can be specified in any order you wish.
+# %n = player name
+# %dn = player display name
+# %fn = player full name (includes prefix/suffix from players.yml)
+# %t = target (player or channel)
+# %p = prefix (from group section)
+# %s = suffix (from group section)
+# %g = group name
+# %afk = afk message (if afk is allowed)
+# %m = chat message
+# %w = world name (or multiverse alias + color if applicable)
+# %h = heroes class
+# Plugins which insert or parse their own chat variables can be inserted as well, such as {FACTION}
 
+plugin:
+  op_fallback: true
+  allow_afk: true
+  allow_channels: true
+  allow_irc: true
+  allow_whispers: true
+  persist_user_settings: false
+  debug: true
+  prefixOnJoin: false
+  prefixOnQuit: false
 format:
   message: '[%t] %p %n&F: %m'
   to: '&7[To] %t>>&F: %m'
   from: '&7[From] %t>>&F: %m'
-
 groups:
-    Default:
-        weight: 1
-        prefix: '&7[Default]'
-        group: ''
-        suffix: ''
-    User:
-        weight: 5
-        prefix: '&8[User]'
-        group: ''
-        suffix: ''
-    Mod:
-        weight: 10
-        prefix: '&9[Mod]'
-        group: ''
-        suffix: ''
-    Admin:
-        weight: 15
-        prefix: '&C[Admin]'
-        group: ''
-        suffix: ''
-        format:
-            message: '[%t] %p %dn&F: %m'
-            to: '&C[To] %t>>&F: %m'
-            from: '&C[From] %t>>&F: %m'
-    Owner:
-        weight: 100
-        prefix: '&2[Owner]'
-        group: ''
-        suffix: ''
-        format:
-            message: '[%t] %p %dn&F: %m'
-            to: '&2[To] %t>>&F %m'
-            from: '&2[From] %t>>&F %m'
+  Default:
+    weight: 1
+    prefix: '&7[Default]'
+    group: ''
+    suffix: ''
+  User:
+    weight: 5
+    prefix: '&8[User]'
+    group: ''
+    suffix: ''
+  Mod:
+    weight: 10
+    prefix: '&9[Mod]'
+    group: ''
+    suffix: ''
+  Admin:
+    weight: 15
+    prefix: '&C[Admin]'
+    group: ''
+    suffix: ''
+    format:
+      message: '[%t] %p %dn&F: %m'
+      to: '&C[To] %t>>&F: %m'
+      from: '&C[From] %t>>&F: %m'
+  Owner:
+    weight: 100
+    prefix: '&2[Owner]'
+    group: ''
+    suffix: ''
+    format:
+      message: '[%t] %p %dn&F: %m'
+      to: '&2[To] %t>>&F %m'
+      from: '&2[From] %t>>&F %m'
