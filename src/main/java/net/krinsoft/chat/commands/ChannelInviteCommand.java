@@ -47,6 +47,8 @@ public class ChannelInviteCommand extends ChatSuiteCommand {
             return;
         }
         channel.invite(inviter, player);
+        message(inviter, "You invited " + player.getName() + " to " + channel.getName() + ".");
+        message(player, "You were invited to join " + channel.getName() + ". (" + ChatColor.AQUA + "/join " + channel.getName() + ChatColor.GREEN + ")");
     }
 
 }
