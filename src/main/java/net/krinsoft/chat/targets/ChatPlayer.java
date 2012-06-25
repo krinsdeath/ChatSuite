@@ -216,7 +216,11 @@ public class ChatPlayer implements Target {
 
     private String parseSelf(String format) {
         format = SELF.matcher(format).replaceAll(getName());
-        format = SELF_DISPLAY.matcher(format).replaceAll(getPlayer().getDisplayName());
+        if (getPlayer() != null) {
+            format = SELF_DISPLAY.matcher(format).replaceAll(getPlayer().getDisplayName());
+        } else {
+            format = SELF_DISPLAY.matcher(format).replaceAll("");
+        }
         return format;
     }
 
