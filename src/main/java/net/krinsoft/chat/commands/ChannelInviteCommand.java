@@ -46,9 +46,12 @@ public class ChannelInviteCommand extends ChatSuiteCommand {
             error(inviter, "That channel doesn't exist.");
             return;
         }
-        channel.invite(inviter, player);
-        message(inviter, "You invited " + player.getName() + " to " + channel.getName() + ".");
-        message(player, "You were invited to join " + channel.getName() + ". (" + ChatColor.AQUA + "/join " + channel.getName() + ChatColor.GREEN + ")");
+        if (channel.invite(inviter, player)) {
+            message(inviter, "You invited " + player.getName() + " to " + channel.getName() + ".");
+            message(player, "You were invited to join " + channel.getName() + ". (" + ChatColor.AQUA + "/join " + channel.getName() + ChatColor.GREEN + ")");
+        } else {
+            error(inviter, "Invite failed.");
+        }
     }
 
 }
