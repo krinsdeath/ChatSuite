@@ -18,16 +18,15 @@ public class ReloadCommand extends ChatSuiteCommand {
         setCommandUsage("/chatsuite reload");
         setArgRange(0, 0);
         addKey("chatsuite reload");
-        addKey("chatsuite -r");
         addKey("chat reload");
-        addKey("chat -r");
         setPermission("chatsuite.reload", "Allows this user to reload ChatSuite.", PermissionDefault.OP);
     }
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
+        long time = System.currentTimeMillis();
         plugin.initConfiguration();
-        sender.sendMessage("ChatSuite configuration reloaded.");
+        message(sender, "ChatSuite configuration reloaded. (" + (System.currentTimeMillis() - time) + "ms)");
     }
 
 }

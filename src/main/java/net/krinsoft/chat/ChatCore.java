@@ -74,6 +74,7 @@ public class ChatCore extends JavaPlugin {
     }
 
     public void initConfiguration() {
+        configuration = null;
         registerConfiguration();
         registerGroups();
         channelManager = new ChannelManager(this);
