@@ -169,12 +169,17 @@ public class ChannelManager implements Manager {
     }
 
     public Channel createChannel(Player player, String channel) {
-        Channel chan = new Channel(this, channel, player);
+        Channel chan = getChannel(channel);
+        if (chan != null) {
+            chan.join(player);
+            return chan;
+        }
+        chan = new Channel(this, channel, player);
         if (player != null) {
             chan.join(player);
         }
         channels.put(channel.toLowerCase(), chan);
-        return channels.get(channel.toLowerCase());
+        return getChannel(channel);
     }
 
     public List<Channel> getChannels() {

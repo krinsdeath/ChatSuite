@@ -34,9 +34,9 @@ public class ChannelListCommand extends ChannelCommand {
     public void runCommand(CommandSender sender, List<String> args) {
         if (!validateSender(sender)) { return; }
         Player player = plugin.getServer().getPlayer(sender.getName());
-        List<Channel> channels = plugin.getChannelManager().getPlayerChannelList(player);
+        List<Channel> channels = manager.getPlayerChannelList(player);
         if (args.size() > 0 && args.get(0).startsWith("-all") && sender.hasPermission("chatsuite.channel.list.all")) {
-            channels = plugin.getChannelManager().getChannels();
+            channels = manager.getChannels();
         }
         int i = 1;
         message(player, "=== Channel List ===");

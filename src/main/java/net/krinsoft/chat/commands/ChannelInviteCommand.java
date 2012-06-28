@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author krinsdeath
  */
-public class ChannelInviteCommand extends ChatSuiteCommand {
+public class ChannelInviteCommand extends ChannelCommand {
 
     public ChannelInviteCommand(ChatCore instance) {
         super(instance);
@@ -37,7 +37,7 @@ public class ChannelInviteCommand extends ChatSuiteCommand {
         if (!validateSender(sender)) { return; }
         Player player = plugin.getServer().getPlayer(args.get(1));
         Player inviter = plugin.getServer().getPlayer(sender.getName());
-        Channel channel = plugin.getChannelManager().getChannel(args.get(0));
+        Channel channel = manager.getChannel(args.get(0));
         if (player == null) {
             error(inviter, "That player doesn't exist.");
             return;

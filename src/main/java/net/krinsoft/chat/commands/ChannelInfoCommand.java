@@ -4,6 +4,7 @@ import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.Channel;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -18,7 +19,7 @@ public class ChannelInfoCommand extends ChannelCommand {
         super(instance);
         setName("ChatSuite: Channel Info");
         setCommandUsage("/ch info [channel]");
-        setArgRange(1, 1);
+        setArgRange(0, 1);
         addKey("chatsuite channel info");
         addKey("chat channel info");
         addKey("channel info");
@@ -28,9 +29,13 @@ public class ChannelInfoCommand extends ChannelCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        Channel chan = manager.getChannel(args.get(0));
+        if (args.size() == 0 && sender instanceof ConsoleCommandSender) {
+            error(sender, "You must supply a channel name as the console.");
+            return;
+        }
+        Channel chan = manager.getChannel((args.size() > 0 ? args.get(0) : plugin.getPlayerManager().getPlayer(sender.getName()).getTarget().getName()));
         if (chan == null) {
-            error(sender, "'" + args.get(0) + "' cannot be matched to a channel.");
+            error(sender, "No such channel.");
             return;
         }
         StringBuilder occs = new StringBuilder();

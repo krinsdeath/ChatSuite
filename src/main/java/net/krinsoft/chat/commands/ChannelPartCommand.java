@@ -36,7 +36,7 @@ public class ChannelPartCommand extends ChannelCommand {
     public void runCommand(CommandSender sender, List<String> args) {
         if (!validateSender(sender)) { return; }
         ChatPlayer player = plugin.getPlayerManager().getPlayer(sender.getName());
-        Channel channel = plugin.getChannelManager().getChannel(args.get(0));
+        Channel channel = manager.getChannel(args.get(0));
         if (channel != null) {
             channel.part(player.getPlayer());
             player.part(channel);

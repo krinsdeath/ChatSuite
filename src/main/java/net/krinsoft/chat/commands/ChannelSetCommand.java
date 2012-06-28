@@ -30,6 +30,15 @@ public class ChannelSetCommand extends ChannelCommand {
         public Object getValue() {
             return value;
         }
+
+        public static Option forName(String name) throws TypeNotPresentException {
+            for (Option o : values()) {
+                if (o.name().equalsIgnoreCase(name)) {
+                    return o;
+                }
+            }
+            throw new TypeNotPresentException(name, new Throwable("No such option: " + name));
+        }
     }
 
     public ChannelSetCommand(ChatCore instance) {
@@ -65,7 +74,13 @@ public class ChannelSetCommand extends ChannelCommand {
             error(sender, "Invalid parameter count.");
             return;
         }
-        Option o = validateOption(args.get(1).toLowerCase());
+        Option o;
+        try {
+            o = Option.forName(args.get(1));
+        } catch (TypeNotPresentException e) {
+            error(sender, e.getLocalizedMessage());
+            return;
+        }
         Object value = null;
         if (o.getValue() instanceof Boolean) {
             try {
@@ -82,15 +97,6 @@ public class ChannelSetCommand extends ChannelCommand {
         } else {
             error(sender, "Setting failed.");
         }
-    }
-
-    private Option validateOption(String opt) {
-        for (Option o : Option.values()) {
-            if (o.name().toLowerCase().equals(opt)) {
-                return o;
-            }
-        }
-        return Option.PERMANENT;
     }
 
 }

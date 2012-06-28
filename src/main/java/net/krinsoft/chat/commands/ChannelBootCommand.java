@@ -46,5 +46,6 @@ public class ChannelBootCommand extends ChannelCommand {
             return;
         }
         channel.boot(booter, player);
+        message(sender, "You booted " + player.getName() + " from " + channel.getName() + ".");
     }
 }
