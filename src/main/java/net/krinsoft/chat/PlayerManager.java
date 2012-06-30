@@ -80,6 +80,9 @@ public class PlayerManager implements Manager {
      * @return The player's ChatPlayer instance if it already exists, or creates a new instance for them
      */
     public ChatPlayer getPlayer(String p) {
+        if (plugin.getServer().getPlayer(p) == null) {
+            return null;
+        }
         if (!isPlayerRegistered(p)) {
             registerPlayer(p);
         }

@@ -23,4 +23,15 @@ public interface Target {
      */
     public void sendMessage(String message);
 
+    /**
+     * Checks whether this target is muted or not.
+     * @return true if the target is muted, otherwise false
+     */
+    public boolean isMuted();
+
+    /**
+     * Toggles whether or not this target can send or receive messages.
+     */
+    public void toggleMute();
+
 }

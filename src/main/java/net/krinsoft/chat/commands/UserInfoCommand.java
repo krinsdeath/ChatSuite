@@ -21,6 +21,7 @@ public class UserInfoCommand extends UserCommand {
         setArgRange(0, 1);
         addKey("chatsuite user info");
         addKey("chat user info");
+        addKey("cuser info");
         setPermission("chatsuite.user.info", "Allows a user to view their current settings.", PermissionDefault.TRUE);
     }
 

@@ -78,6 +78,11 @@ commands:
     usage: |
       /<command> c:[channel]                - Allows you to chat directly to a channel.
       /<command> p:[player]                 - Allows you to chat directly to a player.
+  mute:
+    description: Mutes the specified player.
+    usage: |
+      /<command> c:channel
+      /<command> p:player
   nickname:
     aliases: [nick]
     description: Changes your display name.

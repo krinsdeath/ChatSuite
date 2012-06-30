@@ -55,6 +55,7 @@ public class ChatPlayer implements Target {
     private Target target;
     private Target reply;
     private boolean afk; // whether the player is afk or not
+    private boolean muted;
     private String afk_message;
 
     private List<String> auto_join;
@@ -74,7 +75,11 @@ public class ChatPlayer implements Target {
             target = manager.getPlugin().getChannelManager().getGlobalChannel();
         }
         getGroup();
-        manager.getPlugin().debug("Player " + name + " set to group '" + group + "'");
+        muted = manager.getConfig().getBoolean(getName() + ".muted", false);
+        if (muted) {
+            p.sendMessage(ChatColor.RED + "You are muted.");
+        }
+        manager.getPlugin().debug("Player '" + name + "' in group '" + group + "' (" + (muted ? "" : "not ") + "muted)");
     }
 
     @Override
@@ -105,6 +110,7 @@ public class ChatPlayer implements Target {
         String t = (target instanceof Channel ? "c:" + target.getName() : "p:" + target.getName());
         manager.getConfig().set(getName() + ".target", t);
         manager.getConfig().set(getName() + ".auto_join", auto_join);
+        manager.getConfig().set(getName() + ".muted", muted);
     }
 
     public Player getPlayer() {
@@ -251,6 +257,19 @@ public class ChatPlayer implements Target {
     ///////////////////////
     // MESSAGING METHODS //
     ///////////////////////
+
+    public boolean isMuted() {
+        return muted;
+    }
+
+    public void toggleMute() {
+        muted = !muted;
+        if (muted) {
+            sendMessage(ChatColor.RED + "You have been muted.");
+        } else {
+            sendMessage(ChatColor.GREEN + "You have been unmuted.");
+        }
+    }
 
     public void sendMessage(String message) {
         Player p = getPlayer();

@@ -79,12 +79,26 @@ public class PlayerListener implements Listener {
         }
         ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
         if (player == null) { return; } // player object was null
+        if (player.isMuted()) {
+            player.sendMessage(ChatColor.RED + "You are muted.");
+            event.setCancelled(true);
+            return;
+        }
         Target target = player.getTarget();
         if (target == null) { return; } // target object was null
+        if (target.isMuted()) {
+            player.sendMessage(ChatColor.RED + "Target is muted.");
+            event.setCancelled(true);
+            return;
+        }
         String format = player.getFormattedMessage();
-        plugin.debug("Player: " + player.getName() + " / Target: " + target.getName());
         Set<Player> players = new HashSet<Player>();
         if (target instanceof Channel) {
+            if (!((Channel)target).getOccupants().contains(event.getPlayer())) {
+                event.getPlayer().sendMessage(ChatColor.RED + "You aren't on that channel.");
+                event.setCancelled(true);
+                return;
+            }
             for (Player occ : ((Channel)target).getOccupants()) {
                 if (occ != null) {
                     players.add(occ);

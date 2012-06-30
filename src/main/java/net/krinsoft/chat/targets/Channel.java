@@ -76,6 +76,7 @@ public class Channel implements Target {
     private String target           = null;
     private TextColor color         = TextColor.WHITE;
     private boolean permanent       = false;
+    private boolean muted           = false;
     private String owner            = null;
     private List<String> admins     = new ArrayList<String>();
     private List<String> members    = new ArrayList<String>();
@@ -117,6 +118,7 @@ public class Channel implements Target {
                 connect();
             }
             permanent   = true;
+            muted       = manager.getConfig().getBoolean("channels." + name + ".muted", false);
         }
     }
 
@@ -211,6 +213,7 @@ public class Channel implements Target {
             manager.getConfig().set("channels." + name + ".admins", admins);
             manager.getConfig().set("channels." + name + ".members", members);
             manager.getConfig().set("channels." + name + ".color", color.getName());
+            manager.getConfig().set("channels." + name + ".muted", muted);
             manager.getConfig().set("channels." + name + ".irc.enabled", is_irc);
             manager.getConfig().set("channels." + name + ".irc.channel", IRC_CHANNEL);
             manager.getConfig().set("channels." + name + ".irc.network", IRC_NETWORK);
@@ -299,7 +302,7 @@ public class Channel implements Target {
             return;
         }
         if ((isAdmin(sender) && !isAdmin(player)) || (isOwner(sender) && !isOwner(player)) || sender.hasPermission("chatsuite.bypass.boot")) {
-            occupants.remove(player.getName());
+            manager.removePlayerFromChannel(player, getName());
             members.remove(player.getName());
             player.sendMessage(ChatColor.RED + "[ChatSuite] You have been kicked: " + name);
             manager.log(name, player.getName() + " was kicked from the channel.");
@@ -396,6 +399,21 @@ public class Channel implements Target {
      */
     public boolean invite(Player inviter, Player player) {
         return isAdmin(inviter) && !contains(player) && members.add(player.getName());
+    }
+
+    @Override
+    public boolean isMuted() {
+        return muted;
+    }
+
+    @Override
+    public void toggleMute() {
+        muted = !muted;
+        if (muted) {
+            sendMessage(ChatColor.RED + "[" + getName() + "] Channel has been muted.");
+        } else {
+            sendMessage(ChatColor.GREEN + "[" + getName() + "] Channel has been unmuted.");
+        }
     }
 
     public void sendMessage(String message) {
