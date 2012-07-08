@@ -12,8 +12,10 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -68,7 +70,7 @@ enum TextColor {
 @SuppressWarnings("unused")
 public class Channel implements Target {
 
-    private List<String> occupants  = new ArrayList<String>();
+    private Set<String> occupants  = new HashSet<String>();
     private ChannelManager manager  = null;
     private String name             = null;
     private boolean is_public       = true;
@@ -78,8 +80,8 @@ public class Channel implements Target {
     private boolean permanent       = false;
     private boolean muted           = false;
     private String owner            = null;
-    private List<String> admins     = new ArrayList<String>();
-    private List<String> members    = new ArrayList<String>();
+    private Set<String> admins     = new HashSet<String>();
+    private Set<String> members    = new HashSet<String>();
 
     private String IRC_CHANNEL;
     private String IRC_NETWORK;
@@ -103,8 +105,8 @@ public class Channel implements Target {
             // we found a permanent channel! Let's set it up.
             manager.log(name, "Detected Permanent channel!");
             owner     = manager.getConfig().getString(              "channels." + name + ".owner");
-            admins    = manager.getConfig().getStringList(          "channels." + name + ".admins");
-            members   = manager.getConfig().getStringList(          "channels." + name + ".members");
+            admins.addAll(manager.getConfig().getStringList(        "channels." + name + ".admins"));
+            members.addAll(manager.getConfig().getStringList(       "channels." + name + ".members"));
             is_public = manager.getConfig().getBoolean(             "channels." + name + ".public");
             color     = TextColor.get(manager.getConfig().getString("channels." + name + ".color"));
             if (color == null) {
@@ -337,10 +339,12 @@ public class Channel implements Target {
      * @param player The player we're adding to the admin list
      */
     public void addAdmin(Player owner, Player player) {
-        if (isOwner(player) || owner.hasPermission("chatsuite.bypass.admin")) {
+        if (isOwner(player) || owner.hasPermission("chatsuite.bypass.admin") && !isAdmin(player)) {
             admins.add(player.getName());
             owner.sendMessage(ChatColor.GREEN + "[ChatSuite] " + player.getName() + " is now an admin on '" + name + "'");
             player.sendMessage(ChatColor.GREEN + "[ChatSuite] You are now an admin on '" + name + "'");
+        } else {
+            owner.sendMessage(ChatColor.RED + "[ChatSuite] Failed to add admin.");
         }
     }
 
@@ -350,9 +354,11 @@ public class Channel implements Target {
      * @param player The player we're removing from the admin list
      */
     public void remAdmin(Player owner, Player player) {
-        if (isOwner(player) || owner.hasPermission("chatsuite.bypass.admin")) {
+        if (isOwner(player) || owner.hasPermission("chatsuite.bypass.admin") && isAdmin(player)) {
             admins.remove(player.getName());
             player.sendMessage(ChatColor.RED + "[ChatSuite] You are no longer an admin: " + name);
+        } else {
+            owner.sendMessage(ChatColor.RED + "[ChatSuite] Failed to remove admin.");
         }
     }
 
@@ -398,6 +404,10 @@ public class Channel implements Target {
      * @return true if the invite succeeded, otherwise false
      */
     public boolean invite(Player inviter, Player player) {
+        if (isMember(player)) {
+            inviter.sendMessage(player.getName() + " is already a member of " + name + ".");
+            return false;
+        }
         return isAdmin(inviter) && !contains(player) && members.add(player.getName());
     }
 

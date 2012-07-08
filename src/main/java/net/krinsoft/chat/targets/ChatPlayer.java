@@ -9,7 +9,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -58,13 +60,13 @@ public class ChatPlayer implements Target {
     private boolean muted;
     private String afk_message;
 
-    private List<String> auto_join;
+    private Set<String> auto_join = new HashSet<String>();
 
     public ChatPlayer(PlayerManager man, Player p) {
         manager = man;
         name = p.getName();
         world = p.getWorld().getName();
-        auto_join = manager.getConfig().getStringList(name + ".auto_join");
+        auto_join.addAll( manager.getConfig().getStringList(name + ".auto_join"));
         if (manager.getConfig().get(name) != null) {
             String t = manager.getConfig().getString(getName() + ".target");
             if (t != null) {
@@ -122,13 +124,16 @@ public class ChatPlayer implements Target {
     }
 
     public void setTarget(Target t) {
-        target = t;
-        Player p = getPlayer();
-        if (p != null) { p.sendMessage("[ChatSuite] Your target is now: " + target.getName()); }
+        setTarget(t, false);
     }
 
-    public void setTarget(Target t, boolean val) {
+    public void setTarget(Target t, boolean silent) {
         target = t;
+        if (!silent) {
+            target = t;
+            Player p = getPlayer();
+            if (p != null) { p.sendMessage("[ChatSuite] Your target is now: " + target.getName()); }
+        }
     }
 
     public void join(Channel c) {
@@ -145,7 +150,7 @@ public class ChatPlayer implements Target {
         auto_join.remove(c.getName());
     }
 
-    public List<String> getAutoJoinChannels() {
+    public Set<String> getAutoJoinChannels() {
         return auto_join;
     }
 
