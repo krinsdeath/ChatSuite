@@ -9,8 +9,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -111,7 +111,7 @@ public class ChatPlayer implements Target {
     public void persist() {
         String t = (target instanceof Channel ? "c:" + target.getName() : "p:" + target.getName());
         manager.getConfig().set(getName() + ".target", t);
-        manager.getConfig().set(getName() + ".auto_join", auto_join);
+        manager.getConfig().set(getName() + ".auto_join", new ArrayList<String>().addAll(auto_join));
         manager.getConfig().set(getName() + ".muted", muted);
     }
 

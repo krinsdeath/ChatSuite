@@ -212,8 +212,8 @@ public class Channel implements Target {
         if (permanent) {
             manager.getConfig().set("channels." + name + ".public", is_public);
             manager.getConfig().set("channels." + name + ".owner", owner);
-            manager.getConfig().set("channels." + name + ".admins", admins);
-            manager.getConfig().set("channels." + name + ".members", members);
+            manager.getConfig().set("channels." + name + ".admins", new ArrayList<String>().addAll(admins));
+            manager.getConfig().set("channels." + name + ".members", new ArrayList<String>().addAll(members));
             manager.getConfig().set("channels." + name + ".color", color.getName());
             manager.getConfig().set("channels." + name + ".muted", muted);
             manager.getConfig().set("channels." + name + ".irc.enabled", is_irc);
