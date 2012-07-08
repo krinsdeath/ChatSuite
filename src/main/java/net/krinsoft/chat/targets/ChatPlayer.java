@@ -111,7 +111,7 @@ public class ChatPlayer implements Target {
     public void persist() {
         String t = (target instanceof Channel ? "c:" + target.getName() : "p:" + target.getName());
         manager.getConfig().set(getName() + ".target", t);
-        manager.getConfig().set(getName() + ".auto_join", new ArrayList<String>().addAll(auto_join));
+        manager.getConfig().set(getName() + ".auto_join", new ArrayList<String>(auto_join));
         manager.getConfig().set(getName() + ".muted", muted);
     }
 
