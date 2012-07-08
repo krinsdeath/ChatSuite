@@ -114,7 +114,6 @@ public class PlayerManager implements Manager {
             }
         }
         plugin.getTarget(getConfig().getString(cplayer.getName() + ".target", "c:" + plugin.getChannelManager().getDefaultChannel()));
-        plugin.debug("Player '" + player + "' registered");
     }
 
     public void unregisterPlayer(Player player) {

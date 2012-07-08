@@ -11,6 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -63,6 +64,7 @@ public class ChatPlayer implements Target {
     private Set<String> auto_join = new HashSet<String>();
 
     public ChatPlayer(PlayerManager man, Player p) {
+        long time = System.nanoTime();
         manager = man;
         name = p.getName();
         world = p.getWorld().getName();
@@ -81,7 +83,8 @@ public class ChatPlayer implements Target {
         if (muted) {
             p.sendMessage(ChatColor.RED + "You are muted.");
         }
-        manager.getPlugin().debug("Player '" + name + "' in group '" + group + "' (" + (muted ? "" : "not ") + "muted)");
+        time = System.nanoTime() - time;
+        manager.getPlugin().debug("Player '" + name + "' registered in group '" + group + "' and " + (muted ? "" : "not ") + "muted took " + (time / 1000000L) + "ms. (" + time + "ns)");
     }
 
     @Override
@@ -90,6 +93,7 @@ public class ChatPlayer implements Target {
     }
 
     public String getGroup() {
+        long time = System.nanoTime();
         Player p = getPlayer();
         if (p == null) { return manager.getPlugin().getDefaultGroup(); }
         int weight = 0;
@@ -103,7 +107,8 @@ public class ChatPlayer implements Target {
         if (group == null) {
             group = p.isOp() ? manager.getPlugin().getOpGroup() : manager.getPlugin().getDefaultGroup();
         }
-        manager.getPlugin().debug(name + ": Determined '" + group + "'.");
+        time = System.nanoTime() - time;
+        manager.getPlugin().debug(name + ": Determined '" + group + "' in " + (time / 1000000L) + "ms. (" + time + "ns)");
         return group;
     }
 
@@ -111,7 +116,9 @@ public class ChatPlayer implements Target {
     public void persist() {
         String t = (target instanceof Channel ? "c:" + target.getName() : "p:" + target.getName());
         manager.getConfig().set(getName() + ".target", t);
-        manager.getConfig().set(getName() + ".auto_join", new ArrayList<String>(auto_join));
+        List<String> joins = new ArrayList<String>();
+        joins.addAll(auto_join);
+        manager.getConfig().set(getName() + ".auto_join", joins);
         manager.getConfig().set(getName() + ".muted", muted);
     }
 

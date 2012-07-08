@@ -95,6 +95,7 @@ public class Channel implements Target {
      * @param player The name of the creator of the channel; can be empty.
      */
     public Channel(ChannelManager instance, String channel, Player player) {
+        long time = System.nanoTime();
         manager   = instance;
         name      = channel;
         owner     = (player != null ? player.getName() : "");
@@ -122,6 +123,8 @@ public class Channel implements Target {
             permanent   = true;
             muted       = manager.getConfig().getBoolean("channels." + name + ".muted", false);
         }
+        time = System.nanoTime() - time;
+        manager.getPlugin().debug(name + " registered in " + (time / 1000000L) + "ms. (" + time + "ns)");
     }
 
     /**
@@ -212,8 +215,12 @@ public class Channel implements Target {
         if (permanent) {
             manager.getConfig().set("channels." + name + ".public", is_public);
             manager.getConfig().set("channels." + name + ".owner", owner);
-            manager.getConfig().set("channels." + name + ".admins", new ArrayList<String>(admins));
-            manager.getConfig().set("channels." + name + ".members", new ArrayList<String>(members));
+            List<String> adm = new ArrayList<String>();
+            adm.addAll(admins);
+            List<String> mem = new ArrayList<String>();
+            mem.addAll(members);
+            manager.getConfig().set("channels." + name + ".admins", adm);
+            manager.getConfig().set("channels." + name + ".members", mem);
             manager.getConfig().set("channels." + name + ".color", color.getName());
             manager.getConfig().set("channels." + name + ".muted", muted);
             manager.getConfig().set("channels." + name + ".irc.enabled", is_irc);

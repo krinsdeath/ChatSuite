@@ -45,13 +45,16 @@ public class ChatCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        long time = System.nanoTime();
         initConfiguration();
         initEvents();
-        log("v" + getDescription().getVersion() + " enabled.");
+        time = System.nanoTime() - time;
+        log("v" + getDescription().getVersion() + " enabled in " + (time / 1000000L) + "ms. (" + time + "ns)");
     }
 
     @Override
     public void onDisable() {
+        long time = System.nanoTime();
         pListener = null;
         playerManager.clean();
         playerManager.saveConfig();
@@ -59,7 +62,8 @@ public class ChatCore extends JavaPlugin {
         channelManager.saveConfig();
         worldManager.clean();
         if (irc_bot != null) { irc_bot.clean(); }
-        log("v" + getDescription().getVersion() + " disabled.");
+        time = System.nanoTime() - time;
+        log("v" + getDescription().getVersion() + " disabled in " + (time / 1000000L) + "ms. (" + time + "ns)");
     }
 
     @Override
