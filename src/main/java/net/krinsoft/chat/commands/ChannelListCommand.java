@@ -4,6 +4,7 @@ import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.targets.Channel;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -32,17 +33,26 @@ public class ChannelListCommand extends ChannelCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        if (!validateSender(sender)) { return; }
-        Player player = plugin.getServer().getPlayer(sender.getName());
-        List<Channel> channels = manager.getPlayerChannelList(player);
-        if (args.size() > 0 && args.get(0).startsWith("-all") && sender.hasPermission("chatsuite.channel.list.all")) {
+        List<Channel> channels;
+        if (sender instanceof ConsoleCommandSender) {
             channels = manager.getChannels();
+        } else {
+            Player player = plugin.getServer().getPlayer(sender.getName());
+            if (args.size() > 0 && args.get(0).startsWith("-all") && sender.hasPermission("chatsuite.channel.list.all")) {
+                channels = manager.getChannels();
+            } else {
+                channels = manager.getPlayerChannelList(player);
+            }
         }
         int i = 1;
-        message(player, "=== Channel List ===");
-        for (Channel chan : channels) {
-            message(player, i + ": " + chan.getName());
-            i++;
+        if (channels.size() > 0) {
+            message(sender, "=== Channel List ===");
+            for (Channel chan : channels) {
+                message(sender, i + ": " + chan.getName());
+                i++;
+            }
+        } else {
+            message(sender, "No channels available.");
         }
     }
 
