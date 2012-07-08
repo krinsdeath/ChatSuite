@@ -38,11 +38,13 @@ public class ChannelPartCommand extends ChannelCommand {
         ChatPlayer player = plugin.getPlayerManager().getPlayer(sender.getName());
         Channel channel = manager.getChannel(args.get(0));
         if (channel != null) {
-            channel.part(player.getPlayer());
-            player.part(channel);
-            player.setTarget(manager.getChannel(manager.getDefaultChannel()));
+            if (channel.part(player.getPlayer())) {
+                player.part(channel);
+                player.setTarget(manager.getChannel(manager.getDefaultChannel()));
+            }
         } else {
-            error(player.getPlayer(), "That channel doesn't exist.");
+            // channel was null, do nothing
+            error(sender, "That channel doesn't exist.");
         }
     }
 

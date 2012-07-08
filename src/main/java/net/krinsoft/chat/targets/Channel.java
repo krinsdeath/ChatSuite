@@ -265,39 +265,48 @@ public class Channel implements Target {
     /**
      * Adds the specified player to the occupants list
      * @param player The player to add to the list
+     * @return true if the join succeeds, otherwise false
      */
-    public void join(Player player) {
+    public boolean join(Player player) {
         if (isAllowed(player)) {
-            if (occupants.contains(player.getName())) {
+            if (occupants.add(player.getName())) {
+                player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + getColoredName());
+                if (validIRC()) {
+                    ChannelJoinEvent event = new ChannelJoinEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
+                    manager.getPlugin().getServer().getPluginManager().callEvent(event);
+                }
+                manager.log(name, player.getName() + " was allowed entry.");
+                return true;
+            } else {
                 player.sendMessage(ChatColor.RED + "[ChatSuite] You are already on this channel!");
                 manager.log(name, player.getName() + " was already on " + name + ".");
-                return;
-            }
-            occupants.add(player.getName());
-            player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + name);
-            manager.log(name, player.getName() + " joined the channel.");
-            if (validIRC()) {
-                ChannelJoinEvent event = new ChannelJoinEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
-                manager.getPlugin().getServer().getPluginManager().callEvent(event);
+                return false;
             }
         } else {
-            player.sendMessage(ChatColor.RED + "[ChatSuite] Failed to join: " + name);
+            player.sendMessage(ChatColor.RED + "[ChatSuite] Failed to join: " + getColoredName());
             manager.log(name, player.getName() + " was denied entry.");
         }
+        return false;
     }
 
     /**
      * Removes the specified player from the occupants list
      * @param player The player to remove from the list
+     * @return true if the player successfully left the channel, otherwise false
      */
-    public void part(Player player) {
-        occupants.remove(player.getName());
-        player.sendMessage(ChatColor.GRAY + "[ChatSuite] You have left: " + name);
-        manager.log(name, player.getName() + " left the channel.");
-        if (validIRC()) {
-            ChannelPartEvent event = new ChannelPartEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
-            manager.getPlugin().getServer().getPluginManager().callEvent(event);
+    public boolean part(Player player) {
+        if (occupants.remove(player.getName())) {
+            player.sendMessage(ChatColor.GRAY + "[ChatSuite] You have left: " + getColoredName());
+            manager.log(name, player.getName() + " left the channel.");
+            if (validIRC()) {
+                ChannelPartEvent event = new ChannelPartEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
+                manager.getPlugin().getServer().getPluginManager().callEvent(event);
+            }
+            return true;
+        } else {
+            player.sendMessage(ChatColor.GRAY + "[ChatSuite] You were not on: " + getColoredName());
         }
+        return false;
     }
 
     /**
@@ -415,7 +424,7 @@ public class Channel implements Target {
             inviter.sendMessage(player.getName() + " is already a member of " + name + ".");
             return false;
         }
-        return isAdmin(inviter) && !contains(player) && members.add(player.getName());
+        return isAdmin(inviter) && members.add(player.getName());
     }
 
     @Override

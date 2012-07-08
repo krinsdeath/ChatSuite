@@ -38,9 +38,10 @@ public class ChannelJoinCommand extends ChannelCommand {
         ChatPlayer player = plugin.getPlayerManager().getPlayer(sender.getName());
         Channel channel = manager.getChannel(args.get(0));
         if (channel != null) {
-            channel.join(player.getPlayer());
-            player.join(channel);
-            player.setTarget(channel, false);
+            if (channel.join(player.getPlayer())) {
+                player.join(channel);
+                player.setTarget(channel, false);
+            }
         } else {
             // channel was null, do nothing
             error(sender, "That channel doesn't exist.");
