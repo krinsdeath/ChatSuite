@@ -22,7 +22,7 @@ public class MuteCommand extends ChatSuiteCommand {
         addKey("chatsuite mute");
         addKey("chat mute");
         addKey("mute");
-        setPermission("chatsuite.mute", "Prevents the specified target from sending messages.", PermissionDefault.TRUE);
+        setPermission("chatsuite.mute", "Prevents the specified target from sending messages.", PermissionDefault.OP);
     }
 
     @Override
