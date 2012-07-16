@@ -58,6 +58,9 @@ public class NickCommand extends ChatSuiteCommand {
         }
         target.setDisplayName(nick);
         target.sendMessage("You are now identified as " + nick);
+        if (!target.getPlayer().equals(sender)) {
+            sender.sendMessage("You set " + target.getName() + "'s display name to " + target.getDisplayName());
+        }
     }
 
 }

@@ -67,23 +67,23 @@ commands:
     description: Sends a message to the specified player.
     usage: |
       /<command> [player] [message]         - Send a message to the specified player.
-  reply:
+  reply: # done
     aliases: [r]
     description: Replies to the last person to send you a message.
     usage: |
       /<command> [message]                  - Reply to the last person who /whisper'd you.
-  target:
+  target: # done
     aliases: [t]
     description: Sets your current chat target.
     usage: |
       /<command> c:[channel]                - Allows you to chat directly to a channel.
       /<command> p:[player]                 - Allows you to chat directly to a player.
-  mute:
+  mute: # done
     description: Mutes the specified player.
     usage: |
       /<command> c:channel
       /<command> p:player
-  nickname:
+  nickname: # done
     aliases: [nick]
     description: Changes your display name.
     usage: |
@@ -92,12 +92,12 @@ commands:
       /<command> -r [player]                - Reset the specified player's nickname.
       /<command> -l                         - List all current players with nicknames.
       /<command>                            - Reset your own nickname.
-  afk:
+  afk: # done
     description: Toggles your afk status, with an optional message.
     usage: |
       /<command> [message]      - Sets you to afk with the given message.
       /<command>                - Toggles your afk status.
-  irc:
+  irc: # done
     description: Allows changing various settings for the IRC Bot.
     usage: |
       /<command> connect        - Connects the IRC bot
@@ -108,6 +108,7 @@ commands:
 permissions:
   chatsuite.bypass.*:
     description: Allows bypassing admin and owner rights on channels.
+    default: false
     children:
       chatsuite.bypass.admin: true
       chatsuite.bypass.invite: true
@@ -116,6 +117,7 @@ permissions:
       chatsuite.bypass.set: true
   chatsuite.commands:
     description: All of ChatSuite's basic user commands.
+    default: false
     children:
       chatsuite.nick: true
       chatsuite.nick.other: true
@@ -125,11 +127,14 @@ permissions:
       chatsuite.reply: true
   chatsuite.commands.admin:
     description: All of ChatSuite's administrative commands.
+    default: false
     children:
       chatsuite.reload: true
       chatsuite.version: true
       chatsuite.debug: true
   chatsuite.channel.list.all:
     description: Allows a user to list all active channels.
+    default: false
   chatsuite.nick.other:
     description: Allows a user to change another user's nickname.
+    default: false
