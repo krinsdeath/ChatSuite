@@ -44,9 +44,8 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     void playerKick(PlayerKickEvent event) {
-        if (event.isCancelled()) { return; }
         if (prefixOnQuit) {
             event.setLeaveMessage("[" + plugin.getPlayerManager().getPlayer(event.getPlayer().getName()).getGroup() + "] "+ event.getLeaveMessage());
         }
@@ -69,11 +68,8 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     void playerChatLowest(PlayerChatEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         if (event.getPlayer().hasPermission("chatsuite.colorize")) {
             event.setMessage(event.getMessage().replaceAll("&([0-9a-fA-F])", "\u00A7$1"));
         }
@@ -118,9 +114,8 @@ public class PlayerListener implements Listener {
         event.setMessage(event.getMessage());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     void playerChatMonitor(PlayerChatEvent event) {
-        if (event.isCancelled()) { return; }
         if (plugin.getIRCBot() == null) { return; }
         String message = event.getFormat();
         message = message.replaceAll("%2\\$s", event.getMessage().replaceAll("\\$", "\\\\$"));
