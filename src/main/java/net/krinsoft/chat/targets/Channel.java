@@ -444,7 +444,7 @@ public class Channel implements Target {
 
     public void sendMessage(String message) {
         for (Player player : getOccupants()) {
-            player.sendMessage(message);
+            player.sendMessage("[" + getColoredName() + "] " + message);
         }
     }
 

@@ -35,20 +35,22 @@ public class ChannelMessageCommand extends ChannelCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        if (!validateSender(sender)) { return; }
-        Player player = plugin.getServer().getPlayer(sender.getName());
         Channel channel = manager.getChannel(args.get(0));
         StringBuilder message = new StringBuilder();
         for (int i = 1; i < args.size(); i++) {
             message.append(args.get(i)).append(" ");
         }
         if (channel != null) {
-            Target target = plugin.getPlayerManager().getPlayer(player.getName()).getTarget();
-            plugin.getPlayerManager().getPlayer(player.getName()).setTarget(channel, true);
-            player.chat(message.toString());
-            plugin.getPlayerManager().getPlayer(player.getName()).setTarget(target, true);
+            if (sender instanceof Player) {
+                Target target = plugin.getPlayerManager().getPlayer(sender.getName()).getTarget();
+                plugin.getPlayerManager().getPlayer(sender.getName()).setTarget(channel, true);
+                ((Player)sender).chat(message.toString());
+                plugin.getPlayerManager().getPlayer(sender.getName()).setTarget(target, true);
+            } else {
+                channel.sendMessage(message.toString());
+            }
         } else {
-            error(player, "That channel doesn't exist.");
+            error(sender, "That channel doesn't exist.");
         }
     }
 
