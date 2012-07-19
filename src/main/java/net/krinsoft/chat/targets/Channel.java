@@ -270,6 +270,7 @@ public class Channel implements Target {
     public boolean join(Player player) {
         if (isAllowed(player)) {
             if (occupants.add(player.getName())) {
+                members.add(player.getName());
                 player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + getColoredName());
                 if (validIRC()) {
                     ChannelJoinEvent event = new ChannelJoinEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
@@ -400,9 +401,21 @@ public class Channel implements Target {
      * Checks whether the channel's occupants list contains the specified player
      * @param player The player we're checking occupancy thereof
      * @return true if the list contains the player, otherwise false
+     * @see #contains(String)
+     * @deprecated since 2.1.1
      */
+    @Deprecated
     public boolean contains(Player player) {
         return occupants.contains(player.getName());
+    }
+
+    /**
+     * Checks whether the specified player is on this channel
+     * @param player The name of the player
+     * @return true if the channel has this player in it, otherwise false
+     */
+    public boolean contains(String player) {
+        return occupants.contains(player);
     }
 
     /**

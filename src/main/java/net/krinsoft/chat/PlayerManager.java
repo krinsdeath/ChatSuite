@@ -106,10 +106,13 @@ public class PlayerManager implements Manager {
         }
         ChatPlayer cplayer = new ChatPlayer(this, plugin.getServer().getPlayer(player));
         players.put(player, cplayer);
-        plugin.getChannelManager().getGlobalChannel().join(plugin.getServer().getPlayer(player));
+        Channel chan = plugin.getChannelManager().getGlobalChannel();
+        if (chan != null) {
+            chan.join(cplayer.getPlayer());
+        }
         for (String channel : cplayer.getAutoJoinChannels()) {
-            Channel chan = plugin.getChannelManager().getChannel(channel);
-            if (chan != null && !chan.getOccupants().contains(cplayer.getPlayer())) {
+            chan = plugin.getChannelManager().getChannel(channel);
+            if (chan != null && !chan.contains(player)) {
                 chan.join(cplayer.getPlayer());
             }
         }

@@ -68,7 +68,13 @@ public class ChatPlayer implements Target {
         manager = man;
         name = p.getName();
         world = p.getWorld().getName();
-        auto_join.addAll( manager.getConfig().getStringList(name + ".auto_join"));
+        List<String> joins;
+        if (manager.getConfig().getConfigurationSection(name) != null) {
+            joins = manager.getConfig().getStringList(name + ".auto_join");
+        } else {
+            joins = manager.getConfig().getStringList("default_channels");
+        }
+        auto_join.addAll(joins);
         if (manager.getConfig().get(name) != null) {
             String t = manager.getConfig().getString(getName() + ".target");
             if (t != null) {

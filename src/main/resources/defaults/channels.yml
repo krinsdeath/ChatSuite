@@ -12,3 +12,13 @@ channels:
     owner: ''
     admins: []
     members: []
+  Politics:
+    public: true
+    irc:
+      enabled: false
+      channel: '#chatsuite'
+      key: ''
+      network: esper
+    owner: ''
+    admins: []
+    members: []
