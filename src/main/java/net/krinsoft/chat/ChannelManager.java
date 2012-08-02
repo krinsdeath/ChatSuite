@@ -99,7 +99,7 @@ public class ChannelManager implements Manager {
             chan = new Channel(this, channel, player);
             plugin.debug("Channel '" + channel + "' created");
         }
-        if (!chan.contains(player)) {
+        if (!chan.contains(player.getName())) {
             chan.join(player);
         }
         return channels.put(channel.toLowerCase(), chan);
@@ -119,7 +119,7 @@ public class ChannelManager implements Manager {
             return null;
         } else {
             // remove the player from the channel
-            if (chan.contains(player) && getPlayerChannelList(player).size() > 1) {
+            if (chan.contains(player.getName()) && getPlayerChannelList(player).size() > 1) {
                 chan.part(player);
                 if (chan.getOccupants().size() < 1 && !chan.isPermanent()) {
                     // channel is empty! let's get rid of it
@@ -131,22 +131,29 @@ public class ChannelManager implements Manager {
         }
     }
 
+    /**
+     * Changes the player's stored world alias and updates their world channel
+     * @param p The player we're updating
+     * @param from The name of the world the player is coming from
+     * @param to The name of the world the player is moving to
+     */
     public void playerWorldChange(Player p, String from, String to) {
-        if (!world_channels) { return; }
         if (plugin.getPlayerManager().isPlayerRegistered(p.getName())) {
             ChatPlayer player = plugin.getPlayerManager().getPlayer(p.getName());
-            removePlayerFromChannel(p, from);
-            Target target = addPlayerToChannel(p, to);
-            if (player.getTarget().getName().equals(from)) {
-                player.setTarget(target);
-            }
             player.setWorld(plugin.getWorldManager().getAlias(to));
+            if (world_channels) {
+                removePlayerFromChannel(p, from);
+                Target target = addPlayerToChannel(p, to);
+                if (player.getTarget().getName().equals(from)) {
+                    player.setTarget(target);
+                }
+            }
         }
     }
 
     void removePlayerFromAllChannels(Player player) {
         for (Channel channel : new HashSet<Channel>(channels.values())) {
-            if (channel.contains(player)) {
+            if (channel.contains(player.getName())) {
                 channel.part(player);
                 if (channel.getOccupants().size() == 0 && !channel.isPermanent()) {
                     channels.remove(channel.getName().toLowerCase());
@@ -193,7 +200,7 @@ public class ChannelManager implements Manager {
     public List<Channel> getPlayerChannelList(Player player) {
         List<Channel> list = new ArrayList<Channel>();
         for (Channel chan : channels.values()) {
-            if (chan.contains(player)) {
+            if (chan.contains(player.getName())) {
                 list.add(chan);
             }
         }
