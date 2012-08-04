@@ -74,9 +74,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     void playerChatLowest(AsyncPlayerChatEvent event) {
-        if (event.getPlayer().hasPermission("chatsuite.colorize")) {
-            event.setMessage(event.getMessage().replaceAll("&([0-9a-fA-F])", "\u00A7$1"));
-        }
         ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
         if (player == null) { return; } // player object was null
         if (player.isMuted()) {
@@ -90,6 +87,9 @@ public class PlayerListener implements Listener {
             player.sendMessage(ChatColor.RED + "Target is muted.");
             event.setCancelled(true);
             return;
+        }
+        if (player.colorfulChat()) {
+            event.setMessage(event.getMessage().replaceAll("&([0-9a-fA-F])", "\u00A7$1"));
         }
         String format = player.getFormattedMessage();
         Set<Player> players = new HashSet<Player>();

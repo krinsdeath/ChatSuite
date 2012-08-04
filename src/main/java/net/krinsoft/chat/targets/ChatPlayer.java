@@ -59,6 +59,7 @@ public class ChatPlayer implements Target {
     private Target reply;
     private boolean afk; // whether the player is afk or not
     private boolean muted;
+    private boolean colorful;
     private String afk_message;
 
     private Set<String> auto_join = new HashSet<String>();
@@ -68,6 +69,7 @@ public class ChatPlayer implements Target {
         manager = man;
         name = p.getName();
         world = p.getWorld().getName();
+        colorful = p.hasPermission("chatsuite.colorize");
         List<String> joins;
         if (manager.getConfig().getConfigurationSection(name) != null) {
             joins = manager.getConfig().getStringList(name + ".auto_join");
@@ -360,5 +362,13 @@ public class ChatPlayer implements Target {
         format = parse(format);
         format = format.replaceAll("(%message|%m)", "%2\\$s");
         return format;
+    }
+
+    public boolean colorfulChat() {
+        return colorful;
+    }
+
+    public void setColorfulChat(boolean val) {
+        colorful = val;
     }
 }
