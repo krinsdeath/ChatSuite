@@ -86,9 +86,7 @@ public class PlayerManager implements Manager {
         if (!isPlayerRegistered(p)) {
             registerPlayer(p);
         }
-        ChatPlayer player = players.get(p);
-        player.getGroup();
-        return player;
+        return players.get(p);
     }
 
     /**

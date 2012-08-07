@@ -178,6 +178,7 @@ public class ChatPlayer implements Target {
     }
 
     public void setWorld(String w) {
+        getGroup();
         world = w;
     }
 

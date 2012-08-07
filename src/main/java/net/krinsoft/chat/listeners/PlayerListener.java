@@ -99,13 +99,7 @@ public class PlayerListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            for (Player occ : ((Channel)target).getOccupants()) {
-                if (occ != null) {
-                    players.add(occ);
-                } else {
-                    ((Channel)target).part(occ);
-                }
-            }
+            players.addAll(((Channel) target).getOccupants());
         } else {
             player.whisperTo(target, event.getMessage());
             ((ChatPlayer)target).whisperFrom(player, event.getMessage());
