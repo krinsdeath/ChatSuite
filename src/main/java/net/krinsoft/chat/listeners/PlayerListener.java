@@ -89,7 +89,7 @@ public class PlayerListener implements Listener {
             return;
         }
         if (player.colorfulChat()) {
-            event.setMessage(event.getMessage().replaceAll("&([0-9a-fA-F])", "\u00A7$1"));
+            event.setMessage(ChatColor.translateAlternateColorCodes('&', event.getMessage()));
         }
         String format = player.getFormattedMessage();
         Set<Player> players = new HashSet<Player>();
@@ -115,13 +115,33 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     void playerChatMonitor(AsyncPlayerChatEvent event) {
         if (plugin.getIRCBot() == null) { return; }
-        String message = event.getFormat();
-        message = message.replaceAll("%2\\$s", event.getMessage().replaceAll("\\$", "\\\\$"));
-        message = ChatColor.stripColor(message);
+        final String message = ChatColor.stripColor(replaceAllLiteral(event.getFormat(), "%2$s", replaceAll(event.getMessage(), '$', "\\\\$")));
         ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
         if (player.getTarget() instanceof Channel) {
             ((Channel)player.getTarget()).sendToIRC(message);
         }
+    }
+
+    private static String replaceAll(final String string, final char c, final CharSequence replacement) {
+    	StringBuilder out = new StringBuilder(replacement.length() > 1 ? string.length() + (string.length() >> 3) : string.length());
+        int p, i = -1;
+        while ((i = string.indexOf(c, p = i + 1)) != -1) {
+        	// Copy pre-sequence and then replacement
+    		out.append(string, p, i).append(replacement);
+        }
+    	// Final sequence
+    	return out.append(string, p, string.length()).toString();
+    }
+
+    private static String replaceAllLiteral(final String string, final String value, final CharSequence replacement) {
+    	StringBuilder out = new StringBuilder(replacement.length() > value.length() ? string.length() + (string.length() >> 3) : string.length());
+        int valueLength = value.length(), p, i = -valueLength;
+        while ((i = string.indexOf(value, p = i + valueLength)) != -1) {
+        	// Copy pre-sequence and then replacement
+        	out.append(string, p, i).append(replacement);
+        }
+        // Final sequence
+        return out.append(string, p, string.length()).toString();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
