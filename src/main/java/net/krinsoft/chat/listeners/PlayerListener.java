@@ -1,11 +1,16 @@
 package net.krinsoft.chat.listeners;
 
+import static net.krinsoft.chat.util.Replacer.replaceAll;
+import static net.krinsoft.chat.util.Replacer.replaceAllLiteral;
+
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.api.Target;
 import net.krinsoft.chat.events.MinecraftJoinEvent;
 import net.krinsoft.chat.events.MinecraftQuitEvent;
 import net.krinsoft.chat.targets.Channel;
 import net.krinsoft.chat.targets.ChatPlayer;
+import net.krinsoft.chat.util.Replacer;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -120,28 +125,6 @@ public class PlayerListener implements Listener {
         if (player.getTarget() instanceof Channel) {
             ((Channel)player.getTarget()).sendToIRC(message);
         }
-    }
-
-    private static String replaceAll(final String string, final char c, final CharSequence replacement) {
-    	StringBuilder out = new StringBuilder(replacement.length() > 1 ? string.length() + (string.length() >> 3) : string.length());
-        int p, i = -1;
-        while ((i = string.indexOf(c, p = i + 1)) != -1) {
-        	// Copy pre-sequence and then replacement
-    		out.append(string, p, i).append(replacement);
-        }
-    	// Final sequence
-    	return out.append(string, p, string.length()).toString();
-    }
-
-    private static String replaceAllLiteral(final String string, final String value, final CharSequence replacement) {
-    	StringBuilder out = new StringBuilder(replacement.length() > value.length() ? string.length() + (string.length() >> 3) : string.length());
-        int valueLength = value.length(), p, i = -valueLength;
-        while ((i = string.indexOf(value, p = i + valueLength)) != -1) {
-        	// Copy pre-sequence and then replacement
-        	out.append(string, p, i).append(replacement);
-        }
-        // Final sequence
-        return out.append(string, p, string.length()).toString();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

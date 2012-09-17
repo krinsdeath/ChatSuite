@@ -1,36 +1,41 @@
 package net.krinsoft.chat.targets;
 
-import com.herocraftonline.dev.heroes.Heroes;
-import com.herocraftonline.dev.heroes.persistence.Hero;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import net.krinsoft.chat.PlayerManager;
 import net.krinsoft.chat.api.Target;
+import net.krinsoft.chat.util.Replacer;
+import net.krinsoft.chat.util.Replacer.Handler;
+
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
+import com.herocraftonline.dev.heroes.Heroes;
+import com.herocraftonline.dev.heroes.persistence.Hero;
 
 /**
  *
  * @author krinsdeath
  */
+@SuppressWarnings("javadoc")
 public class ChatPlayer implements Target {
-    private final static Pattern SELF = Pattern.compile("(%name|%n)");
-    private final static Pattern SELF_DISPLAY = Pattern.compile("(%display|%dn)");
-    private final static Pattern TARGET = Pattern.compile("(%target|%t|%channel|%c)");
-    private final static Pattern TARGET_DISPLAY = Pattern.compile("(%disp_target|%dt)");
-    private final static Pattern PREFIX = Pattern.compile("(%prefix|%p)");
-    private final static Pattern GROUP = Pattern.compile("(%group|%g)");
-    private final static Pattern SUFFIX = Pattern.compile("(%suffix|%s)");
-    private final static Pattern HEROES = Pattern.compile("(%hero|%h)");
-    private final static Pattern AFK = Pattern.compile("(%afk)");
-    private final static Pattern WORLD = Pattern.compile("(%world|%w)");
-    private final static Pattern COLOR = Pattern.compile("(?i)&([0-F])");
+    private static class NodeGrabber implements Replacer.Handler {
+        final String node;
+
+        NodeGrabber(final String node) {
+            this.node = node;
+        }
+
+        @Override
+        public String getValue(final Object... scope) {
+            return ((ConfigurationSection) scope[1]).getString(node);
+        }
+    }
 
     public enum Type {
         NORMAL("normal"),
@@ -40,7 +45,7 @@ public class ChatPlayer implements Target {
 
         private String type;
 
-        private Type(String type) {
+        private Type(final String type) {
             this.type = type;
         }
 
@@ -49,22 +54,125 @@ public class ChatPlayer implements Target {
         }
 
     }
+    private final static Handler AFK;
+    private final static Handler GROUP;
+    private final static Handler HEROES;
+    private final static Handler PREFIX;
+    private final static Replacer[] replacers;
+    private final static Handler SELF;
+    private final static Handler SELF_DISPLAY;
+    private final static Handler SUFFIX;
+    private final static Handler TARGET;
+    private final static Handler TARGET_DISPLAY;
+    private final static Handler WORLD;
+    static {
+        AFK = new NodeGrabber("afk");
+        GROUP = new NodeGrabber("group");
+        HEROES =
+            new Replacer.Handler() {
+                @Override
+                public String getValue(final Object... scope) {
+                    final ChatPlayer chatPlayer = (ChatPlayer) scope[0];
+                    final PlayerManager manager = chatPlayer.manager;
+                    final Plugin tmp = manager.getPlugin().getServer().getPluginManager().getPlugin("Heroes");
+                    if (tmp != null) {
+                        try {
+                            final Heroes heroes = (Heroes) tmp;
+                            final Player player = manager.getPlugin().getServer().getPlayer(chatPlayer.getName());
+                            final Hero hero = heroes.getHeroManager().getHero(player);
+                            final String hero_name = hero.getHeroClass().getName();
+                            return hero_name;
+                        } catch (final Exception e) {
+                            manager.getPlugin().warn("An error occurred while parsing a Hero class: " + e.getLocalizedMessage());
+                        }
+                    }
+                    return "";
+                }
+            };
+        PREFIX = new NodeGrabber("prefix");
+        SUFFIX = new NodeGrabber("suffix");
+        SELF =
+            new Replacer.Handler() {
+                @Override
+                public String getValue(final Object... scope) {
+                    return ((ChatPlayer) scope[0]).getName();
+                }
+            };
+        SELF_DISPLAY =
+            new Replacer.Handler() {
+                @Override
+                public String getValue(final Object... scope) {
+                    final Player player = ((ChatPlayer) scope[0]).getPlayer();
+                    if (player != null) return player.getDisplayName();
+                    return "";
+                }
+            };
+        TARGET =
+            new Replacer.Handler() {
+                @Override
+                public String getValue(final Object... scope) {
+                    final Target target = ((ChatPlayer) scope[0]).target;
+                    if (target != null) {
+                        if (target instanceof Channel) return ((Channel)target).getColoredName();
+                        return target.getName();
+                    }
+                    return "";
+                }
+            };
+        TARGET_DISPLAY =
+            new Replacer.Handler() {
+                @Override
+                public String getValue(final Object... scope) {
+                    final Player p = ((ChatPlayer) scope[0]).getPlayer();
+                    if (p != null) return p.getDisplayName();
+                    return "";
+                }
+            };
+        WORLD =
+            new Replacer.Handler() {
+                @Override
+                public String getValue(final Object... scope) {
+                    final ChatPlayer chatPlayer = (ChatPlayer) scope[0];
+                    return chatPlayer.manager.getPlugin().getWorldManager().getAlias(chatPlayer.world);
+                }
+            };
+            replacers = new Replacer[] {
+                new Replacer("%afk", AFK, false),
+                new Replacer("group", GROUP, false),
+                new Replacer("%g", GROUP, true),
+                new Replacer("%hero", HEROES, false),
+                new Replacer("%h", HEROES, true),
+                new Replacer("%prefix", PREFIX, false),
+                new Replacer("%p", PREFIX, true),
+                new Replacer("%name", SELF, false),
+                new Replacer("%n", SELF, true),
+                new Replacer("%display", SELF_DISPLAY, false),
+                new Replacer("%dn", SELF_DISPLAY, false),
+                new Replacer("%suffix", SUFFIX, false),
+                new Replacer("%s", SUFFIX, false),
+                new Replacer("%target", TARGET, false),
+                new Replacer("%t", TARGET, true),
+                new Replacer("%channel", TARGET, false),
+                new Replacer("%c", TARGET, false),
+                new Replacer("%disp_target", TARGET_DISPLAY, false),
+                new Replacer("%dt", TARGET_DISPLAY, true),
+                new Replacer("%world", WORLD, false),
+                new Replacer("%w", WORLD, true)};
+    }
 
-    // general stuff
-    private PlayerManager manager;
-    private String name;
-    private String world; // the player's current world
-    private String group; // the player's group
-    private Target target;
-    private Target reply;
     private boolean afk; // whether the player is afk or not
-    private boolean muted;
-    private boolean colorful;
     private String afk_message;
+    private final Set<String> auto_join = new HashSet<String>();
+    private boolean colorful;
+    private String group; // the player's group
+    private final PlayerManager manager;
+    private boolean muted;
+    private final String name;
+    private Target reply;
+    private Target target;
+    private String world; // the player's current world
 
-    private Set<String> auto_join = new HashSet<String>();
-
-    public ChatPlayer(PlayerManager man, Player p) {
+    public ChatPlayer(final PlayerManager man, final Player p) {
         long time = System.nanoTime();
         manager = man;
         name = p.getName();
@@ -78,7 +186,7 @@ public class ChatPlayer implements Target {
         }
         auto_join.addAll(joins);
         if (manager.getConfig().get(name) != null) {
-            String t = manager.getConfig().getString(getName() + ".target");
+            final String t = manager.getConfig().getString(getName() + ".target");
             if (t != null) {
                 target = manager.getPlugin().getTarget(t);
             }
@@ -95,74 +203,8 @@ public class ChatPlayer implements Target {
         manager.getPlugin().debug("Player '" + name + "' registered in group '" + group + "' and " + (muted ? "" : "not ") + "muted took " + (time / 1000000L) + "ms. (" + time + "ns)");
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public String getGroup() {
-        long time = System.nanoTime();
-        Player p = getPlayer();
-        if (p == null) { return manager.getPlugin().getDefaultGroup(); }
-        int weight = 0;
-        for (String key : manager.getPlugin().getGroups()) {
-            int i = manager.getPlugin().getGroupNode(key).getInt("weight");
-            if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
-                weight = i;
-                group = key;
-            }
-        }
-        if (group == null) {
-            group = p.isOp() ? manager.getPlugin().getOpGroup() : manager.getPlugin().getDefaultGroup();
-        }
-        time = System.nanoTime() - time;
-        manager.getPlugin().debug(name + ": Determined '" + group + "' in " + (time / 1000000L) + "ms. (" + time + "ns)");
-        return group;
-    }
-
-    @Override
-    public void persist() {
-        String t = (target instanceof Channel ? "c:" + target.getName() : "p:" + target.getName());
-        manager.getConfig().set(getName() + ".target", t);
-        List<String> joins = new ArrayList<String>();
-        joins.addAll(auto_join);
-        manager.getConfig().set(getName() + ".auto_join", joins);
-        manager.getConfig().set(getName() + ".muted", muted);
-    }
-
-    public Player getPlayer() {
-        return manager.getPlugin().getServer().getPlayer(name);
-    }
-
-    public Target getTarget() {
-        return target;
-    }
-
-    public void setTarget(Target t) {
-        setTarget(t, false);
-    }
-
-    public void setTarget(Target t, boolean silent) {
-        target = t;
-        if (!silent) {
-            target = t;
-            Player p = getPlayer();
-            if (p != null) { p.sendMessage("[ChatSuite] Your target is now: " + target.getName()); }
-        }
-    }
-
-    public void join(Channel c) {
-        if (!auto_join.contains(c.getName())) {
-            sendMessage(c.getColoredName() + " added to Auto-Join list.");
-        }
-        auto_join.add(c.getName());
-    }
-
-    public void part(Channel c) {
-        if (auto_join.contains(c.getName())) {
-            sendMessage(c.getColoredName() + " removed from Auto-Join list.");
-        }
-        auto_join.remove(c.getName());
+    public boolean colorfulChat() {
+        return colorful;
     }
 
     public Set<String> getAutoJoinChannels() {
@@ -170,186 +212,11 @@ public class ChatPlayer implements Target {
     }
 
     public String getAutoJoinChannelString() {
-        StringBuilder ajoin = new StringBuilder();
-        for (String ch : auto_join) {
+        final StringBuilder ajoin = new StringBuilder();
+        for (final String ch : auto_join) {
             ajoin.append(ChatColor.AQUA).append(ch).append(ChatColor.WHITE).append(", ");
         }
         return ajoin.toString().substring(0, ajoin.toString().length()-2);
-    }
-
-    public void setWorld(String w) {
-        getGroup();
-        world = w;
-    }
-
-    public String parse(String format) {
-        ConfigurationSection node = manager.getPlugin().getGroupNode(group);
-        format = parsePrefix(format, node.getString("prefix"));
-        format = parseGroup(format, node.getString("group"));
-        format = parseSuffix(format, node.getString("suffix"));
-        format = parseHero(format);
-        format = parseWorld(format, manager.getPlugin().getWorldManager().getAlias(world));
-        format = parseTarget(format);
-        format = parseSelf(format);
-        format = parseAfk(format, node.getString("afk"));
-        format = parseColors(format);
-        return format;
-    }
-
-    private String parseAfk(String format, String afk) {
-        if (this.afk) {
-            format = AFK.matcher(format).replaceAll(afk);
-            return format;
-        } else {
-            return AFK.matcher(format).replaceAll("");
-        }
-    }
-
-    private String parsePrefix(String format, String prefix) {
-        format = PREFIX.matcher(format).replaceAll(prefix);
-        return format;
-    }
-
-    private String parseSuffix(String format, String suffix) {
-        format = SUFFIX.matcher(format).replaceAll(suffix);
-        return format;
-    }
-
-    private String parseHero(String format) {
-        Plugin tmp = manager.getPlugin().getServer().getPluginManager().getPlugin("Heroes");
-        if (tmp != null) {
-            try {
-                Heroes heroes = (Heroes) tmp;
-                Player player = manager.getPlugin().getServer().getPlayer(getName());
-                Hero hero = heroes.getHeroManager().getHero(player);
-                String hero_name = hero.getHeroClass().getName();
-                format = HEROES.matcher(format).replaceAll(hero_name);
-            } catch (Exception e) {
-                manager.getPlugin().warn("An error occurred while parsing a Hero class: " + e.getLocalizedMessage());
-            }
-        }
-        return format;
-    }
-
-    private String parseGroup(String format, String group) {
-        format = GROUP.matcher(format).replaceAll(group);
-        return format;
-    }
-
-    private String parseWorld(String format, String world) {
-        format = WORLD.matcher(format).replaceAll(world);
-        return format;
-    }
-
-    private String parseSelf(String format) {
-        format = SELF.matcher(format).replaceAll(getName());
-        if (getPlayer() != null) {
-            format = SELF_DISPLAY.matcher(format).replaceAll(getPlayer().getDisplayName());
-        } else {
-            format = SELF_DISPLAY.matcher(format).replaceAll("");
-        }
-        return format;
-    }
-
-    private String parseTarget(String format) {
-        if (target != null) {
-            if (target instanceof Channel) {
-                format = TARGET.matcher(format).replaceAll(((Channel)target).getColoredName());
-            } else {
-                format = TARGET.matcher(format).replaceAll(target.getName());
-            }
-            Player p = getPlayer();
-            if (p != null) {
-                format = TARGET_DISPLAY.matcher(format).replaceAll(p.getDisplayName());
-            }
-        }
-        return format;
-    }
-
-    private String parseColors(String format) {
-        return COLOR.matcher(format).replaceAll("\u00A7$1");
-    }
-
-    public void toggleAfk(String message) {
-        this.afk_message = message;
-        this.afk = !this.afk;
-    }
-
-    ///////////////////////
-    // MESSAGING METHODS //
-    ///////////////////////
-
-    public boolean isMuted() {
-        return muted;
-    }
-
-    public void toggleMute() {
-        muted = !muted;
-        if (muted) {
-            sendMessage(ChatColor.RED + "You have been muted.");
-        } else {
-            sendMessage(ChatColor.GREEN + "You have been unmuted.");
-        }
-    }
-
-    public void sendMessage(String message) {
-        Player p = getPlayer();
-        if (p != null) { p.sendMessage(message); }
-    }
-
-    public void whisperTo(Target to, String message) {
-        reply = to;
-        String format = getFormattedWhisperTo(to);
-        format = format.replaceAll("(%message|%m)", message);
-        sendMessage(format);
-        if (to instanceof ChatPlayer && ((ChatPlayer)to).afk) {
-            sendMessage(to.getName() + " is afk: " + ((ChatPlayer)to).afk_message);
-        }
-    }
-
-    public void whisperFrom(Target from, String message) {
-        reply = from;
-        String format = getFormattedWhisperFrom(from);
-        format = format.replaceAll("(%message|%m)", message);
-        sendMessage(format);
-    }
-
-    public void reply(String message) {
-        if (reply == null) { return; }
-        whisperTo(reply, message);
-        ((ChatPlayer)reply).whisperFrom(this, message);
-    }
-
-    public String getFormattedWhisperTo(Target target) {
-        String format = manager.getPlugin().getConfig().getString("groups." + ((ChatPlayer)target).getGroup() + ".format.to");
-        if (format == null) {
-            format = manager.getPlugin().getConfig().getString("format.to");
-            if (format == null) {
-                format = "&7[To] %t>>&F: %m";
-            }
-        }
-        format = whisperParse(format);
-        format = parse(format);
-        return format;
-    }
-
-    public String getFormattedWhisperFrom(Target target) {
-        String format = manager.getPlugin().getConfig().getString("groups." + ((ChatPlayer)target).getGroup() + ".format.from");
-        if (format == null) {
-            format = manager.getPlugin().getConfig().getString("format.from");
-            if (format == null) {
-                format = "&7[From] %t>>&F: %m";
-            }
-        }
-        format = whisperParse(format);
-        format = parse(format);
-        return format;
-    }
-
-    protected String whisperParse(String format) {
-        format = TARGET.matcher(format).replaceAll(reply.getName());
-        format = TARGET_DISPLAY.matcher(format).replaceAll(reply.getName());
-        return format;
     }
 
     public String getFormattedMessage() {
@@ -365,11 +232,172 @@ public class ChatPlayer implements Target {
         return format;
     }
 
-    public boolean colorfulChat() {
-        return colorful;
+    public String getFormattedWhisperFrom(final Target target) {
+        String format = manager.getPlugin().getConfig().getString("groups." + ((ChatPlayer)target).getGroup() + ".format.from");
+        if (format == null) {
+            format = manager.getPlugin().getConfig().getString("format.from");
+            if (format == null) {
+                format = "&7[From] %t>>&F: %m";
+            }
+        }
+        format = whisperParse(format);
+        format = parse(format);
+        return format;
     }
 
-    public void setColorfulChat(boolean val) {
+    public String getFormattedWhisperTo(final Target target) {
+        String format = manager.getPlugin().getConfig().getString("groups." + ((ChatPlayer)target).getGroup() + ".format.to");
+        if (format == null) {
+            format = manager.getPlugin().getConfig().getString("format.to");
+            if (format == null) {
+                format = "&7[To] %t>>&F: %m";
+            }
+        }
+        format = whisperParse(format);
+        format = parse(format);
+        return format;
+    }
+
+    public String getGroup() {
+        long time = System.nanoTime();
+        final Player p = getPlayer();
+        if (p == null) 
+        	return manager.getPlugin().getDefaultGroup();
+        int weight = 0;
+        for (final String key : manager.getPlugin().getGroups()) {
+            final int i = manager.getPlugin().getGroupNode(key).getInt("weight");
+            if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
+                weight = i;
+                group = key;
+            }
+        }
+        if (group == null) {
+            group = p.isOp() ? manager.getPlugin().getOpGroup() : manager.getPlugin().getDefaultGroup();
+        }
+        time = System.nanoTime() - time;
+        manager.getPlugin().debug(name + ": Determined '" + group + "' in " + (time / 1000000L) + "ms. (" + time + "ns)");
+        return group;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public Player getPlayer() {
+        return manager.getPlugin().getServer().getPlayer(name);
+    }
+
+    public Target getTarget() {
+        return target;
+    }
+
+    @Override
+	public boolean isMuted() {
+        return muted;
+    }
+
+    public void join(final Channel c) {
+        if (!auto_join.contains(c.getName())) {
+            sendMessage(c.getColoredName() + " added to Auto-Join list.");
+        }
+        auto_join.add(c.getName());
+    }
+
+    public String parse(String format) {
+        final ConfigurationSection node = manager.getPlugin().getGroupNode(group);
+        format = Replacer.makeReplacements(format, replacers, this, node);
+        format = ChatColor.translateAlternateColorCodes('&', format);
+        return format;
+    }
+
+    public void part(final Channel c) {
+        if (auto_join.contains(c.getName())) {
+            sendMessage(c.getColoredName() + " removed from Auto-Join list.");
+        }
+        auto_join.remove(c.getName());
+    }
+
+    @Override
+    public void persist() {
+        final String t = (target instanceof Channel ? "c:" + target.getName() : "p:" + target.getName());
+        manager.getConfig().set(getName() + ".target", t);
+        final List<String> joins = new ArrayList<String>();
+        joins.addAll(auto_join);
+        manager.getConfig().set(getName() + ".auto_join", joins);
+        manager.getConfig().set(getName() + ".muted", muted);
+    }
+
+    public void reply(final String message) {
+        if (reply == null) return;
+        whisperTo(reply, message);
+        ((ChatPlayer)reply).whisperFrom(this, message);
+    }
+
+    @Override
+	public void sendMessage(final String message) {
+        final Player p = getPlayer();
+        if (p != null) { p.sendMessage(message); }
+    }
+
+    public void setColorfulChat(final boolean val) {
         colorful = val;
+    }
+
+    public void setTarget(final Target t) {
+        setTarget(t, false);
+    }
+
+    public void setTarget(final Target t, final boolean silent) {
+        target = t;
+        if (!silent) {
+            target = t;
+            final Player p = getPlayer();
+            if (p != null) { p.sendMessage("[ChatSuite] Your target is now: " + target.getName()); }
+        }
+    }
+
+    public void setWorld(final String w) {
+        getGroup();
+        world = w;
+    }
+
+    public void toggleAfk(final String message) {
+        this.afk_message = message;
+        this.afk = !this.afk;
+    }
+
+    @Override
+	public void toggleMute() {
+        muted = !muted;
+        if (muted) {
+            sendMessage(ChatColor.RED + "You have been muted.");
+        } else {
+            sendMessage(ChatColor.GREEN + "You have been unmuted.");
+        }
+    }
+
+    public void whisperFrom(final Target from, final String message) {
+        reply = from;
+        String format = getFormattedWhisperFrom(from);
+        format = format.replaceAll("(%message|%m)", message);
+        sendMessage(format);
+    }
+
+    protected String whisperParse(String format) {
+    	// TODO: fix.... *sigh*
+        format = TARGET.matcher(format).replaceAll(reply.getName());
+        format = TARGET_DISPLAY.matcher(format).replaceAll(reply.getName());
+        return format;
+    }
+
+    public void whisperTo(final Target to, final String message) {
+        reply = to;
+        String format = getFormattedWhisperTo(to);
+        format = format.replaceAll("(%message|%m)", message);
+        sendMessage(format);
+        if (to instanceof ChatPlayer && ((ChatPlayer)to).afk) {
+            sendMessage(to.getName() + " is afk: " + ((ChatPlayer)to).afk_message);
+        }
     }
 }
