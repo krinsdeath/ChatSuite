@@ -1,6 +1,7 @@
 package net.krinsoft.chat.targets;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,10 +39,10 @@ public class ChatPlayer implements Target {
     }
 
     public enum Type {
+        GLOBAL("global"),
         NORMAL("normal"),
-        WHISPER_SEND("whisper_send"),
         WHISPER_RECEIVE("whisper_receive"),
-        GLOBAL("global");
+        WHISPER_SEND("whisper_send");
 
         private String type;
 
@@ -54,21 +55,12 @@ public class ChatPlayer implements Target {
         }
 
     }
-    private final static Handler AFK;
-    private final static Handler GROUP;
-    private final static Handler HEROES;
-    private final static Handler PREFIX;
     private final static Replacer[] replacers;
-    private final static Handler SELF;
-    private final static Handler SELF_DISPLAY;
-    private final static Handler SUFFIX;
-    private final static Handler TARGET;
-    private final static Handler TARGET_DISPLAY;
-    private final static Handler WORLD;
+	private final static Replacer[] replacers_whisper;
     static {
-        AFK = new NodeGrabber("afk");
-        GROUP = new NodeGrabber("group");
-        HEROES =
+        final Handler AFK = new NodeGrabber("afk");
+        final Handler GROUP = new NodeGrabber("group");
+        final Handler HEROES =
             new Replacer.Handler() {
                 @Override
                 public String getValue(final Object... scope) {
@@ -89,16 +81,16 @@ public class ChatPlayer implements Target {
                     return "";
                 }
             };
-        PREFIX = new NodeGrabber("prefix");
-        SUFFIX = new NodeGrabber("suffix");
-        SELF =
+        final Handler PREFIX = new NodeGrabber("prefix");
+        final Handler SUFFIX = new NodeGrabber("suffix");
+        final Handler SELF =
             new Replacer.Handler() {
                 @Override
                 public String getValue(final Object... scope) {
                     return ((ChatPlayer) scope[0]).getName();
                 }
             };
-        SELF_DISPLAY =
+        final Handler SELF_DISPLAY =
             new Replacer.Handler() {
                 @Override
                 public String getValue(final Object... scope) {
@@ -107,7 +99,7 @@ public class ChatPlayer implements Target {
                     return "";
                 }
             };
-        TARGET =
+        final Handler TARGET =
             new Replacer.Handler() {
                 @Override
                 public String getValue(final Object... scope) {
@@ -119,7 +111,7 @@ public class ChatPlayer implements Target {
                     return "";
                 }
             };
-        TARGET_DISPLAY =
+        final Handler TARGET_DISPLAY =
             new Replacer.Handler() {
                 @Override
                 public String getValue(final Object... scope) {
@@ -128,7 +120,7 @@ public class ChatPlayer implements Target {
                     return "";
                 }
             };
-        WORLD =
+        final Handler WORLD =
             new Replacer.Handler() {
                 @Override
                 public String getValue(final Object... scope) {
@@ -136,28 +128,74 @@ public class ChatPlayer implements Target {
                     return chatPlayer.manager.getPlugin().getWorldManager().getAlias(chatPlayer.world);
                 }
             };
-            replacers = new Replacer[] {
-                new Replacer("%afk", AFK, false),
-                new Replacer("group", GROUP, false),
-                new Replacer("%g", GROUP, true),
-                new Replacer("%hero", HEROES, false),
-                new Replacer("%h", HEROES, true),
-                new Replacer("%prefix", PREFIX, false),
-                new Replacer("%p", PREFIX, true),
-                new Replacer("%name", SELF, false),
-                new Replacer("%n", SELF, true),
-                new Replacer("%display", SELF_DISPLAY, false),
-                new Replacer("%dn", SELF_DISPLAY, false),
-                new Replacer("%suffix", SUFFIX, false),
-                new Replacer("%s", SUFFIX, false),
-                new Replacer("%target", TARGET, false),
-                new Replacer("%t", TARGET, true),
-                new Replacer("%channel", TARGET, false),
-                new Replacer("%c", TARGET, false),
-                new Replacer("%disp_target", TARGET_DISPLAY, false),
-                new Replacer("%dt", TARGET_DISPLAY, true),
-                new Replacer("%world", WORLD, false),
-                new Replacer("%w", WORLD, true)};
+        final Handler MESSAGE =
+        	new Replacer.Handler() {
+				@Override
+				public String getValue(final Object... scope) {
+					return (String) scope[2];
+				}
+			};
+
+        replacers = new Replacer[] {
+            new Replacer("%afk", AFK, false),
+            new Replacer("group", GROUP, false),
+            new Replacer("%g", GROUP, true),
+            new Replacer("%hero", HEROES, false),
+            new Replacer("%h", HEROES, true),
+            new Replacer("%prefix", PREFIX, false),
+            new Replacer("%p", PREFIX, true),
+            new Replacer("%name", SELF, false),
+            new Replacer("%n", SELF, true),
+            new Replacer("%display", SELF_DISPLAY, false),
+            new Replacer("%dn", SELF_DISPLAY, true),
+            new Replacer("%suffix", SUFFIX, false),
+            new Replacer("%s", SUFFIX, false),
+            new Replacer("%target", TARGET, false),
+            new Replacer("%t", TARGET, true),
+            new Replacer("%channel", TARGET, false),
+            new Replacer("%c", TARGET, true),
+            new Replacer("%disp_target", TARGET_DISPLAY, false),
+            new Replacer("%dt", TARGET_DISPLAY, true),
+            new Replacer("%message", MESSAGE, false),
+            new Replacer("%m", MESSAGE, true),
+            new Replacer("%world", WORLD, false),
+            new Replacer("%w", WORLD, true)};
+        Arrays.sort(replacers);
+
+        final Handler WHISPER_TARGET =
+        	new Replacer.Handler() {
+				@Override
+				public String getValue(final Object... scope) {
+					return ((ChatPlayer) scope[0]).reply.getName();
+				}
+			};
+        replacers_whisper = new Replacer[] {
+            new Replacer("%afk", AFK, false),
+            new Replacer("group", GROUP, false),
+            new Replacer("%g", GROUP, true),
+            new Replacer("%hero", HEROES, false),
+            new Replacer("%h", HEROES, true),
+            new Replacer("%prefix", PREFIX, false),
+            new Replacer("%p", PREFIX, true),
+            new Replacer("%name", SELF, false),
+            new Replacer("%n", SELF, true),
+            new Replacer("%display", SELF_DISPLAY, false),
+            new Replacer("%dn", SELF_DISPLAY, true),
+            new Replacer("%suffix", SUFFIX, false),
+            new Replacer("%s", SUFFIX, false),
+            // Begin whisper specific
+            new Replacer("%target", WHISPER_TARGET, false),
+            new Replacer("%t", WHISPER_TARGET, true),
+            new Replacer("%channel", WHISPER_TARGET, false),
+            new Replacer("%c", WHISPER_TARGET, true),
+            // End whisper specific
+            new Replacer("%message", MESSAGE, false),
+            new Replacer("%m", MESSAGE, true),
+            new Replacer("%disp_target", TARGET_DISPLAY, false),
+            new Replacer("%dt", TARGET_DISPLAY, true),
+            new Replacer("%world", WORLD, false),
+            new Replacer("%w", WORLD, true)};
+        Arrays.sort(replacers_whisper);
     }
 
     private boolean afk; // whether the player is afk or not
@@ -227,12 +265,11 @@ public class ChatPlayer implements Target {
                 format = "[%t] %p %n&F: %m";
             }
         }
-        format = parse(format);
-        format = format.replaceAll("(%message|%m)", "%2\\$s");
+        format = parse(format, "%2$s", false);
         return format;
     }
 
-    public String getFormattedWhisperFrom(final Target target) {
+    public String getFormattedWhisperFrom(final Target target, final String message) {
         String format = manager.getPlugin().getConfig().getString("groups." + ((ChatPlayer)target).getGroup() + ".format.from");
         if (format == null) {
             format = manager.getPlugin().getConfig().getString("format.from");
@@ -240,12 +277,11 @@ public class ChatPlayer implements Target {
                 format = "&7[From] %t>>&F: %m";
             }
         }
-        format = whisperParse(format);
-        format = parse(format);
+        format = parse(format, message, true);
         return format;
     }
 
-    public String getFormattedWhisperTo(final Target target) {
+    public String getFormattedWhisperTo(final Target target, final String message) {
         String format = manager.getPlugin().getConfig().getString("groups." + ((ChatPlayer)target).getGroup() + ".format.to");
         if (format == null) {
             format = manager.getPlugin().getConfig().getString("format.to");
@@ -253,15 +289,14 @@ public class ChatPlayer implements Target {
                 format = "&7[To] %t>>&F: %m";
             }
         }
-        format = whisperParse(format);
-        format = parse(format);
+        format = parse(format, message, true);
         return format;
     }
 
     public String getGroup() {
         long time = System.nanoTime();
         final Player p = getPlayer();
-        if (p == null) 
+        if (p == null)
         	return manager.getPlugin().getDefaultGroup();
         int weight = 0;
         for (final String key : manager.getPlugin().getGroups()) {
@@ -304,9 +339,9 @@ public class ChatPlayer implements Target {
         auto_join.add(c.getName());
     }
 
-    public String parse(String format) {
+    public String parse(String format, final String message, final boolean isWhisper) {
         final ConfigurationSection node = manager.getPlugin().getGroupNode(group);
-        format = Replacer.makeReplacements(format, replacers, this, node);
+        format = Replacer.makeReplacements(format, isWhisper ? replacers_whisper : replacers, this, node, message);
         format = ChatColor.translateAlternateColorCodes('&', format);
         return format;
     }
@@ -379,22 +414,13 @@ public class ChatPlayer implements Target {
 
     public void whisperFrom(final Target from, final String message) {
         reply = from;
-        String format = getFormattedWhisperFrom(from);
-        format = format.replaceAll("(%message|%m)", message);
+        final String format = getFormattedWhisperFrom(from, message);
         sendMessage(format);
-    }
-
-    protected String whisperParse(String format) {
-    	// TODO: fix.... *sigh*
-        format = TARGET.matcher(format).replaceAll(reply.getName());
-        format = TARGET_DISPLAY.matcher(format).replaceAll(reply.getName());
-        return format;
     }
 
     public void whisperTo(final Target to, final String message) {
         reply = to;
-        String format = getFormattedWhisperTo(to);
-        format = format.replaceAll("(%message|%m)", message);
+        final String format = getFormattedWhisperTo(to, message);
         sendMessage(format);
         if (to instanceof ChatPlayer && ((ChatPlayer)to).afk) {
             sendMessage(to.getName() + " is afk: " + ((ChatPlayer)to).afk_message);
