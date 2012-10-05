@@ -56,7 +56,7 @@ public class ChatPlayer implements Target {
 
     }
     private final static Replacer[] replacers;
-	private final static Replacer[] replacers_whisper;
+    private final static Replacer[] replacers_whisper;
     static {
         final Handler AFK = new NodeGrabber("afk");
         final Handler GROUP = new NodeGrabber("group");
@@ -129,16 +129,16 @@ public class ChatPlayer implements Target {
                 }
             };
         final Handler MESSAGE =
-        	new Replacer.Handler() {
-				@Override
-				public String getValue(final Object... scope) {
-					return (String) scope[2];
-				}
-			};
+            new Replacer.Handler() {
+                @Override
+                public String getValue(final Object... scope) {
+                    return (String) scope[2];
+                }
+            };
 
         replacers = new Replacer[] {
             new Replacer("%afk", AFK, false),
-            new Replacer("group", GROUP, false),
+            new Replacer("%group", GROUP, false),
             new Replacer("%g", GROUP, true),
             new Replacer("%hero", HEROES, false),
             new Replacer("%h", HEROES, true),
@@ -163,15 +163,15 @@ public class ChatPlayer implements Target {
         Arrays.sort(replacers);
 
         final Handler WHISPER_TARGET =
-        	new Replacer.Handler() {
-				@Override
-				public String getValue(final Object... scope) {
-					return ((ChatPlayer) scope[0]).reply.getName();
-				}
-			};
+            new Replacer.Handler() {
+                @Override
+                public String getValue(final Object... scope) {
+                    return ((ChatPlayer) scope[0]).reply.getName();
+                }
+            };
         replacers_whisper = new Replacer[] {
             new Replacer("%afk", AFK, false),
-            new Replacer("group", GROUP, false),
+            new Replacer("%group", GROUP, false),
             new Replacer("%g", GROUP, true),
             new Replacer("%hero", HEROES, false),
             new Replacer("%h", HEROES, true),
@@ -297,7 +297,7 @@ public class ChatPlayer implements Target {
         long time = System.nanoTime();
         final Player p = getPlayer();
         if (p == null)
-        	return manager.getPlugin().getDefaultGroup();
+            return manager.getPlugin().getDefaultGroup();
         int weight = 0;
         for (final String key : manager.getPlugin().getGroups()) {
             final int i = manager.getPlugin().getGroupNode(key).getInt("weight");
@@ -328,7 +328,7 @@ public class ChatPlayer implements Target {
     }
 
     @Override
-	public boolean isMuted() {
+    public boolean isMuted() {
         return muted;
     }
 
@@ -370,7 +370,7 @@ public class ChatPlayer implements Target {
     }
 
     @Override
-	public void sendMessage(final String message) {
+    public void sendMessage(final String message) {
         final Player p = getPlayer();
         if (p != null) { p.sendMessage(message); }
     }
@@ -403,7 +403,7 @@ public class ChatPlayer implements Target {
     }
 
     @Override
-	public void toggleMute() {
+    public void toggleMute() {
         muted = !muted;
         if (muted) {
             sendMessage(ChatColor.RED + "You have been muted.");
