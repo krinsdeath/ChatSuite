@@ -1,11 +1,16 @@
 package net.krinsoft.chat.listeners;
 
+import static net.krinsoft.chat.util.Replacer.replaceAll;
+import static net.krinsoft.chat.util.Replacer.replaceAllLiteral;
+
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.api.Target;
 import net.krinsoft.chat.events.MinecraftJoinEvent;
 import net.krinsoft.chat.events.MinecraftQuitEvent;
 import net.krinsoft.chat.targets.Channel;
 import net.krinsoft.chat.targets.ChatPlayer;
+import net.krinsoft.chat.util.Replacer;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -89,7 +94,7 @@ public class PlayerListener implements Listener {
             return;
         }
         if (player.colorfulChat()) {
-            event.setMessage(event.getMessage().replaceAll("&([0-9a-fA-F])", "\u00A7$1"));
+            event.setMessage(ChatColor.translateAlternateColorCodes('&', event.getMessage()));
         }
         String format = player.getFormattedMessage();
         Set<Player> players = new HashSet<Player>();
@@ -115,9 +120,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     void playerChatMonitor(AsyncPlayerChatEvent event) {
         if (plugin.getIRCBot() == null) { return; }
-        String message = event.getFormat();
-        message = message.replaceAll("%2\\$s", event.getMessage().replaceAll("\\$", "\\\\$"));
-        message = ChatColor.stripColor(message);
+        final String message = ChatColor.stripColor(replaceAllLiteral(event.getFormat(), "%2$s", replaceAll(event.getMessage(), '$', "\\\\$")));
         ChatPlayer player = plugin.getPlayerManager().getPlayer(event.getPlayer().getName());
         if (player.getTarget() instanceof Channel) {
             ((Channel)player.getTarget()).sendToIRC(message);

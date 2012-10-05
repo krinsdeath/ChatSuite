@@ -1,21 +1,22 @@
 package net.krinsoft.chat.targets;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import net.krinsoft.chat.ChannelManager;
 import net.krinsoft.chat.api.Target;
 import net.krinsoft.chat.events.ChannelBootEvent;
 import net.krinsoft.chat.events.ChannelJoinEvent;
 import net.krinsoft.chat.events.ChannelPartEvent;
 import net.krinsoft.chat.events.MinecraftMessageEvent;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  *
@@ -41,7 +42,7 @@ enum TextColor {
 
     private String name;
     private ChatColor color;
-    TextColor(String name, ChatColor color) {
+    TextColor(final String name, final ChatColor color) {
         this.name = name;
         this.color = color;
     }
@@ -57,10 +58,9 @@ enum TextColor {
     public static TextColor get(String name) {
         if (name != null) {
             name = name.toUpperCase().replaceAll("[^A-Z]", "");
-            for (TextColor c : values()) {
-                if (c.getName().equals(name)) {
+            for (final TextColor c : values()) {
+                if (c.getName().equals(name))
                     return c;
-                }
             }
         }
         return null;
@@ -70,18 +70,18 @@ enum TextColor {
 @SuppressWarnings("unused")
 public class Channel implements Target {
 
-    private Set<String> occupants  = new HashSet<String>();
-    private ChannelManager manager  = null;
-    private String name             = null;
-    private boolean is_public       = true;
-    private boolean is_irc          = false;
-    private String target           = null;
-    private TextColor color         = TextColor.WHITE;
-    private boolean permanent       = false;
-    private boolean muted           = false;
-    private String owner            = null;
-    private Set<String> admins     = new HashSet<String>();
-    private Set<String> members    = new HashSet<String>();
+    private final Set<String> occupants  = new HashSet<String>();
+    private ChannelManager manager       = null;
+    private String name                  = null;
+    private boolean is_public            = true;
+    private boolean is_irc               = false;
+    private final String target          = null;
+    private TextColor color              = TextColor.WHITE;
+    private boolean permanent            = false;
+    private boolean muted                = false;
+    private String owner                 = null;
+    private final Set<String> admins     = new HashSet<String>();
+    private final Set<String> members    = new HashSet<String>();
 
     private String IRC_CHANNEL;
     private String IRC_NETWORK;
@@ -94,7 +94,7 @@ public class Channel implements Target {
      * @param channel The name of the channel we've just instantiated
      * @param player The name of the creator of the channel; can be empty.
      */
-    public Channel(ChannelManager instance, String channel, Player player) {
+    public Channel(final ChannelManager instance, final String channel, final Player player) {
         long time = System.nanoTime();
         manager   = instance;
         name      = channel;
@@ -131,6 +131,7 @@ public class Channel implements Target {
      * Get the name of this channel
      * @return The channel's name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -148,7 +149,7 @@ public class Channel implements Target {
      * @param c The new color of the channel
      * @return true if the color was set successfully, otherwise false
      */
-    public boolean setColor(String c) {
+    public boolean setColor(final String c) {
         color = TextColor.get(c);
         if (color == null) {
             color = TextColor.WHITE;
@@ -164,7 +165,7 @@ public class Channel implements Target {
      * @param sender The entity whose access we're checking
      * @return true if access is allowed, otherwise false
      */
-    public boolean canEdit(CommandSender sender) {
+    public boolean canEdit(final CommandSender sender) {
         return sender instanceof ConsoleCommandSender || isOwner((Player) sender) || sender.hasPermission("chatsuite.bypass.set");
     }
 
@@ -174,29 +175,29 @@ public class Channel implements Target {
      * @param value The value we're trying to set
      * @return true if the value is set successfully, otherwise false
      */
-    public boolean set(String option, Object value) {
+    public boolean set(final String option, final Object value) {
         if (option.equals("public")) {
             try {
                 is_public = Boolean.parseBoolean(value.toString());
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 return false;
             }
         } else if (option.equals("permanent")) {
             try {
                 permanent = Boolean.parseBoolean(value.toString());
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 return false;
             }
         } else if (option.equals("owner")) {
             owner = value.toString();
-        } else if (option.equals("color")) {
+        } else if (option.equals("color"))
             return setColor(value.toString());
             /////////////////
             // IRC OPTIONS
-        } else if (option.equals("enabled")) {
+        else if (option.equals("enabled")) {
             try {
                 is_irc = Boolean.parseBoolean(value.toString());
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 return false;
             }
         } else if (option.equals("network")) {
@@ -205,19 +206,19 @@ public class Channel implements Target {
             IRC_CHANNEL = value.toString();
         } else if (option.equals("key")) {
             IRC_KEY = value.toString();
-        } else {
+        } else
             return false;
-        }
         return true;
     }
 
+    @Override
     public void persist() {
         if (permanent) {
             manager.getConfig().set("channels." + name + ".public", is_public);
             manager.getConfig().set("channels." + name + ".owner", owner);
-            List<String> adm = new ArrayList<String>();
+            final List<String> adm = new ArrayList<String>();
             adm.addAll(admins);
-            List<String> mem = new ArrayList<String>();
+            final List<String> mem = new ArrayList<String>();
             mem.addAll(members);
             manager.getConfig().set("channels." + name + ".admins", adm);
             manager.getConfig().set("channels." + name + ".members", mem);
@@ -234,11 +235,11 @@ public class Channel implements Target {
      * @return The list of players on this channel
      */
     public List<Player> getOccupants() {
-        List<Player> players = new ArrayList<Player>();
-        Iterator<String> iter = occupants.iterator();
+        final List<Player> players = new ArrayList<Player>();
+        final Iterator<String> iter = occupants.iterator();
         while (iter.hasNext()) {
-            String p = iter.next();
-            Player ply = manager.getPlugin().getServer().getPlayer(p);
+            final String p = iter.next();
+            final Player ply = manager.getPlugin().getServer().getPlayer(p);
             if (ply != null) {
                 players.add(ply);
             } else {
@@ -248,7 +249,7 @@ public class Channel implements Target {
         return players;
     }
 
-    public void setPermanent(boolean val) {
+    public void setPermanent(final boolean val) {
         permanent = val;
         if (permanent) {
             manager.log(name, "Now being persisted.");
@@ -267,13 +268,13 @@ public class Channel implements Target {
      * @param player The player to add to the list
      * @return true if the join succeeds, otherwise false
      */
-    public boolean join(Player player) {
+    public boolean join(final Player player) {
         if (isAllowed(player)) {
             if (occupants.add(player.getName())) {
                 members.add(player.getName());
                 player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + getColoredName());
                 if (validIRC()) {
-                    ChannelJoinEvent event = new ChannelJoinEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
+                    final ChannelJoinEvent event = new ChannelJoinEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
                     manager.getPlugin().getServer().getPluginManager().callEvent(event);
                 }
                 manager.log(name, player.getName() + " was allowed entry.");
@@ -295,12 +296,12 @@ public class Channel implements Target {
      * @param player The player to remove from the list
      * @return true if the player successfully left the channel, otherwise false
      */
-    public boolean part(Player player) {
+    public boolean part(final Player player) {
         if (occupants.remove(player.getName())) {
             player.sendMessage(ChatColor.GRAY + "[ChatSuite] You have left: " + getColoredName());
             manager.log(name, player.getName() + " left the channel.");
             if (validIRC()) {
-                ChannelPartEvent event = new ChannelPartEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
+                final ChannelPartEvent event = new ChannelPartEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
                 manager.getPlugin().getServer().getPluginManager().callEvent(event);
             }
             return true;
@@ -315,7 +316,7 @@ public class Channel implements Target {
      * @param sender If the target is an admin, the sender must be the owner of the channel
      * @param player The player to remove from the channel
      */
-    public void boot(Player sender, Player player) {
+    public void boot(final Player sender, final Player player) {
         if (sender.equals(player)) {
             sender.sendMessage(ChatColor.RED + "[ChatSuite] Stop kicking yourself.");
             return;
@@ -326,7 +327,7 @@ public class Channel implements Target {
             player.sendMessage(ChatColor.RED + "[ChatSuite] You have been kicked: " + name);
             manager.log(name, player.getName() + " was kicked from the channel.");
             if (validIRC()) {
-                ChannelBootEvent event = new ChannelBootEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
+                final ChannelBootEvent event = new ChannelBootEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
                 manager.getPlugin().getServer().getPluginManager().callEvent(event);
             }
         }
@@ -337,7 +338,7 @@ public class Channel implements Target {
      * @param player The player whose access we're checking
      * @return True if the player was allowed, otherwise false
      */
-    public boolean isAllowed(Player player) {
+    public boolean isAllowed(final Player player) {
         return isPublic() || isMember(player) || player.hasPermission("chatsuite.bypass.join");
     }
 
@@ -346,7 +347,7 @@ public class Channel implements Target {
      * @param player The player we're authenticating
      * @return true if the player's name matches, otherwise false
      */
-    public boolean isOwner(Player player) {
+    public boolean isOwner(final Player player) {
         return owner != null && owner.equals(player.getName());
     }
 
@@ -355,7 +356,7 @@ public class Channel implements Target {
      * @param owner This player must be the owner of the channel
      * @param player The player we're adding to the admin list
      */
-    public void addAdmin(Player owner, Player player) {
+    public void addAdmin(final Player owner, final Player player) {
         if (isOwner(player) || owner.hasPermission("chatsuite.bypass.admin") && !isAdmin(player)) {
             admins.add(player.getName());
             owner.sendMessage(ChatColor.GREEN + "[ChatSuite] " + player.getName() + " is now an admin on '" + name + "'");
@@ -370,7 +371,7 @@ public class Channel implements Target {
      * @param owner This player must be the owner of the channel
      * @param player The player we're removing from the admin list
      */
-    public void remAdmin(Player owner, Player player) {
+    public void remAdmin(final Player owner, final Player player) {
         if (isOwner(player) || owner.hasPermission("chatsuite.bypass.admin") && isAdmin(player)) {
             admins.remove(player.getName());
             player.sendMessage(ChatColor.RED + "[ChatSuite] You are no longer an admin: " + name);
@@ -384,7 +385,7 @@ public class Channel implements Target {
      * @param player The player we're authenticating
      * @return true if the player is on the admin list (or the owner), otherwise false
      */
-    public boolean isAdmin(Player player) {
+    public boolean isAdmin(final Player player) {
         return isOwner(player) || admins.contains(player.getName());
     }
 
@@ -393,7 +394,7 @@ public class Channel implements Target {
      * @param player The player we're authenticating
      * @return true if the player is on the member list (or an admin), otherwise false
      */
-    public boolean isMember(Player player) {
+    public boolean isMember(final Player player) {
         return isAdmin(player) || members.contains(player.getName());
     }
 
@@ -405,7 +406,7 @@ public class Channel implements Target {
      * @deprecated since 2.1.1
      */
     @Deprecated
-    public boolean contains(Player player) {
+    public boolean contains(final Player player) {
         return occupants.contains(player.getName());
     }
 
@@ -414,7 +415,7 @@ public class Channel implements Target {
      * @param player The name of the player
      * @return true if the channel has this player in it, otherwise false
      */
-    public boolean contains(String player) {
+    public boolean contains(final String player) {
         return occupants.contains(player);
     }
 
@@ -432,7 +433,7 @@ public class Channel implements Target {
      * @param player  The player we're inviting to the channel
      * @return true if the invite succeeded, otherwise false
      */
-    public boolean invite(Player inviter, Player player) {
+    public boolean invite(final Player inviter, final Player player) {
         if (isMember(player)) {
             inviter.sendMessage(player.getName() + " is already a member of " + name + ".");
             return false;
@@ -455,8 +456,9 @@ public class Channel implements Target {
         }
     }
 
-    public void sendMessage(String message) {
-        for (Player player : getOccupants()) {
+    @Override
+    public void sendMessage(final String message) {
+        for (final Player player : getOccupants()) {
             player.sendMessage("[" + getColoredName() + "] " + message);
         }
     }
@@ -465,15 +467,16 @@ public class Channel implements Target {
         return is_irc && IRC_NETWORK != null && IRC_CHANNEL != null && connect();
     }
 
-    public void sendToIRC(String message) {
+    public void sendToIRC(final String message) {
         if (validIRC()) {
-            MinecraftMessageEvent event = new MinecraftMessageEvent(IRC_NETWORK, IRC_CHANNEL, message);
+            final MinecraftMessageEvent event = new MinecraftMessageEvent(IRC_NETWORK, IRC_CHANNEL, message);
             manager.getPlugin().getServer().getPluginManager().callEvent(event);
         }
     }
 
     public boolean connect() {
-        if (connected) { return true; }
+        if (connected)
+            return true;
         if (is_irc && manager.getPlugin().getIRCBot() != null) {
             if (!manager.getPlugin().getIRCBot().connect(IRC_NETWORK, IRC_CHANNEL, IRC_KEY)) {
                 manager.log(name, "Connection to IRC failed.");
