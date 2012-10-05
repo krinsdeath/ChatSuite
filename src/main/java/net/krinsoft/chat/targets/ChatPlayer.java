@@ -258,11 +258,14 @@ public class ChatPlayer implements Target {
     }
 
     public String getFormattedMessage() {
-        String format = manager.getPlugin().getConfig().getString("groups." + group + ".format.message");
+        String format = manager.getPlugin().getChannelManager().getConfig().getString("channels." + getTarget().getName() + ".format");
         if (format == null) {
-            format = manager.getPlugin().getConfig().getString("format.message");
+            format = manager.getPlugin().getConfig().getString("groups." + group + ".format.message");
             if (format == null) {
-                format = "[%t] %p %n&F: %m";
+                format = manager.getPlugin().getConfig().getString("format.message");
+                if (format == null) {
+                    format = "[%t] %p %n&F: %m";
+                }
             }
         }
         format = parse(format, "%2$s", false);
@@ -364,7 +367,7 @@ public class ChatPlayer implements Target {
     }
 
     public void reply(final String message) {
-        if (reply == null) return;
+        if (reply == null) { return; }
         whisperTo(reply, message);
         ((ChatPlayer)reply).whisperFrom(this, message);
     }

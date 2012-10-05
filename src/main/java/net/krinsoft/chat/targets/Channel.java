@@ -475,8 +475,9 @@ public class Channel implements Target {
     }
 
     public boolean connect() {
-        if (connected)
+        if (connected) {
             return true;
+        }
         if (is_irc && manager.getPlugin().getIRCBot() != null) {
             if (!manager.getPlugin().getIRCBot().connect(IRC_NETWORK, IRC_CHANNEL, IRC_KEY)) {
                 manager.log(name, "Connection to IRC failed.");
