@@ -25,7 +25,6 @@ public class PlayerManager implements Manager {
     public PlayerManager(ChatCore instance) {
         clean();
         plugin = instance;
-        persist = plugin.getConfig().getBoolean("plugin.persist_user_settings");
         config = new File(plugin.getDataFolder(), "players.yml");
         if (!config.exists()) {
             getConfig().setDefaults(YamlConfiguration.loadConfiguration(plugin.getClass().getResourceAsStream("/defaults/players.yml")));
@@ -33,6 +32,7 @@ public class PlayerManager implements Manager {
             saveConfig();
         }
         saveConfig();
+        persist = plugin.getConfig().getBoolean("plugin.persist_user_settings");
         buildPlayerList();
     }
 
