@@ -237,6 +237,11 @@ public class ChatPlayer implements Target {
         if (muted) {
             p.sendMessage(ChatColor.RED + "You are muted.");
         }
+        String nick = manager.getConfig().getString(getName() + ".nickname");
+        if (nick != null) {
+            p.setDisplayName(nick);
+            p.sendMessage(ChatColor.GREEN + "Your nickname is: " + ChatColor.WHITE + nick);
+        }
         time = System.nanoTime() - time;
         manager.getPlugin().debug("Player '" + name + "' registered in group '" + group + "' and " + (muted ? "" : "not ") + "muted took " + (time / 1000000L) + "ms. (" + time + "ns)");
     }
@@ -364,6 +369,7 @@ public class ChatPlayer implements Target {
         joins.addAll(auto_join);
         manager.getConfig().set(getName() + ".auto_join", joins);
         manager.getConfig().set(getName() + ".muted", muted);
+        manager.getConfig().set(getName() + ".nickname", getPlayer().getDisplayName());
     }
 
     public void reply(final String message) {
