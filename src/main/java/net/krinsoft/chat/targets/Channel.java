@@ -271,7 +271,9 @@ public class Channel implements Target {
     public boolean join(final Player player) {
         if (isAllowed(player)) {
             if (occupants.add(player.getName())) {
-                members.add(player.getName());
+                if (!isPublic()) {
+                    members.add(player.getName());
+                }
                 player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + getColoredName());
                 if (validIRC()) {
                     final ChannelJoinEvent event = new ChannelJoinEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
