@@ -367,9 +367,14 @@ public class ChatPlayer implements Target {
         manager.getConfig().set(getName() + ".target", t);
         final List<String> joins = new ArrayList<String>();
         joins.addAll(auto_join);
-        manager.getConfig().set(getName() + ".auto_join", joins);
+        if (joins.size() > 0) {
+            manager.getConfig().set(getName() + ".auto_join", joins);
+        }
         manager.getConfig().set(getName() + ".muted", muted);
-        manager.getConfig().set(getName() + ".nickname", getPlayer().getDisplayName());
+        Player p = getPlayer();
+        if (p != null && p.getDisplayName() != null && !p.getDisplayName().equals(p.getName())) {
+            manager.getConfig().set(getName() + ".nickname", getPlayer().getDisplayName());
+        }
     }
 
     public void reply(final String message) {
