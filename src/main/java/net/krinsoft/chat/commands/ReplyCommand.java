@@ -19,7 +19,7 @@ public class ReplyCommand extends ChatSuiteCommand {
         setCommandUsage("/r [message]");
         setPageHeader(0, "User Commands", "/reply");
         addToPage(0, "sup       " + ChatColor.WHITE + "// Say 'sup' to the last person who whispered you.");
-        setArgRange(2, 20);
+        setArgRange(1, 20);
         addKey("chatsuite reply");
         addKey("chat reply");
         addKey("reply");
@@ -31,10 +31,10 @@ public class ReplyCommand extends ChatSuiteCommand {
     public void runCommand(CommandSender sender, List<String> args) {
         if (!validateSender(sender)) { return; }
         ChatPlayer player = plugin.getPlayerManager().getPlayer(sender.getName());
-        String message = "";
-        for (int i = 1; i < args.size(); i++) {
-            message += args.get(i) + " ";
+        StringBuilder message = new StringBuilder();
+        for (String arg : args) {
+            message.append(arg).append(" ");
         }
-        player.reply(message.trim());
+        player.reply(message.toString().trim());
     }
 }
