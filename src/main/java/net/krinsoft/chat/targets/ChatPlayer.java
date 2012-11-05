@@ -34,7 +34,10 @@ public class ChatPlayer implements Target {
 
         @Override
         public String getValue(final Object... scope) {
-            String value = ((ConfigurationSection) scope[2]).getString(node);
+            String value = null;
+            if (scope[2] != null) {
+                value = ((ConfigurationSection) scope[2]).getString(node);
+            }
             if (value == null) {
                 value = ((ConfigurationSection) scope[1]).getString(node);
             }
