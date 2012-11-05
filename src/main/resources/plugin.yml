@@ -92,6 +92,12 @@ commands:
       /<command> -r [player]                - Reset the specified player's nickname.
       /<command> -l                         - List all current players with nicknames.
       /<command>                            - Reset your own nickname.
+  prefix:
+    description: Sets  a player's prefix.
+    usage: /<command> [player] [prefix]
+  suffix:
+    description: Sets a player's suffix.
+    usage: /<command> [player] [suffix]
   afk: # done
     description: Toggles your afk status, with an optional message.
     usage: |

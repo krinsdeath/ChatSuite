@@ -34,7 +34,11 @@ public class ChatPlayer implements Target {
 
         @Override
         public String getValue(final Object... scope) {
-            return ((ConfigurationSection) scope[1]).getString(node);
+            String value = ((ConfigurationSection) scope[2]).getString(node);
+            if (value == null) {
+                value = ((ConfigurationSection) scope[1]).getString(node);
+            }
+            return value;
         }
     }
 
@@ -132,7 +136,7 @@ public class ChatPlayer implements Target {
             new Replacer.Handler() {
                 @Override
                 public String getValue(final Object... scope) {
-                    return (String) scope[2];
+                    return (String) scope[3];
                 }
             };
 
@@ -348,8 +352,9 @@ public class ChatPlayer implements Target {
     }
 
     public String parse(String format, final String message, final boolean isWhisper) {
-        final ConfigurationSection node = manager.getPlugin().getGroupNode(group);
-        format = Replacer.makeReplacements(format, isWhisper ? replacers_whisper : replacers, this, node, message);
+        final ConfigurationSection group = manager.getPlugin().getGroupNode(this.group);
+        final ConfigurationSection user = manager.getConfig().getConfigurationSection(this.name);
+        format = Replacer.makeReplacements(format, isWhisper ? replacers_whisper : replacers, this, group, user, message);
         format = ChatColor.translateAlternateColorCodes('&', format);
         return format;
     }
@@ -391,6 +396,14 @@ public class ChatPlayer implements Target {
 
     public void setColorfulChat(final boolean val) {
         colorful = val;
+    }
+
+    public void setPrefix(String prefix) {
+        manager.getConfig().set(this.name + ".prefix", prefix);
+    }
+
+    public void setSuffix(String suffix) {
+        manager.getConfig().set(this.name + ".suffix", suffix);
     }
 
     public void setTarget(final Target t) {
