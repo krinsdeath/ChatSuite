@@ -190,10 +190,10 @@ public class ChannelManager implements Manager {
     }
 
     public void addChannel(Channel channel) {
-        if (channels.containsKey(channel.getName())) {
+        if (channels.containsKey(channel.getName().toLowerCase())) {
             plugin.debug("A channel named '" + channel.getName() + "' already exists.");
         }
-        channels.put(channel.getName(), channel);
+        channels.put(channel.getName().toLowerCase(), channel);
     }
 
     public List<Channel> getChannels() {
