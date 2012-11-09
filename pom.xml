@@ -22,7 +22,7 @@
             <id>onarandombox</id>
             <url>http://repo.onarandombox.com/content/groups/public</url>
         </repository>
-        <!-- KrinSoft Repository -->
+        <!-- krinsoft Repository -->
         <repository>
             <id>krinsoft</id>
             <url>http://files.krinsoft.net:8085/nexus/content/groups/public</url>

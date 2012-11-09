@@ -185,8 +185,15 @@ public class ChannelManager implements Manager {
         if (player != null) {
             chan.join(player);
         }
-        channels.put(channel.toLowerCase(), chan);
-        return getChannel(channel);
+        addChannel(chan);
+        return chan;
+    }
+
+    public void addChannel(Channel channel) {
+        if (channels.containsKey(channel.getName())) {
+            plugin.debug("A channel named '" + channel.getName() + "' already exists.");
+        }
+        channels.put(channel.getName(), channel);
     }
 
     public List<Channel> getChannels() {
