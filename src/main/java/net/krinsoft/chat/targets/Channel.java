@@ -249,6 +249,12 @@ public class Channel implements Target {
         return players;
     }
 
+    public Set<Player> getRecipients() {
+        Set<Player> players = new HashSet<Player>();
+        players.addAll(getOccupants());
+        return players;
+    }
+
     public void setPermanent(final boolean val) {
         permanent = val;
         if (permanent) {

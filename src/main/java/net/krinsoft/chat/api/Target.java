@@ -1,5 +1,9 @@
 package net.krinsoft.chat.api;
 
+import org.bukkit.entity.Player;
+
+import java.util.Set;
+
 /**
  *
  * @author Krin
@@ -33,5 +37,11 @@ public interface Target {
      * Toggles whether or not this target can send or receive messages.
      */
     public void toggleMute();
+
+    /**
+     * Retrieves a set of player objects to which messages to this object should be sent
+     * @return The list of players
+     */
+    public Set<Player> getRecipients();
 
 }

@@ -338,6 +338,12 @@ public class ChatPlayer implements Target {
         return manager.getPlugin().getServer().getPlayer(name);
     }
 
+    public Set<Player> getRecipients() {
+        Set<Player> players = new HashSet<Player>();
+        players.add(getPlayer());
+        return players;
+    }
+
     public Target getTarget() {
         return target;
     }

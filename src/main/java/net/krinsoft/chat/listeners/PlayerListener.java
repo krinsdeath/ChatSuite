@@ -105,11 +105,13 @@ public class PlayerListener implements Listener {
                 return;
             }
             players.addAll(((Channel) target).getOccupants());
-        } else {
+        } else if (target instanceof ChatPlayer) {
             player.whisperTo(target, event.getMessage());
             ((ChatPlayer)target).whisperFrom(player, event.getMessage());
             event.setCancelled(true);
             return;
+        } else {
+            players.addAll(target.getRecipients());
         }
         event.getRecipients().clear();
         event.getRecipients().addAll(players);
