@@ -208,6 +208,8 @@ public class ChatPlayer implements Target {
     private boolean afk; // whether the player is afk or not
     private String afk_message;
     private final Set<String> auto_join = new HashSet<String>();
+    private final Set<String> ignores = new HashSet<String>();
+    private boolean bypass_ignore = false;
     private boolean colorful;
     private String group; // the player's group
     private final PlayerManager manager;
@@ -224,12 +226,16 @@ public class ChatPlayer implements Target {
         world = p.getWorld().getName();
         colorful = p.hasPermission("chatsuite.colorize");
         List<String> joins;
+        List<String> ignored;
         if (manager.getConfig().getConfigurationSection(name) != null) {
             joins = manager.getConfig().getStringList(name + ".auto_join");
+            ignored = manager.getConfig().getStringList(name + ".ignores");
         } else {
             joins = manager.getConfig().getStringList("default_channels");
+            ignored = new ArrayList<String>();
         }
         auto_join.addAll(joins);
+        ignores.addAll(ignored);
         if (manager.getConfig().get(name) != null) {
             final String t = manager.getConfig().getString(getName() + ".target");
             if (t != null) {
@@ -249,12 +255,33 @@ public class ChatPlayer implements Target {
             p.setDisplayName(nick);
             p.sendMessage(ChatColor.GREEN + "Your nickname is: " + ChatColor.WHITE + nick);
         }
+        bypass_ignore = p.hasPermission("chatsuite.bypass.ignore");
         time = System.nanoTime() - time;
         manager.getPlugin().debug("Player '" + name + "' registered in group '" + group + "' and " + (muted ? "" : "not ") + "muted took " + (time / 1000000L) + "ms. (" + time + "ns)");
     }
 
     public boolean colorfulChat() {
         return colorful;
+    }
+
+    public boolean addIgnore(String name) {
+        return ignores.add(name);
+    }
+
+    public boolean removeIgnore(String name) {
+        return ignores.remove(name);
+    }
+
+    public boolean bypassIgnore() {
+        return bypass_ignore;
+    }
+
+    public boolean isIgnoring(String name) {
+        return ignores.contains(name);
+    }
+
+    public List<String> getIgnoreList() {
+        return new ArrayList<String>(ignores);
     }
 
     public Set<String> getAutoJoinChannels() {
@@ -385,6 +412,11 @@ public class ChatPlayer implements Target {
             manager.getConfig().set(getName() + ".auto_join", joins);
         }
         manager.getConfig().set(getName() + ".muted", muted);
+        final List<String> ignore = new ArrayList<String>();
+        ignore.addAll(ignores);
+        if (ignore.size() > 0) {
+            manager.getConfig().set(getName() + ".ignores", ignore);
+        }
         Player p = getPlayer();
         if (p != null && p.getDisplayName() != null && !p.getDisplayName().equals(p.getName())) {
             manager.getConfig().set(getName() + ".nickname", getPlayer().getDisplayName());
@@ -448,13 +480,24 @@ public class ChatPlayer implements Target {
         }
     }
 
+    /**
+     * Indicates that this chat player has just received a whisper from the specified target
+     * @param from The person who just sent a whisper
+     * @param message The contents of the message
+     */
     public void whisperFrom(final Target from, final String message) {
+        if (from instanceof ChatPlayer && isIgnoring(from.getName())) {
+            return;
+        }
         reply = from;
         final String format = getFormattedWhisperFrom(from, message);
         sendMessage(format);
     }
 
     public void whisperTo(final Target to, final String message) {
+        if (to instanceof ChatPlayer && ((ChatPlayer) to).isIgnoring(to.getName())) {
+            return;
+        }
         reply = to;
         final String format = getFormattedWhisperTo(to, message);
         sendMessage(format);

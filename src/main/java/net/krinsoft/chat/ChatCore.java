@@ -138,6 +138,7 @@ public class ChatCore extends JavaPlugin {
         commandHandler.registerCommand(new NickCommand(this));
         commandHandler.registerCommand(new ReloadCommand(this));
         commandHandler.registerCommand(new TargetCommand(this));
+        commandHandler.registerCommand(new UserIgnoreCommand(this));
         commandHandler.registerCommand(new UserInfoCommand(this));
         commandHandler.registerCommand(new UserPrefixCommand(this));
         commandHandler.registerCommand(new UserSuffixCommand(this));

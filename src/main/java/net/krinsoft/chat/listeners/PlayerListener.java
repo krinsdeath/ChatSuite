@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -104,7 +105,17 @@ public class PlayerListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            players.addAll(((Channel) target).getOccupants());
+            List<Player> occupants = ((Channel) target).getOccupants();
+            players.addAll(occupants);
+            if (!player.bypassIgnore()) {
+                // check whether players are ignoring this sender
+                for (Player p : occupants) {
+                    ChatPlayer tmp = plugin.getPlayerManager().getPlayer(p.getName());
+                    if (tmp != null && tmp.isIgnoring(player.getName())) {
+                        players.remove(p);
+                    }
+                }
+            }
         } else if (target instanceof ChatPlayer) {
             player.whisperTo(target, event.getMessage());
             ((ChatPlayer)target).whisperFrom(player, event.getMessage());

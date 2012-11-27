@@ -43,6 +43,7 @@ public class BaseCommand extends ChatSuiteCommand {
         addToPage(3,                ChatColor.RED + "[user]    " + ChatColor.GOLD + "lang      " + ChatColor.YELLOW + "[string]  ");
         addToPage(3,                ChatColor.RED + "[user]    " + ChatColor.GOLD + "prefix    " + ChatColor.YELLOW + "[string]  " + ChatColor.GRAY + "// overrides group prefix");
         addToPage(3,                ChatColor.RED + "[user]    " + ChatColor.GOLD + "suffix    " + ChatColor.YELLOW + "[string]  " + ChatColor.GRAY + "// overrides group suffix");
+        addToPage(3,                ChatColor.RED + "[user]    " + ChatColor.GOLD + "ignore    " + ChatColor.YELLOW + "[player]  ");
         // ---
         // channel commands         / page 4
         setPageHeader(4, "Channel Commands 1", "/ch   ");

@@ -81,8 +81,13 @@ commands:
   mute: # done
     description: Mutes the specified player.
     usage: |
-      /<command> c:channel
-      /<command> p:player
+      /<command> c:[channel]
+      /<command> p:[player]
+  ignore: # done
+    description: Ignores the specified player.
+    usage: |
+      /<command> [player]
+      /<command> [player] -remove
   nickname: # done
     aliases: [nick]
     description: Changes your display name.
@@ -117,6 +122,7 @@ permissions:
     default: false
     children:
       chatsuite.bypass.admin: true
+      chatsuite.bypass.ignore: true
       chatsuite.bypass.invite: true
       chatsuite.bypass.join: true
       chatsuite.bypass.boot: true

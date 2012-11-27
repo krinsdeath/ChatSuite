@@ -23,6 +23,7 @@ public class ChannelCreateCommand extends ChannelCommand {
         addToPage(0, "test      " + ChatColor.WHITE + "// Create a channel called 'test'");
         setArgRange(1, 1);
         addKey("chatsuite channel create");
+        addKey("chat channel create");
         addKey("channel create");
         addKey("ch create");
         addKey("create");

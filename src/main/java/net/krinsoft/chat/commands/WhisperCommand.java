@@ -16,11 +16,11 @@ public class WhisperCommand extends ChatSuiteCommand {
 
     public WhisperCommand(ChatCore plugin) {
         super(plugin);
-        this.plugin = plugin;
         this.setName("ChatSuite: Whisper");
         this.setCommandUsage("/whisper [player] [message]");
         this.setArgRange(2, 20);
         this.addKey("chatsuite whisper");
+        this.addKey("chat whisper");
         this.addKey("whisper");
         this.addKey("w");
         this.setPermission("chatsuite.whisper", "Whispers a message to another user", PermissionDefault.TRUE);
