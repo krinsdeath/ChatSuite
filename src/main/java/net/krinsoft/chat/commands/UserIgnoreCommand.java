@@ -17,6 +17,9 @@ public class UserIgnoreCommand extends UserCommand {
         super(instance);
         setName("ChatSuite: User Ignore");
         setCommandUsage("/chat user ignore [target] [-remove]");
+        setPageHeader(0, "User Commands", "/ignore   ");
+        addToPage(0, "[user]    " + ChatColor.WHITE + "// Adds the specified user to your ignore list.");
+        addToPage(0, "[user]    " + ChatColor.GOLD + "-remove   " + ChatColor.WHITE + "// Removes the specified user from your ignore list.");
         addCommandExample("/ignore Njodi -- Ignores messages sent from Njodi.");
         addCommandExample("/ignore Njodi -remove -- Stops ignoring Njodi.");
         setArgRange(1, 2);
