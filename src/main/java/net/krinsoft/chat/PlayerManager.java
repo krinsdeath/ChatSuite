@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -87,6 +89,10 @@ public class PlayerManager implements Manager {
             registerPlayer(p);
         }
         return players.get(p);
+    }
+
+    public Set<ChatPlayer> getPlayers() {
+        return new HashSet<ChatPlayer>(players.values());
     }
 
     /**
