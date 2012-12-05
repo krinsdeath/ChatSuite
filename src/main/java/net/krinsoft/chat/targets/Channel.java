@@ -316,8 +316,10 @@ public class Channel implements Target {
      */
     public boolean part(final Player player) {
         if (occupants.remove(player.getName())) {
-            player.sendMessage(ChatColor.GRAY + "[ChatSuite] You have left: " + getColoredName());
-            manager.log(name, player.getName() + " left the channel.");
+            if (manager.getAllowChannels()) {
+                player.sendMessage(ChatColor.GRAY + "[ChatSuite] You have left: " + getColoredName());
+                manager.log(name, player.getName() + " left the channel.");
+            }
             if (validIRC()) {
                 final ChannelPartEvent event = new ChannelPartEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
                 manager.getPlugin().getServer().getPluginManager().callEvent(event);
