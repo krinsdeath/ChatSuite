@@ -20,6 +20,7 @@ public class ChannelManager implements Manager {
     private HashMap<String, Channel> channels = new HashMap<String, Channel>();
 
     private boolean world_channels;
+    private boolean allow_channels;
     private boolean channel_logging;
 
     private FileConfiguration configuration;
@@ -70,6 +71,7 @@ public class ChannelManager implements Manager {
             saveConfig();
         }
         world_channels = getConfig().getBoolean("world_channels");
+        allow_channels = plugin.getConfig().getBoolean("plugin.allow_channels");
         channel_logging = getConfig().getBoolean("logging", true);
     }
 
@@ -194,6 +196,10 @@ public class ChannelManager implements Manager {
             plugin.debug("A channel named '" + channel.getName() + "' already exists.");
         }
         channels.put(channel.getName().toLowerCase(), channel);
+    }
+
+    public boolean getAllowChannels() {
+        return this.allow_channels;
     }
 
     public List<Channel> getChannels() {

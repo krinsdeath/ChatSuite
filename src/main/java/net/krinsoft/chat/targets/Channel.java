@@ -23,22 +23,28 @@ import org.bukkit.entity.Player;
  * @author krinsdeath (Jeff Wardian)
  */
 enum TextColor {
-    AQUA(       "AQUA",         ChatColor.AQUA),
-    BLACK(      "BLACK",        ChatColor.BLACK),
-    BLUE(       "BLUE",         ChatColor.BLUE),
-    DARKAQUA(   "DARKAQUA",     ChatColor.DARK_AQUA),
-    DARKBLUE(   "DARKBLUE",     ChatColor.DARK_BLUE),
-    DARKGRAY(   "DARKGRAY",     ChatColor.DARK_GRAY),
-    DARKGREEN(  "DARKGREEN",    ChatColor.DARK_GREEN),
-    DARKPURPLE( "DARKPURPLE",   ChatColor.DARK_PURPLE),
-    DARKRED(    "DARKRED",      ChatColor.DARK_RED),
-    GOLD(       "GOLD",         ChatColor.GOLD),
-    GRAY(       "GRAY",         ChatColor.GRAY),
-    GREEN(      "GREEN",        ChatColor.GREEN),
-    LIGHTPURPLE("LIGHTPURPLE",  ChatColor.LIGHT_PURPLE),
-    RED(        "RED",          ChatColor.RED),
-    YELLOW(     "YELLOW",       ChatColor.YELLOW),
-    WHITE(      "WHITE",        ChatColor.WHITE);
+    AQUA(           "AQUA",         ChatColor.AQUA),
+    BLACK(          "BLACK",        ChatColor.BLACK),
+    BLUE(           "BLUE",         ChatColor.BLUE),
+    DARKAQUA(       "DARKAQUA",     ChatColor.DARK_AQUA),
+    DARKBLUE(       "DARKBLUE",     ChatColor.DARK_BLUE),
+    DARKGRAY(       "DARKGRAY",     ChatColor.DARK_GRAY),
+    DARKGREEN(      "DARKGREEN",    ChatColor.DARK_GREEN),
+    DARKPURPLE(     "DARKPURPLE",   ChatColor.DARK_PURPLE),
+    DARKRED(        "DARKRED",      ChatColor.DARK_RED),
+    GOLD(           "GOLD",         ChatColor.GOLD),
+    GRAY(           "GRAY",         ChatColor.GRAY),
+    GREEN(          "GREEN",        ChatColor.GREEN),
+    LIGHTPURPLE(    "LIGHTPURPLE",  ChatColor.LIGHT_PURPLE),
+    RED(            "RED",          ChatColor.RED),
+    YELLOW(         "YELLOW",       ChatColor.YELLOW),
+    WHITE(          "WHITE",        ChatColor.WHITE),
+    MAGIC(          "MAGIC",        ChatColor.MAGIC),
+    BOLD(           "BOLD",         ChatColor.BOLD),
+    UNDERLINE(      "UNDERLINE",    ChatColor.UNDERLINE),
+    STRIKETHROUGH(  "STRIKETHROUGH",ChatColor.STRIKETHROUGH),
+    RESET(          "RESET",        ChatColor.RESET)
+    ;
 
     private String name;
     private ChatColor color;
@@ -280,16 +286,20 @@ public class Channel implements Target {
                 if (!isPublic()) {
                     members.add(player.getName());
                 }
-                player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + getColoredName());
+                if (manager.getAllowChannels()) {
+                    player.sendMessage(ChatColor.GREEN + "[ChatSuite] You have joined: " + getColoredName());
+                    manager.log(name, player.getName() + " was allowed entry.");
+                }
                 if (validIRC()) {
                     final ChannelJoinEvent event = new ChannelJoinEvent(name, IRC_NETWORK, IRC_CHANNEL, player.getName());
                     manager.getPlugin().getServer().getPluginManager().callEvent(event);
                 }
-                manager.log(name, player.getName() + " was allowed entry.");
                 return true;
             } else {
-                player.sendMessage(ChatColor.RED + "[ChatSuite] You are already on this channel!");
-                manager.log(name, player.getName() + " was already on " + name + ".");
+                if (manager.getAllowChannels()) {
+                    player.sendMessage(ChatColor.RED + "[ChatSuite] You are already on this channel!");
+                    manager.log(name, player.getName() + " was already on " + name + ".");
+                }
                 return false;
             }
         } else {
