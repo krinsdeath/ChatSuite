@@ -143,7 +143,7 @@ public class ChannelManager implements Manager {
         if (plugin.getPlayerManager().isPlayerRegistered(p.getName())) {
             ChatPlayer player = plugin.getPlayerManager().getPlayer(p.getName());
             player.setWorld(plugin.getWorldManager().getAlias(to));
-            if (world_channels) {
+            if (world_channels && allow_channels) {
                 removePlayerFromChannel(p, from);
                 Target target = addPlayerToChannel(p, to);
                 if (player.getTarget().getName().equals(from)) {
