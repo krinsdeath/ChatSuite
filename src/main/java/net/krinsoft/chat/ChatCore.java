@@ -2,7 +2,37 @@ package net.krinsoft.chat;
 
 import com.pneumaticraft.commandhandler.CommandHandler;
 import net.krinsoft.chat.api.Target;
-import net.krinsoft.chat.commands.*;
+import net.krinsoft.chat.commands.AfkCommand;
+import net.krinsoft.chat.commands.BaseCommand;
+import net.krinsoft.chat.commands.ChannelAdminCommand;
+import net.krinsoft.chat.commands.ChannelBootCommand;
+import net.krinsoft.chat.commands.ChannelCreateCommand;
+import net.krinsoft.chat.commands.ChannelInfoCommand;
+import net.krinsoft.chat.commands.ChannelInviteCommand;
+import net.krinsoft.chat.commands.ChannelJoinCommand;
+import net.krinsoft.chat.commands.ChannelListCommand;
+import net.krinsoft.chat.commands.ChannelMessageCommand;
+import net.krinsoft.chat.commands.ChannelPartCommand;
+import net.krinsoft.chat.commands.ChannelSetCommand;
+import net.krinsoft.chat.commands.DebugCommand;
+import net.krinsoft.chat.commands.GroupOptionCommand;
+import net.krinsoft.chat.commands.IRCCommand;
+import net.krinsoft.chat.commands.IRCConnectCommand;
+import net.krinsoft.chat.commands.IRCCreateCommand;
+import net.krinsoft.chat.commands.IRCListCommand;
+import net.krinsoft.chat.commands.IRCQuitCommand;
+import net.krinsoft.chat.commands.MuteCommand;
+import net.krinsoft.chat.commands.NickCommand;
+import net.krinsoft.chat.commands.ReloadCommand;
+import net.krinsoft.chat.commands.ReplyCommand;
+import net.krinsoft.chat.commands.TargetCommand;
+import net.krinsoft.chat.commands.UserIgnoreCommand;
+import net.krinsoft.chat.commands.UserInfoCommand;
+import net.krinsoft.chat.commands.UserPrefixCommand;
+import net.krinsoft.chat.commands.UserSuffixCommand;
+import net.krinsoft.chat.commands.ValidateGroupsCommand;
+import net.krinsoft.chat.commands.VersionCommand;
+import net.krinsoft.chat.commands.WhisperCommand;
 import net.krinsoft.chat.listeners.IRCListener;
 import net.krinsoft.chat.listeners.PlayerListener;
 import net.krinsoft.chat.targets.ChatPlayer;
@@ -14,6 +44,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,6 +53,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -67,12 +99,31 @@ public class ChatCore extends JavaPlugin {
     }
 
     @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> tabbed = new ArrayList<String>();
+        if (command.getName().equals("target") || command.getName().equals("whisper")) {
+            if (!(sender instanceof Player)) {
+                return null;
+            }
+            Player tabber = (Player) sender;
+            String toComplete = args[args.length - 1];
+            for (Player player : getServer().getOnlinePlayers()) {
+                if (tabber.canSee(player) && player.getName().startsWith(toComplete)) {
+                    tabbed.add(player.getName());
+                }
+            }
+            return tabbed;
+        }
+        return null;
+    }
+
+    @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
         if (!isEnabled()) {
             cs.sendMessage(ChatColor.RED + "no.");
             return true;
         }
-        ArrayList<String> allArgs = new ArrayList<String>(Arrays.asList(args));
+        List<String> allArgs = new ArrayList<String>(Arrays.asList(args));
         allArgs.add(0, label);
         return this.commandHandler.locateAndRunCommand(cs, allArgs);
     }
