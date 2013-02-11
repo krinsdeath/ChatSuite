@@ -38,9 +38,14 @@ public class UserIgnoreCommand extends UserCommand {
             return;
         }
         if (args.size() == 1 && (args.get(0).equalsIgnoreCase("-l") || args.get(0).equalsIgnoreCase("-list"))) {
-            player.sendMessage("=== Ignore List ===");
-            for (String name : player.getIgnoreList()) {
-                player.sendMessage(name);
+            List<String> ignores = player.getIgnoreList();
+            if (ignores.size() > 0) {
+                player.sendMessage("=== Ignore List ===");
+                for (String name : ignores) {
+                    player.sendMessage(name);
+                }
+            } else {
+                player.sendMessage("You are not ignoring anyone.");
             }
             return;
         }
