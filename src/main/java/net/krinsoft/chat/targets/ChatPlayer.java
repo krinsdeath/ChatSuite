@@ -1,23 +1,18 @@
 package net.krinsoft.chat.targets;
 
+import net.krinsoft.chat.PlayerManager;
+import net.krinsoft.chat.api.Target;
+import net.krinsoft.chat.util.Replacer;
+import net.krinsoft.chat.util.Replacer.Handler;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import net.krinsoft.chat.PlayerManager;
-import net.krinsoft.chat.api.Target;
-import net.krinsoft.chat.util.Replacer;
-import net.krinsoft.chat.util.Replacer.Handler;
-
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
-import com.herocraftonline.dev.heroes.Heroes;
-import com.herocraftonline.dev.heroes.persistence.Hero;
 
 /**
  *
@@ -67,27 +62,6 @@ public class ChatPlayer implements Target {
     static {
         final Handler AFK = new NodeGrabber("afk");
         final Handler GROUP = new NodeGrabber("group");
-        final Handler HEROES =
-            new Replacer.Handler() {
-                @Override
-                public String getValue(final Object... scope) {
-                    final ChatPlayer chatPlayer = (ChatPlayer) scope[0];
-                    final PlayerManager manager = chatPlayer.manager;
-                    final Plugin tmp = manager.getPlugin().getServer().getPluginManager().getPlugin("Heroes");
-                    if (tmp != null) {
-                        try {
-                            final Heroes heroes = (Heroes) tmp;
-                            final Player player = manager.getPlugin().getServer().getPlayer(chatPlayer.getName());
-                            final Hero hero = heroes.getHeroManager().getHero(player);
-                            final String hero_name = hero.getHeroClass().getName();
-                            return hero_name;
-                        } catch (final Exception e) {
-                            manager.getPlugin().warn("An error occurred while parsing a Hero class: " + e.getLocalizedMessage());
-                        }
-                    }
-                    return "";
-                }
-            };
         final Handler PREFIX = new NodeGrabber("prefix");
         final Handler SUFFIX = new NodeGrabber("suffix");
         final Handler SELF =
@@ -147,8 +121,6 @@ public class ChatPlayer implements Target {
             new Replacer("%afk", AFK, false),
             new Replacer("%group", GROUP, false),
             new Replacer("%g", GROUP, true),
-            new Replacer("%hero", HEROES, false),
-            new Replacer("%h", HEROES, true),
             new Replacer("%prefix", PREFIX, false),
             new Replacer("%p", PREFIX, true),
             new Replacer("%name", SELF, false),
@@ -180,8 +152,6 @@ public class ChatPlayer implements Target {
             new Replacer("%afk", AFK, false),
             new Replacer("%group", GROUP, false),
             new Replacer("%g", GROUP, true),
-            new Replacer("%hero", HEROES, false),
-            new Replacer("%h", HEROES, true),
             new Replacer("%prefix", PREFIX, false),
             new Replacer("%p", PREFIX, true),
             new Replacer("%name", SELF, false),
@@ -338,8 +308,9 @@ public class ChatPlayer implements Target {
     public String getGroup() {
         long time = System.nanoTime();
         final Player p = getPlayer();
-        if (p == null)
+        if (p == null) {
             return manager.getPlugin().getDefaultGroup();
+        }
         int weight = 0;
         for (final String key : manager.getPlugin().getGroups()) {
             final int i = manager.getPlugin().getGroupNode(key).getInt("weight");
@@ -408,15 +379,11 @@ public class ChatPlayer implements Target {
         manager.getConfig().set(getName() + ".target", t);
         final List<String> joins = new ArrayList<String>();
         joins.addAll(auto_join);
-        if (joins.size() > 0) {
-            manager.getConfig().set(getName() + ".auto_join", joins);
-        }
+        manager.getConfig().set(getName() + ".auto_join", joins);
         manager.getConfig().set(getName() + ".muted", muted);
         final List<String> ignore = new ArrayList<String>();
         ignore.addAll(ignores);
-        if (ignore.size() > 0) {
-            manager.getConfig().set(getName() + ".ignores", ignore);
-        }
+        manager.getConfig().set(getName() + ".ignores", ignore);
         Player p = getPlayer();
         if (p != null && p.getDisplayName() != null && !p.getDisplayName().equals(p.getName())) {
             manager.getConfig().set(getName() + ".nickname", getPlayer().getDisplayName());

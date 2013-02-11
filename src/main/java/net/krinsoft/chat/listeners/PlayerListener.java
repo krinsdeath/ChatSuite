@@ -1,16 +1,11 @@
 package net.krinsoft.chat.listeners;
 
-import static net.krinsoft.chat.util.Replacer.replaceAll;
-import static net.krinsoft.chat.util.Replacer.replaceAllLiteral;
-
 import net.krinsoft.chat.ChatCore;
 import net.krinsoft.chat.api.Target;
 import net.krinsoft.chat.events.MinecraftJoinEvent;
 import net.krinsoft.chat.events.MinecraftQuitEvent;
 import net.krinsoft.chat.targets.Channel;
 import net.krinsoft.chat.targets.ChatPlayer;
-import net.krinsoft.chat.util.Replacer;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,6 +20,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static net.krinsoft.chat.util.Replacer.replaceAll;
+import static net.krinsoft.chat.util.Replacer.replaceAllLiteral;
 
 /**
  *
