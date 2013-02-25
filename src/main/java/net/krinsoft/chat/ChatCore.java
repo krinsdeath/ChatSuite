@@ -336,7 +336,6 @@ public class ChatCore extends JavaPlugin {
                 "%afk = afk message (if afk is allowed)\n" +
                 "%m = chat message\n" +
                 "%w = world name (or multiverse alias + color if applicable)\n" +
-                "%h = heroes class\n" +
                 "Plugins which insert or parse their own chat variables can be inserted as well, such as {FACTION}";
         config = new File(getDataFolder(), "config.yml");
         if (!config.exists()) {
@@ -344,6 +343,8 @@ public class ChatCore extends JavaPlugin {
             getConfig().options().copyDefaults(true);
             getConfig().options().header(header);
             saveConfig();
+        } else {
+            reloadConfig();
         }
         if (getConfig().get("plugin.prefixOnJoin") == null) {
             getConfig().set("plugin.prefixOnJoin", false);
