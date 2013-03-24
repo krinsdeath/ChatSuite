@@ -1,6 +1,7 @@
 package net.krinsoft.chat.commands;
 
 import net.krinsoft.chat.ChatCore;
+import net.krinsoft.chat.targets.ChatPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -33,14 +34,14 @@ public class NickCommand extends ChatSuiteCommand {
             sender.sendMessage("Your nickname has been reset to default.");
             return;
         }
-        Player target = plugin.getServer().getPlayer(args.get(0));
+        ChatPlayer target = plugin.getPlayerManager().getPlayer(args.get(0));
         String nick = args.get(0);
         if (args.size() == 2 && !sender.hasPermission("chatsuite.nick.other")) {
             sender.sendMessage("You don't have permission to change other peoples' nicknames.");
             return;
         }
         if (sender instanceof Player && args.size() < 2) {
-            target = (Player) sender;
+            target = plugin.getPlayerManager().getPlayer(sender.getName());
         } else {
             if (sender instanceof ConsoleCommandSender && args.size() < 2) {
                 sender.sendMessage("You must supply a target and a new name for him.");
@@ -56,10 +57,10 @@ public class NickCommand extends ChatSuiteCommand {
                 nick = args.get(1);
             }
         }
-        target.setDisplayName(nick);
+        target.setNickname(nick);
         target.sendMessage("You are now identified as " + nick);
         if (!target.getPlayer().equals(sender)) {
-            sender.sendMessage("You set " + target.getName() + "'s display name to " + target.getDisplayName());
+            sender.sendMessage("You set " + target.getName() + "'s display name to " + target.getNickname());
         }
     }
 

@@ -332,6 +332,10 @@ public class ChatPlayer implements Target {
         return name;
     }
 
+    public String getNickname() {
+        return getPlayer().getDisplayName();
+    }
+
     public Player getPlayer() {
         return manager.getPlugin().getServer().getPlayer(name);
     }
@@ -406,12 +410,26 @@ public class ChatPlayer implements Target {
         colorful = val;
     }
 
+    public void setNickname(String nickname) {
+        Player p = getPlayer();
+        if (nickname == null) {
+            p.setDisplayName(p.getName());
+            manager.getConfig().set(this.name + ".nickname", null);
+        } else {
+            p.setDisplayName(nickname);
+            manager.getConfig().set(this.name + ".nickname", nickname);
+        }
+        manager.saveConfig();
+    }
+
     public void setPrefix(String prefix) {
         manager.getConfig().set(this.name + ".prefix", prefix);
+        manager.saveConfig();
     }
 
     public void setSuffix(String suffix) {
         manager.getConfig().set(this.name + ".suffix", suffix);
+        manager.saveConfig();
     }
 
     public void setTarget(final Target t) {
