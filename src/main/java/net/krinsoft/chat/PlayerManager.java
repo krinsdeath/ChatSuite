@@ -25,8 +25,8 @@ public class PlayerManager implements Manager {
     private boolean persist = false;
 
     public PlayerManager(ChatCore instance) {
-        clean();
         plugin = instance;
+        clean();
         config = new File(plugin.getDataFolder(), "players.yml");
         if (!config.exists()) {
             getConfig().setDefaults(YamlConfiguration.loadConfiguration(plugin.getClass().getResourceAsStream("/defaults/players.yml")));
@@ -36,6 +36,7 @@ public class PlayerManager implements Manager {
         saveConfig();
         persist = plugin.getConfig().getBoolean("plugin.persist_user_settings");
         buildPlayerList();
+        validateGroups();
     }
 
     public void clean() {
@@ -45,6 +46,7 @@ public class PlayerManager implements Manager {
             }
         }
         players.clear();
+        finishValidation();
     }
 
     @Override
@@ -74,6 +76,22 @@ public class PlayerManager implements Manager {
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             registerPlayer(p.getName());
         }
+    }
+
+    private int group_task = 0;
+    private void validateGroups() {
+        group_task = this.plugin.getServer().getScheduler().scheduleSyncRepeatingTask(this.plugin, new Runnable() {
+            @Override
+            public void run() {
+                for (ChatPlayer player : players.values()) {
+                    player.getGroup();
+                }
+            }
+        }, 0L, 100L);
+    }
+
+    private void finishValidation() {
+        this.plugin.getServer().getScheduler().cancelTask(group_task);
     }
 
     /**
