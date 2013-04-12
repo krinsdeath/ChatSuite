@@ -314,7 +314,7 @@ public class ChatPlayer implements Target {
         int weight = 0;
         for (final String key : manager.getPlugin().getGroups()) {
             final int i = manager.getPlugin().getGroupNode(key).getInt("weight");
-            if ((p.hasPermission("chatsuite.groups." + key) || p.hasPermission("group." + key)) && i > weight) {
+            if ((p.hasPermission("chatsuite.groups." + key) || (p.isPermissionSet("group." + key) && p.hasPermission("group." + key))) && i > weight) {
                 weight = i;
                 group = key;
             }
