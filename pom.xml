@@ -129,13 +129,6 @@
             <version>2.4</version>
             <type>jar</type>
         </dependency>
-        <!-- Heroes -->
-        <dependency>
-            <groupId>com.herocraftonline</groupId>
-            <artifactId>Heroes</artifactId>
-            <version>1.2.4</version>
-            <type>jar</type>
-        </dependency>
         <!-- CommandHandler -->
         <dependency>
             <groupId>com.pneumaticraft.commandhandler</groupId>
