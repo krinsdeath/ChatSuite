@@ -42,6 +42,8 @@ public class MuteCommand extends ChatSuiteCommand {
         }
         if (target != null) {
             target.toggleMute();
+            target.persist();
+            plugin.getPlayerManager().saveConfig();
             sender.sendMessage(ChatColor.GRAY + "You " + (target.isMuted() ? "" : "un") + "muted the " + (target instanceof Channel ? "channel " : "player ") + ChatColor.RED + target.getName() + ChatColor.GRAY + ".");
         } else {
             sender.sendMessage(ChatColor.RED + "No such player or channel.");
